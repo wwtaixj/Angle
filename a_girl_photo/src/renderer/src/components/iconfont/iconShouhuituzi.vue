@@ -1,7 +1,7 @@
 <template>
-  <svgIcon icon-class="icon-shouhuituzi" />
+  <svgIcon v-bind="$attrs" icon-class="icon-shouhuituzi" />
 </template>
-<script>
+<script lang="ts">
 import svgIcon from './svgIcon.vue';
 export default {
   name: 'IconShouhuituzi',

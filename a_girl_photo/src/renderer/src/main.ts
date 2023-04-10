@@ -17,5 +17,5 @@ const app = createApp(App);
 app.use(router);
 app.use(Antd);
 app.use(i18n);
-app.use(<never>Particles);
+app.use(Particles);
 app.mount('#app');

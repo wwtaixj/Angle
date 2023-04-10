@@ -3,7 +3,7 @@
     <use :xlink:href="iconName" :fill="color" />
   </svg>
 </template>
-<script setup>
+<script lang="ts" setup>
 import { computed } from 'vue';
 const props = defineProps({
   className: {
@@ -12,7 +12,7 @@ const props = defineProps({
   },
   iconClass: {
     type: String,
-    required: true
+    default: ''
   },
   color: {
     type: String,

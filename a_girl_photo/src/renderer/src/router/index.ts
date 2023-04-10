@@ -15,7 +15,7 @@ const login: RouteComponent = () => import('../views/login/index.vue');
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/login'
   },
   {
     path: '/login',
@@ -27,6 +27,10 @@ const routes: RouteRecordRaw[] = [
     name: 'home',
     component: home,
     children: [
+      {
+        path: '/',
+        redirect: '/home/chatGpt'
+      },
       {
         path: 'chatGpt',
         name: 'chatGpt',

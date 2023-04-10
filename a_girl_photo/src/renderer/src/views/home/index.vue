@@ -60,10 +60,10 @@ import {
   FrownTwoTone,
   SmileTwoTone
 } from '@ant-design/icons-vue';
-import iconAixin1 from '../../components/iconfont/iconAixin1.vue';
-import iconArtboard from '../../components/iconfont/iconArtboard.vue';
-import iconHuluobu from '../../components/iconfont/iconHuluobu.vue';
-import iconShouhuituzi from '../../components/iconfont/iconShouhuituzi.vue';
+import iconAixin1 from '@renderer/components/iconfont/iconAixin1.vue';
+import iconArtboard from '@renderer/components/iconfont/iconArtboard.vue';
+import iconHuluobu from '@renderer/components/iconfont/iconHuluobu.vue';
+import iconShouhuituzi from '@renderer/components/iconfont/iconShouhuituzi.vue';
 import homeMenu from './children/homeMenu.vue';
 import { ref } from 'vue';
 
@@ -84,36 +84,6 @@ const smallMenuVisible = ref(false);
     .content {
       margin: 0 !important;
     }
-    .small-menu {
-      position: fixed;
-      left: 1rem;
-      bottom: 10rem;
-      z-index: 100;
-      display: flex !important;
-      flex-direction: column;
-      cursor: pointer;
-      .small-menu-icon {
-        animation: rubberBand 1s; // rubberBand是animate.css辅助类
-        font-size: 32px;
-        color: #000;
-        background-color: #fff;
-        box-shadow: var(--shadow-card);
-        transition: color 0.3s;
-        // Transition 过渡动画
-        .v-enter-active,
-        .v-leave-active {
-          transition: opacity 0.5s ease;
-        }
-
-        .v-enter-from,
-        .v-leave-to {
-          opacity: 0;
-        }
-      }
-      .small-menu-icon:active {
-        animation: none;
-      }
-    }
   }
   @media screen and(min-width: 751px) {
     .header {
@@ -126,7 +96,7 @@ const smallMenuVisible = ref(false);
       min-height: 280px;
     }
     .small-menu {
-      display: none;
+      display: none !important;
     }
     .trigger {
       font-size: 18px;

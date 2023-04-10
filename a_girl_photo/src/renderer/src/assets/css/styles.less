@@ -19,3 +19,36 @@ canvas {
   width: 100vw;
 }
 
+.small-menu {
+  position: fixed;
+  right: 85%;
+  top: 75%;
+  z-index: 100;
+  display: flex !important;
+  flex-direction: column;
+  cursor: pointer;
+  .small-menu-icon {
+    width: 35px;
+    height: 35px;
+    animation: rubberBand 1s; // rubberBand是animate.css辅助类
+    font-size: 35px;
+    color: #000;
+    background-color: transparent;
+    box-shadow: var(--shadow-card);
+    transition: color 0.3s;
+   
+  }
+  .small-menu-icon:active {
+    animation: none;
+  }
+}
+
+// Transition 过渡动画
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}

@@ -54,11 +54,7 @@ class HttpRequest {
    * @param config
    * @returns {Promise<void>}
    */
-  async postApiData(
-    url: string,
-    data?: never,
-    config?: AxiosRequestConfig
-  ): Promise<AxiosResponse> {
+  async postApiData(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse> {
     const res = await axios.post(url, data, config);
     if (res.data && res.data.returnCode && res.data.returnCode.toString() !== '0') {
       message.error(res.data.errorMessage + ',错误码：' + res.data.returnCode);

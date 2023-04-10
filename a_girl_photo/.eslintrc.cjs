@@ -1,5 +1,5 @@
 /* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution')
+require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
   root: true,
@@ -26,7 +26,8 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     'vue/require-default-prop': 'off',
     'vue/multi-word-component-names': 'off',
-    'semi':[2, 'always']
+    semi: [2, 'always'],
+    endOfLine: auto
   },
   overrides: [
     {
@@ -36,4 +37,4 @@ module.exports = {
       }
     }
   ]
-}
+};
