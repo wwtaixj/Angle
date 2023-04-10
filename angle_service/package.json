@@ -1,0 +1,19 @@
+{
+  "type": "module",
+  "name": "a_girl_photo_background_system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.18.1",
+    "express-art-template": "^1.0.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^2.3.3"
+  }
+}
