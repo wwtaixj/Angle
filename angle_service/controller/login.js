@@ -1,8 +1,9 @@
 import db from '../db/index.js';
-
+import jwt from 'jsonwebtoken';
+const Key = 'wwtxjsdas';
 export async function login(req, res, next) {
   const { username, password } = req.body;
-  console.log(req);
+
   if (!username || !password) {
     // 没有用户名或密码
     return res.status(401).json({
@@ -14,7 +15,7 @@ export async function login(req, res, next) {
   const user = await db.query(
     `select password from user where username = ${username}`
   );
-
+  console.log(user);
   if (!user) {
     // 用户不存在或密码错误
     return res.status(401).json({
@@ -41,7 +42,7 @@ function generateToken(user) {
     name: user.username,
     role: user.role,
   };
-
+  jwt.sign(payload, Key);
   // TODO: 使用实际的 JWT 库生成 token
   return 'fake_token';
 }

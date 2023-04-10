@@ -14,7 +14,7 @@ const port = 9310;
 app.use('/api', router);
 
 app.listen(port, '0.0.0.0', () => {
-  console.log('server running at http://192.168.31.170:9310');
+  console.log('server running at http://0.0.0.0:9310');
 });
 const __dirname = './';
 // 在一个项目中会有一个静态资源文件夹
