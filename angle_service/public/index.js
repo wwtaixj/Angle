@@ -2,7 +2,7 @@ class Public {
   // corsky:表示cors跨域
   corsky(req, res, next) {
     // CORS→Cross Origin Resource Sharing
-    const allwo_origin = ['192.168.31.170:9310', 'localhost:9310'];
+    const allwo_origin = ['loose.net.cn', 'localhost'];
     // 设置可以用如下三行的写法,也可以用对象去写即res.set({}).二选一即可
     // res.header("Access-Control-Allow-Origin", "*");
     // res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
@@ -14,7 +14,7 @@ class Public {
     // console.log("请求者域名host:", req.get("host"));
     // console.log(allwo_origin.includes(req.get("host")));
     // req.get()这个方法,获取的是控制台Network，里面的属性名为Origin的属性值,还可以获取属性名为host的属性值
-    if (allwo_origin.includes(req.get('host'))) {
+    if (allwo_origin.includes(req.get('host').split(':')[0])) {
       res.set({
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers':
