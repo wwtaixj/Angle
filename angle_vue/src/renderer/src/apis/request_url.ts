@@ -1,5 +1,5 @@
 export default {
-  setLocation: 'api/setLocation',
+  setLocation: 'api/location',
   getAllPhoto: 'api/getAllPhoto',
   login: 'api/login'
 };

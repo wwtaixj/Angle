@@ -1,6 +1,6 @@
 import express from 'express';
 import router from './router/index.js';
-import Public from './public/public.js';
+import Public from './public/index.js';
 // import { send } from "express/lib/response";
 import express_art_template from 'express-art-template';
 import path from 'path';

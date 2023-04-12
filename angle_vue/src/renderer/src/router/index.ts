@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw, RouteComponent } from 'vue-router';
 import { useI18n } from '../i18n';
+import { useUserStore } from "@renderer/store/userStore";
 
 const { t } = useI18n();
 const home: RouteComponent = () => import('../views/home/index.vue');
@@ -112,5 +113,15 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes
 });
+
+router.beforeEach((to, from, next) => {
+  console.log(from)
+  const userStore = useUserStore();
+  if (to.name !== 'login' && !userStore.getToken) {
+    next({name: 'login'})
+  } else {
+    next();
+  }
+})
 
 export default router;

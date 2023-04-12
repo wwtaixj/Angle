@@ -1,6 +1,7 @@
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import vue from '@vitejs/plugin-vue';
+//import { readFileSync } from 'fs';
 import VueI18nPlugin from '@intlify/vite-plugin-vue-i18n';
 
 export default defineConfig({
@@ -24,6 +25,10 @@ export default defineConfig({
       })
     ],
     server: {
+      // https: {
+      //   key: readFileSync(join(__dirname, 'resources/localhost+1-key.pem')),
+      //   cert: readFileSync(join(__dirname, 'resources/localhost+1.pem'))
+      // },
       host: true,
       port: 5173,
       proxy: {

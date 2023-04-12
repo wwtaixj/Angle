@@ -7,7 +7,7 @@ export async function getAllUser(req, res) {
   let initParams = tool.initParams(url);
   if (method === 'GET') {
     if (url.indexOf('?') === -1) {
-      const [rows] = await db.query('select * from user');
+      const [rows] = await db.query('select * from users');
       res.send({
         status: 0,
         message: '获取用户列表数据成功！',
@@ -16,14 +16,14 @@ export async function getAllUser(req, res) {
     } else {
       let urlKey = Object.keys(initParams)[0];
       console.log(
-        'select * from ev_users where ' +
+        'select * from users where ' +
           urlKey +
           " like '%" +
           initParams[urlKey] +
           "%'"
       );
       const [rows] = await db.query(
-        'select * from ev_users where ' +
+        'select * from users where ' +
           urlKey +
           ' like "%' +
           initParams[urlKey] +
@@ -56,7 +56,7 @@ export async function getAllUser(req, res) {
       sqlDataStr = sqlDataStr.substring(0, sqlDataStr.length - 1);
 
       const [ResultSetHeader] = await db.query(
-        'insert into user (' + sqlStr + ') values (' + sqlDataStr + ')'
+        'insert into users (' + sqlStr + ') values (' + sqlDataStr + ')'
       );
       if (ResultSetHeader.serverStatus === 2) {
         res.send({
@@ -83,7 +83,7 @@ export async function getAllUser(req, res) {
       });
       sqlStr = sqlStr.substring(0, sqlStr.length - 1);
       const [ResultSetHeader] = await db.query(
-        'update user set ' + sqlStr + ' where id=' + body.id + ''
+        'update users set ' + sqlStr + ' where id=' + body.id + ''
       );
       if (ResultSetHeader.serverStatus === 2) {
         res.send({
@@ -96,7 +96,7 @@ export async function getAllUser(req, res) {
   if (method === 'DELETE') {
     let urlKey = Object.keys(initParams)[0];
     const [ResultSetHeader] = await db.query(
-      'delete from user where ' + urlKey + "='" + initParams[urlKey] + "'"
+      'delete from users where ' + urlKey + "='" + initParams[urlKey] + "'"
     );
     if (ResultSetHeader.serverStatus === 2) {
       res.send({

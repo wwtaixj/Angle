@@ -1,48 +1,68 @@
 import db from '../db/index.js';
-import jwt from 'jsonwebtoken';
-const Key = 'wwtxjsdas';
-export async function login(req, res, next) {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
+import { decrypt, encrypt } from '../util/cryptoJs.js';
+export const login = async (req, res, next) => {
+  let return_code, message = '';
+  try {
+    const { username, password } = req.body;
     // 没有用户名或密码
-    return res.status(401).json({
-      status: -1,
-      message: '未输入用户名或密码！',
-    });
-  }
-  // 在用户数据中查找是否存在与请求提供的用户名及密码匹配的用户记录
-  const user = await db.query(
-    `select password from user where username = ${username}`
-  );
-  console.log(user);
-  if (!user) {
+    if (!username || !password) {
+      return_code = '-1';
+      throw new Error('未输入用户名或密码！');
+    }
+    // 解密
+    const hashedPassword = decrypt(password);
+    const hashedUsername = decrypt(username);
+    // 在用户数据中查找是否存在与请求提供的用户名及密码匹配的用户记录
+    const [[ user ]] = await db.query(
+      `select * from users where username = '${hashedUsername}'`
+    );
     // 用户不存在或密码错误
-    return res.status(401).json({
-      status: -2,
-      message: '用户名或密码错误！',
+    if (!user) {
+      return_code = '-2';
+      throw new Error('用户不存在!');
+    }
+    // 密码错误
+    if (hashedPassword !== user.password) {
+      return_code = '-3';
+      throw new Error('密码错误,请再试一次!');
+    }
+    const { phone, avatar_url } = user;
+    // 返回包含 token、return_code 和 message 的 JSON 响应
+    res.json({
+      return_code: '0',
+      message: null,
+      data: {
+        token: encrypt(user.username),
+        phone: encrypt(phone),
+        avatar_url: encrypt(avatar_url)
+      }
+    });
+  } catch (e) {
+    let { message, code } = e;
+    if (code) {
+      return_code = code;
+      message = '系统内部异常！'
+    }
+    return res.json({
+      return_code,
+      message,
     });
   }
-
-  // 生成 token
-  const token = generateToken(user);
-
-  // 返回包含 token、returnCode 和 errorMessage 的 JSON 响应
-  res.json({
-    token,
-    status: 0,
-    message: null,
-  });
 }
 
-// 生成 token
-function generateToken(user) {
-  const payload = {
-    sub: user.id,
-    name: user.username,
-    role: user.role,
-  };
-  jwt.sign(payload, Key);
-  // TODO: 使用实际的 JWT 库生成 token
-  return 'fake_token';
+export const location = (req, res, next) => {
+  let return_code;
+  try {
+
+  }catch (e) {
+    let { message, code } = e;
+    if (code) {
+      return_code = code;
+      message = '系统内部异常！'
+    }
+    return res.json({
+      return_code,
+      message,
+    });
+  }
 }

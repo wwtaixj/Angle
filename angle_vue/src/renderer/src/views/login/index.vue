@@ -6,7 +6,7 @@
           id="tsparticles"
           :options="particOPtions"
           :particlesInit="particlesInit"
-          :particlesLoaded="particlesLoaded"
+          :rules="rules"
           :key="current[0]"
         />
         <a-card class="login-card">
@@ -21,15 +21,14 @@
             :label-col="{ span: 4 }"
             autocomplete="off"
             @finish="onFinish"
+            :rules="rules"
             @finish-failed="onFinishFailed"
           >
-            <a-form-item
-              name="username"
-              :rules="[{ required: true, message: $t('login.Please input your username!') }]"
-            >
+            <a-form-item name="username">
               <a-input
                 v-model:value="formState.username"
                 :placeholder="$t('login.Username')"
+                :autocomplete="formState.remember ? 'on' : 'off'"
                 allowClear
               >
                 <template #prefix>
@@ -38,14 +37,12 @@
               </a-input>
             </a-form-item>
 
-            <a-form-item
-              name="password"
-              :rules="[{ required: true, message: $t('login.Please input your password!') }]"
-              class="login-form-password"
-            >
+            <a-form-item name="password" class="login-form-password">
               <a-input-password
                 v-model:value="formState.password"
+                @change="formState.password = formState.password.trim()"
                 :placeholder="$t('login.Password')"
+                :autocomplete="formState.remember ? 'on' : 'off'"
                 allowClear
               >
                 <template #prefix>
@@ -103,17 +100,25 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { loadFull } from 'tsparticles';
+import { useI18n } from '@renderer/i18n';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@renderer/store/userStore';
 import XMenu from '@renderer/components/XMenu.vue';
 import iconShouhuituzi from '@renderer/components/iconfont/iconShouhuituzi.vue';
 import options from '@renderer/assets/particles';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import service from '@renderer/apis/service';
 import request_url from '@renderer/apis/request_url';
+import _public from '@renderer/assets/public';
+import { encrypt, decrypt } from '@renderer/assets/public/cryptoJs';
+import type { Rule } from 'ant-design-vue/es/form';
 interface FormState {
   username: string;
   password: string;
   remember: boolean;
 }
+
+const { t } = useI18n();
 const menuConfig = reactive({
   mode: 'inline',
   theme: 'dark'
@@ -141,6 +146,17 @@ const formState = reactive<FormState>({
   remember: true
 });
 
+let validatorPass = async (_rule: Rule, value: string): Promise<void> => {
+  if (value === '') {
+    return Promise.reject(t('login.Please input your password!'));
+  }
+};
+const rules: Record<string, Rule[]> = {
+  username: [
+    { required: true, message: t('login.Please input your username!'), trigger: 'change' }
+  ],
+  password: [{ required: true, validator: validatorPass, trigger: 'change' }]
+};
 // 背景特性选择
 const menuClick = async ({ key }) => {
   particOPtions.value = options[key];
@@ -152,27 +168,36 @@ const particlesInit = async (engine) => {
   await loadFull(engine);
 };
 // 粒子特性加载完
-const particlesLoaded = async (container) => {
-  console.log('Particles container loaded', container);
-};
-// const getAssetsFile = (url: string): void => {
-//   imgUrl.value = new URL(url, import.meta.url).href;
+// const particlesLoaded = async (container) => {
+//   // console.log('Particles container loaded', container);
 // };
-//
+// login 表单校验成功
+const router = useRouter();
+const { setUserName, setToken, setPhone, setAvatarUrl } = useUserStore();
 const onFinish = async (values) => {
   const { username, password } = values;
+  // 生成哈希值
+  const hashedPassword = encrypt(password);
+  const hashedUsername = encrypt(username);
+  // 存储 hash 值到数据库中
   const result = await service.postApiData(request_url.login, {
-    username,
-    password
+    username: hashedUsername,
+    password: hashedPassword
   });
-  console.log(result);
+  // 返回结果提示
+  _public.resultPrompt(result.data, '登录成功!', () => {
+    const { token, phone, avatar_url } = result.data?.data;
+    setUserName(username);
+    setToken(token);
+    setPhone(decrypt(phone));
+    setAvatarUrl(decrypt(avatar_url));
+    router.push('/home/chatGpt');
+  });
 };
-
+// login 表单校验失败
 const onFinishFailed = (errorInfo: never): void => {
   console.log('Failed:', errorInfo);
 };
-// // 设置header background image
-// getAssetsFile('../../assets/images/background/xingkong.jpeg');
 </script>
 <style lang="less" scoped>
 .login {
@@ -198,7 +223,6 @@ const onFinishFailed = (errorInfo: never): void => {
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         border: 2px solid rgba(255, 255, 255, 0);
-        box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
         position: absolute;
         right: 5%;
         top: 50%;
@@ -283,7 +307,6 @@ const onFinishFailed = (errorInfo: never): void => {
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         border: 2px solid rgba(255, 255, 255, 0);
-        box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
         padding: 20px 35px;
         position: absolute;
         right: 5%;

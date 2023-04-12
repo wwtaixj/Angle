@@ -1,14 +1,9 @@
 <template>
   <div class="browse-photo"></div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
 
-export default defineComponent({
-  name: 'BrowsePhoto',
-  mounted() {},
-  methods: {}
-});
+
 </script>
 
 <style lang="less" scoped>

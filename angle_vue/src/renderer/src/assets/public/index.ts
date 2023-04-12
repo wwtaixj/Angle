@@ -1,31 +1,26 @@
-import { particles } from 'vue3-particles';
+import { message } from "ant-design-vue";
+// import { MessageInstance } from "ant-design-vue/lib/message"
+import { Response } from '@renderer/apis/model';
 
-const confetti = await particles.load('tsparticles', {
-  preset: 'confetti'
-});
-export const Pride = () => {
-  const end = Date.now() + 15 * 1000;
-  // go Buckeyes!
-  const colors = ['#bb0000', '#ffffff'];
-  function frame() {
-    confetti({
-      particleCount: 2,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0 },
-      colors: colors
-    });
-
-    confetti({
-      particleCount: 2,
-      angle: 120,
-      spread: 55,
-      origin: { x: 1 },
-      colors: colors
-    });
-
-    if (Date.now() < end) {
-      requestAnimationFrame(frame);
+export default {
+  resultPrompt(
+    result: Response,
+    content: string,
+    succeedFun?: (...arg0: any) => void,
+    level: "open" | "success" | "error" | "info" | "warning" | "warn" | "loading" = 'success',
+    ...options
+  ) {
+    if (
+      result.hasOwnProperty('return_code') &&
+      result.return_code &&
+      result.return_code.toString() === '0'
+    ) {
+      message[level]({
+        content,
+        ...options[0]
+      })
+      if (!succeedFun) return;
+      succeedFun();
     }
   }
-};
+}

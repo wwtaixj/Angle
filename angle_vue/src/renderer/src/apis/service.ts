@@ -1,4 +1,4 @@
-import axios from './http.js';
+import send from './http.js';
 import { message } from 'ant-design-vue';
 import { AxiosResponse, AxiosRequestConfig } from 'axios';
 import { cloneDeep } from 'lodash';
@@ -11,7 +11,7 @@ class HttpRequest {
    * @returns {Promise<*>}
    */
   async getApiData(url, config?: AxiosRequestConfig): Promise<AxiosResponse> {
-    const res = await axios.get(url, config);
+    const res = await send.get(url, config);
     if (res.data && res.data.returnCode && res.data.returnCode.toString() !== '0') {
       message.error(res.data.errorMessage + ',错误码：' + res.data.returnCode);
     }
@@ -26,7 +26,7 @@ class HttpRequest {
    * @returns {Promise<void>}
    */
   async updateApiData(url, data, config?: AxiosRequestConfig): Promise<AxiosResponse> {
-    const res = await axios.put(url, data, config);
+    const res = await send.put(url, data, config);
     if (res.data && res.data.returnCode && res.data.returnCode.toString() !== '0') {
       message.error(res.data.errorMessage + ',错误码：' + res.data.returnCode);
     }
@@ -40,7 +40,7 @@ class HttpRequest {
    * @returns {Promise<void>}
    */
   async deleteApiData(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
-    const res = await axios.delete(url, config);
+    const res = await send.delete(url, config);
     if (res.data && res.data.returnCode && res.data.returnCode.toString() !== '0') {
       message.error(res.data.errorMessage + ',错误码：' + res.data.returnCode);
     }
@@ -55,7 +55,7 @@ class HttpRequest {
    * @returns {Promise<void>}
    */
   async postApiData(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse> {
-    const res = await axios.post(url, data, config);
+    const res = await send.post(url, data, config);
     if (res.data && res.data.returnCode && res.data.returnCode.toString() !== '0') {
       message.error(res.data.errorMessage + ',错误码：' + res.data.returnCode);
     }

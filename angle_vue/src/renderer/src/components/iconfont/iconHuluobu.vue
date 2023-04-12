@@ -1,7 +1,7 @@
 <template>
   <svgIcon icon-class="icon-huluobu" />
 </template>
-<script>
+<script lang="ts">
 import svgIcon from './svgIcon.vue';
 export default {
   name: 'IconHuluobu',

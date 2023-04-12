@@ -22,6 +22,7 @@ import { ref, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 import XMenu from '@renderer/components/XMenu.vue';
 import { AliwangwangOutlined, PictureOutlined, SmileOutlined } from '@ant-design/icons-vue';
+import { MenuItem } from '@renderer/components/model';
 
 const props = defineProps({
   menuConfig: {
@@ -37,8 +38,8 @@ const props = defineProps({
   }
 });
 const router = useRouter();
-const menuList = ref([]);
-const current = ref([]);
+const menuList = ref<MenuItem[]>([]);
+const current = ref<string[]>([]);
 const currentRoute = router.currentRoute;
 const parentName = currentRoute.value.path.split('/')[1];
 
@@ -47,14 +48,18 @@ const initPage = (): void => {
 };
 const setMenuConfig = (): void => {
   const routerList = router.getRoutes();
-  const parentChildren = routerList.find((i) => i.name === parentName).children;
-  current.value[0] = currentRoute.value.name; // 当前路由name
+  const parentChildren = routerList.find((i) => i.name === parentName)?.children;
+  if (!currentRoute.value.name) return;
+  current.value[0] = <string>currentRoute.value.name; // 当前路由name
+  if (!parentChildren) return;
   menuList.value = parentChildren
-    .filter((i) => i.component)
-    .map((i) => ({
-      key: i.name,
-      name: i.meta.name
-    }));
+    ?.filter((i) => i.component)
+    .map(
+      (i): MenuItem => ({
+        key: <string>i.name,
+        title: <string>i?.meta?.name
+      })
+    );
 };
 const headerSelect = ({ key }): void => {
   if (!props.smallMenu) goToPhotoRouter(key);

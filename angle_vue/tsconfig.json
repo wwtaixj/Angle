@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "@renderer/*": ["./src/renderer/src/*"]
+      "@renderer/*": ["src/renderer/src/*"]
     }
   },
   "files": [],

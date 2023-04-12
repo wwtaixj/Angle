@@ -22,12 +22,12 @@
 import { UploadOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
 
-function getBase64(file): Promise<void> {
+function getBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = (): void => resolve(reader.result);
-    reader.onerror = (error): void => reject(error);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
   });
 }
 

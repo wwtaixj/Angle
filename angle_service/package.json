@@ -17,6 +17,6 @@
     "mysql2": "^2.3.3"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.0"
+    "crypto-js": "^4.1.1"
   }
 }

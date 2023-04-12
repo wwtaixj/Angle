@@ -2,10 +2,8 @@
   <div></div>
 </template>
 
-<script>
-export default {
-  name: 'GradePhoto'
-};
+<script lang="ts" setup>
+
 </script>
 
 <style scoped></style>

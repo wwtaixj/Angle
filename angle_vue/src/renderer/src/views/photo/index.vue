@@ -28,9 +28,10 @@ import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import XMenu from '../../components/XMenu.vue';
 import { HomeOutlined, LikeOutlined, HeartOutlined, UploadOutlined } from '@ant-design/icons-vue';
+import { MenuItem } from '@renderer/components/model';
 
-const menuList = ref([]);
-const current = ref([]);
+const menuList = ref<MenuItem[]>([]);
+const current = ref<string[]>([]);
 const menuConfig = reactive({
   mode: 'horizontal',
   theme: 'light'
@@ -45,14 +46,18 @@ const initPage = (): void => {
 };
 const setMenuConfig = (): void => {
   const routerList = router.getRoutes();
-  const parentChildren = routerList.find((i) => i.name === parentName[2]).children;
-  current.value = [currentRoute.value.name]; // 当前路由name
+  const parentChildren = routerList.find((i) => i.name === parentName[2])?.children;
+  if (!currentRoute.value.name) return;
+  current.value[0] = <string>currentRoute.value.name; // 当前路由name
+  if (!parentChildren) return;
   menuList.value = parentChildren
-    .filter((i) => i.component)
-    .map((i) => ({
-      key: i.name,
-      name: i.meta.name
-    }));
+    ?.filter((i) => i.component)
+    .map(
+      (i): MenuItem => ({
+        key: <string>i.name,
+        title: <string>i?.meta?.name
+      })
+    );
 };
 const headerSelect = ({ key }): void => {
   goToPhotoRouter(key);
