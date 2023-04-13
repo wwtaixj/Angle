@@ -1,9 +1,14 @@
 <template>
-  <iframe class="chat-iframe" src="http://loose.net.cn:3002"></iframe>
+  <iframe class="chat-iframe" :src="chatGpt"></iframe>
 </template>
-<scipt setup>
-
-</scipt>
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useUserStore } from '@renderer/store/userStore';
+const userStore = useUserStore();
+const { getUserName, getToken, getLanguage } = userStore;
+const chatGpt = ref('');
+chatGpt.value = `http://192.168.3.166:1002/#/chat?username=${getUserName}&token=${getToken}&lang=${getLanguage}`;
+</script>
 <style lang="less" scoped>
 .chat-iframe {
   width: 100%;

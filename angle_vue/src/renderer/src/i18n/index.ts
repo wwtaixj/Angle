@@ -1,22 +1,32 @@
 import { createI18n } from 'vue-i18n';
-import LangCN from './language/zh-cn';
-import LangEN from './language/en';
-import { getLanguage } from "@renderer/utils";
+import LangCN from './locales/zh-cn';
+import LangEN from './locales/en';
+import { getNavLanguage } from '@renderer/utils';
+import { createPinia } from 'pinia';
+import { useUserStore } from '@renderer/store/userStore';
+import { Language } from './model';
 
-const languageFile = {
-  'zh-cn': LangCN,
-  en: LangEN
-};
-
+const userStore = useUserStore(createPinia());
+let defaultLocale = userStore.getLanguage;
+if (!defaultLocale) {
+  defaultLocale = getNavLanguage();
+  userStore.setLanguage(defaultLocale);
+}
 const i18n = createI18n({
-  locale: getLanguage(),
+  locale: defaultLocale,
   fallbackLocale: 'zh-cn', // 不存在默认则为中文
   allowComposition: true, // 允许组合式api
-  globalInjection: true, //全局生效$t
-  messages: languageFile
+  messages: {
+    'zh-cn': LangCN,
+    en: LangEN,
+    'en-us': LangEN
+  }
 });
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const useI18n = () => {
+
+export function setLocale(locale: Language) {
+  i18n.global.locale = locale;
+}
+export const useI18n: any = () => {
   const { t, ...methods } = i18n.global;
   return {
     ...methods,

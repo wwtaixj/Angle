@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { message } from 'ant-design-vue';
-import _public from '@renderer/assets/public';
+import { XMessage } from '@renderer/assets/public';
 // 创建axios实例
 const instance = axios.create({
   timeout: 10000 * 12
@@ -21,15 +20,15 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   function (data) {
     if (data.data.return_code !== '0') {
-      message.error(data.data.message);
+      XMessage.error(data.data.message);
     }
     return data;
   },
   function (data) {
     if (data.toString().includes('500') || data.toString().includes('502')) {
-      message.error('服务未启动!');
+      XMessage.error('服务未启动!');
     } else {
-      message.error('服务出错，待解决！');
+      XMessage.error('服务出错，待解决！');
     }
     return data;
   }

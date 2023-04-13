@@ -13,12 +13,17 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-header class="header">
-        <menu-unfold-outlined
-          v-if="collapsed"
-          class="trigger"
-          @click="() => (collapsed = !collapsed)"
-        />
-        <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
+        <a-row>
+          <a-col :span="22">
+            <menu-unfold-outlined
+              v-if="collapsed"
+              class="trigger"
+              @click="() => (collapsed = !collapsed)"
+            />
+            <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
+          </a-col>
+          <a-col :span="2"> <XAvatar /></a-col>
+        </a-row>
       </a-layout-header>
       <a-layout-content class="content">
         <router-view v-slot="{ Component, route }">
@@ -60,6 +65,7 @@ import {
   FrownTwoTone,
   SmileTwoTone
 } from '@ant-design/icons-vue';
+import XAvatar from './children/XAvatar.vue';
 import iconAixin1 from '@renderer/components/iconfont/iconAixin1.vue';
 import iconArtboard from '@renderer/components/iconfont/iconArtboard.vue';
 import iconHuluobu from '@renderer/components/iconfont/iconHuluobu.vue';

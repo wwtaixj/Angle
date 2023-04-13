@@ -63,7 +63,7 @@
             </a-form-item>
 
             <a-form-item class="login-form-button">
-              <a-button block html-type="submit">
+              <a-button :loading="loginLoading" block html-type="submit">
                 {{ $t('login.Log in') }}
               </a-button>
             </a-form-item>
@@ -98,8 +98,9 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { loadFull } from 'tsparticles';
+import { Engine } from 'tsparticles-engine';
 import { useI18n } from '@renderer/i18n';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@renderer/store/userStore';
@@ -109,43 +110,60 @@ import options from '@renderer/assets/particles';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import service from '@renderer/apis/service';
 import request_url from '@renderer/apis/request_url';
-import _public from '@renderer/assets/public';
+import { resultPrompt } from '@renderer/assets/public';
 import { encrypt, decrypt } from '@renderer/assets/public/cryptoJs';
+import { getNavLocation } from '@renderer/utils';
 import type { Rule } from 'ant-design-vue/es/form';
+import { MenuItem } from '@renderer/components/model';
+import { UserParticles } from '@renderer/assets/particles';
+
 interface FormState {
   username: string;
   password: string;
   remember: boolean;
 }
 
+const userStore = useUserStore();
 const { t } = useI18n();
+const router = useRouter();
 const menuConfig = reactive({
   mode: 'inline',
   theme: 'dark'
 });
-const menuList = ref([
+const menuList = ref<MenuItem[]>([
   {
     key: 'light',
-    name: 'light'
+    title: 'light'
   },
   {
     key: 'fireworks',
-    name: 'fireworks'
+    title: 'fireworks'
   },
   {
     key: 'amongUs',
-    name: 'amongUs'
+    title: 'amongUs'
   }
 ]);
-const current = ref(['fireworks']); // 当前选中背景特性
-const particOPtions = ref(options[current.value[0]]); // 背景特性参数
+const loginLoading = ref(false);
+const current = ref<UserParticles[]>([userStore.getParticlesCurrent]); // 当前选中背景特性
+const particOPtions = ref(options[userStore.getParticlesCurrent]); // 背景特性参数
 const formState = reactive<FormState>({
   // 登陆表单
   username: '',
   password: '',
   remember: true
 });
-
+// 获取地理位置
+onMounted(() => {
+  getNavLocation()
+    .then((position) => {
+      userStore.setLocation(position);
+    })
+    .catch((error) => {
+      const { message } = error;
+      userStore.setLocation({ longitude: 0, latitude: 0, message });
+    });
+});
 let validatorPass = async (_rule: Rule, value: string): Promise<void> => {
   if (value === '') {
     return Promise.reject(t('login.Please input your password!'));
@@ -161,9 +179,10 @@ const rules: Record<string, Rule[]> = {
 const menuClick = async ({ key }) => {
   particOPtions.value = options[key];
   current.value[0] = key;
+  userStore.setParticlesCurrent(key);
 };
 // 粒子特性初始化
-const particlesInit = async (engine) => {
+const particlesInit = async (engine: Engine) => {
   // console.log(engine);
   await loadFull(engine);
 };
@@ -172,27 +191,32 @@ const particlesInit = async (engine) => {
 //   // console.log('Particles container loaded', container);
 // };
 // login 表单校验成功
-const router = useRouter();
-const { setUserName, setToken, setPhone, setAvatarUrl } = useUserStore();
-const onFinish = async (values) => {
-  const { username, password } = values;
-  // 生成哈希值
-  const hashedPassword = encrypt(password);
-  const hashedUsername = encrypt(username);
-  // 存储 hash 值到数据库中
-  const result = await service.postApiData(request_url.login, {
-    username: hashedUsername,
-    password: hashedPassword
-  });
-  // 返回结果提示
-  _public.resultPrompt(result.data, '登录成功!', () => {
-    const { token, phone, avatar_url } = result.data?.data;
-    setUserName(username);
-    setToken(token);
-    setPhone(decrypt(phone));
-    setAvatarUrl(decrypt(avatar_url));
-    router.push('/home/chatGpt');
-  });
+
+const onFinish = async (values: FormState) => {
+  try {
+    const { username, password } = values;
+    loginLoading.value = true;
+    // 生成哈希值
+    const hashedPassword = encrypt(password);
+    const hashedUsername = encrypt(username);
+    // 存储 hash 值到数据库中
+    const result = await service.postApiData(request_url.login, {
+      username: hashedUsername,
+      password: hashedPassword,
+      ...userStore.getLocation // 地理位置信息
+    });
+    // 返回结果提示
+    resultPrompt(result.data, '登录成功!', () => {
+      const { token, phone, avatar_url } = result.data?.data;
+      userStore.setUserName(username);
+      userStore.setToken(token);
+      userStore.setPhone(decrypt(phone));
+      userStore.setAvatarUrl(decrypt(avatar_url));
+      router.push('/home/chatGpt');
+    });
+  } finally {
+    loginLoading.value = false;
+  }
 };
 // login 表单校验失败
 const onFinishFailed = (errorInfo: never): void => {

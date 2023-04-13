@@ -4,3 +4,4 @@ export default {
   fireworks,
   amongUs
 };
+export type UserParticles = 'light' | 'fireworks' | 'amongUs' | undefined;

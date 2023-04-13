@@ -1,8 +1,7 @@
 import { resolve, join } from 'path';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import vue from '@vitejs/plugin-vue';
-//import { readFileSync } from 'fs';
-import VueI18nPlugin from '@intlify/vite-plugin-vue-i18n';
+import { readFileSync } from 'fs';
 
 export default defineConfig({
   main: {
@@ -15,15 +14,10 @@ export default defineConfig({
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),
-        'vue-i18n': 'vue-i18n/dist/vue-i18n.esm-bundler.js'
+        'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
       }
     },
-    plugins: [
-      vue(),
-      VueI18nPlugin({
-        include: resolve(__dirname, './path/to/src/locales/**')
-      })
-    ],
+    plugins: [vue()],
     server: {
       // https: {
       //   key: readFileSync(join(__dirname, 'resources/localhost+1-key.pem')),
