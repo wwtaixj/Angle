@@ -2,6 +2,8 @@ export default {
   Photo: 'Photo manage',
   ChatGPT: 'ChatGPT',
   About: 'About us',
+  'Sign out': 'Sign out',
+  'Account information': 'Account information',
   login: {
     Username: 'Username',
     Password: 'Password',

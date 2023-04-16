@@ -2,6 +2,8 @@ export default {
   Photo: '照片管理',
   ChatGPT: 'ChatGPT',
   About: '关于我们',
+  'Sign out': '退出登录',
+  'Account information': '账户信息',
   login: {
     Username: '用户名',
     Password: '密码',

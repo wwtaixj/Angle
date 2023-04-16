@@ -208,6 +208,8 @@ const onFinish = async (values: FormState) => {
     // 返回结果提示
     resultPrompt(result.data, '登录成功!', () => {
       const { token, phone, avatar_url } = result.data?.data;
+      console.log(decrypt(token));
+
       userStore.setUserName(username);
       userStore.setToken(token);
       userStore.setPhone(decrypt(phone));

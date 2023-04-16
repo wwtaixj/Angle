@@ -7,16 +7,16 @@
       class="menu"
       @select="headerSelect"
     >
-      <template #browsePhoto>
+      <template #browsePhotoicon>
         <HomeOutlined />
       </template>
-      <template #angellPhoto>
+      <template #angellPhotoicon>
         <HeartOutlined />
       </template>
-      <template #gradePhoto>
+      <template #gradePhotoicon>
         <LikeOutlined />
       </template>
-      <template #uploadPhoto>
+      <template #uploadPhotoicon>
         <UploadOutlined />
       </template>
     </XMenu>
