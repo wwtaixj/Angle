@@ -8,6 +8,7 @@ interface Location {
   latitude: number;
   message?: string;
 }
+type Gender = '0' | '1' | undefined;
 // 用户信息
 interface User {
   username: string;
@@ -17,6 +18,11 @@ interface User {
   location: Location;
   lang: Language;
   particles: UserParticles;
+  age: string;
+  gender: Gender;
+  label: string;
+  password: string;
+  remember: boolean;
 }
 export const useUserStore = defineStore('user', {
   state: (): User => ({
@@ -26,7 +32,12 @@ export const useUserStore = defineStore('user', {
     avatar_url: '',
     lang: undefined,
     location: { longitude: 0, latitude: 0 },
-    particles: undefined
+    particles: undefined,
+    age: '',
+    gender: undefined,
+    label: '',
+    password: '',
+    remember: false
   }),
   getters: {
     getUserName(state) {
@@ -44,10 +55,30 @@ export const useUserStore = defineStore('user', {
       if (phone) return phone;
       return sStorage.get('phone');
     },
+    getAge(state) {
+      const age = state.age;
+      if (age) return age;
+      return sStorage.get('age');
+    },
+    getGender(state) {
+      const gender = state.gender;
+      if (gender) return gender;
+      return sStorage.get('gender');
+    },
     getAvatarUrl(state) {
       const avatar_url = state.avatar_url;
       if (avatar_url) return avatar_url;
       return sStorage.get('avatar_url');
+    },
+    getLabel(state) {
+      const label = state.label;
+      if (label) return label;
+      return sStorage.get('label');
+    },
+    getPassword(state) {
+      const password = state.password;
+      if (password) return password;
+      return sStorage.get('password');
     },
     getLocation(state) {
       const location = state.location;
@@ -63,6 +94,11 @@ export const useUserStore = defineStore('user', {
       const particles = state.particles;
       if (particles) return particles;
       return lStorage.get('particles') || 'fireworks';
+    },
+    getRemember(state) {
+      const remember = state.remember;
+      if (remember) return remember;
+      return lStorage.get('remember');
     }
   },
   actions: {
@@ -78,9 +114,25 @@ export const useUserStore = defineStore('user', {
       this.phone = phone;
       sStorage.set('phone', phone);
     },
+    setAge(age: string) {
+      this.age = age;
+      sStorage.set('age', age);
+    },
+    setGender(gender: Gender) {
+      this.gender = gender;
+      sStorage.set('gender', gender);
+    },
     setAvatarUrl(url: string) {
       this.avatar_url = url;
       sStorage.set('avatar_url', url);
+    },
+    setLabel(label: string) {
+      this.label = label;
+      sStorage.set('label', label);
+    },
+    setPassword(password: string) {
+      this.password = password;
+      sStorage.set('password', password);
     },
     setLocation(location: Location) {
       this.location = location;
@@ -93,6 +145,10 @@ export const useUserStore = defineStore('user', {
     setParticlesCurrent(particles: UserParticles) {
       this.particles = particles;
       lStorage.set('particles', particles);
+    },
+    setRemember(remember: boolean) {
+      this.remember = remember;
+      lStorage.set('remember', remember);
     }
   }
 });

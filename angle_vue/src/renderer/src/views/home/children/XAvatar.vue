@@ -1,10 +1,10 @@
 <template>
-  <a-dropdown v-model:visible="visible" :trigger="['hover']" placement="bottom">
+  <a-dropdown :trigger="['hover']" placement="bottom">
     <a-badge :count="1"
       ><a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 40, xl: 40, xxl: 40 }" shape="square">
         <template #icon>
           <a-image
-            src="https://zos.-oss-process=image/blur,r_50,s_50/quality,q_1/resize,m_mfit,h_200,w_200"
+            :src="userStore.getAvatarUrl"
             :preview="false"
             fallback="/src/assets/images/avatar32.png"
           >
@@ -31,19 +31,26 @@
       </XMenu>
     </template>
   </a-dropdown>
+  <account v-model:visible="accountVisible" />
 </template>
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@renderer/i18n';
 import XMenu from '@renderer/components/XMenu.vue';
+import account from './account.vue';
 import { UserOutlined, PoweroffOutlined } from '@ant-design/icons-vue';
+import { postApiData } from '@renderer/apis/service';
+import request_url from '@renderer/apis/request_url';
+import { useUserStore } from '@renderer/store/userStore';
 import { sStorage } from '@renderer/assets/public/webStorage';
 import { MenuItem } from '@renderer/components/model';
+import { resultPrompt } from '@renderer/assets/public';
 
+const userStore = useUserStore();
 const router = useRouter();
 const { t } = useI18n();
-const visible = ref(false);
+const accountVisible = ref(false);
 const menuList = ref<MenuItem[]>([
   {
     key: 'accountInformation',
@@ -63,11 +70,16 @@ const menuConfig = reactive({
 const headerClick = ({ key }) => {
   current.value[0] = key;
   if (key === 'signOut') signOut();
-  if (key === 'accountInformation') openAccountInformation;
-  console.log(key);
+  if (key === 'accountInformation') openAccountInformation();
 };
-const openAccountInformation = () => {};
-const signOut = () => {
+const openAccountInformation = () => {
+  accountVisible.value = true;
+};
+const signOut = async () => {
+  const result = await postApiData(request_url.login, {
+    token: userStore.getToken
+  });
+  resultPrompt(result.data, t('Sign out successfully'));
   sStorage.clear();
   router.push('/');
 };

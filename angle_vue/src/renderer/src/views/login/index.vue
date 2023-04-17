@@ -6,7 +6,6 @@
           id="tsparticles"
           :options="particOPtions"
           :particlesInit="particlesInit"
-          :rules="rules"
           :key="current[0]"
         />
         <a-card class="login-card">
@@ -21,41 +20,17 @@
             :label-col="{ span: 4 }"
             autocomplete="off"
             @finish="onFinish"
-            :rules="rules"
             @finish-failed="onFinishFailed"
           >
-            <a-form-item name="username">
-              <a-input
-                v-model:value="formState.username"
-                :placeholder="$t('login.Username')"
-                :autocomplete="formState.remember ? 'on' : 'off'"
-                allowClear
-              >
-                <template #prefix>
-                  <UserOutlined class="site-form-item-icon" />
-                </template>
-              </a-input>
-            </a-form-item>
-
-            <a-form-item name="password" class="login-form-password">
-              <a-input-password
-                v-model:value="formState.password"
-                @change="formState.password = formState.password.trim()"
-                :placeholder="$t('login.Password')"
-                :autocomplete="formState.remember ? 'on' : 'off'"
-                allowClear
-              >
-                <template #prefix>
-                  <LockOutlined class="site-form-item-icon" />
-                </template>
-              </a-input-password>
-            </a-form-item>
-
+            <nameOrPassword v-model:data="formState" />
             <a-form-item>
               <a-form-item name="remember" no-style>
-                <a-checkbox v-model:checked="formState.remember" class="login-form-remember">{{
-                  $t('login.Remember me')
-                }}</a-checkbox>
+                <a-checkbox
+                  v-model:checked="formState.remember"
+                  @change="rememberChange"
+                  class="login-form-remember"
+                  >{{ $t('login.Remember me') }}</a-checkbox
+                >
               </a-form-item>
               <a-typography-link class="login-form-forgot" href="">{{
                 $t('login.Forgot password')
@@ -101,30 +76,24 @@
 import { reactive, ref, onMounted } from 'vue';
 import { loadFull } from 'tsparticles';
 import { Engine } from 'tsparticles-engine';
-import { useI18n } from '@renderer/i18n';
+// import { useI18n } from '@renderer/i18n';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@renderer/store/userStore';
 import XMenu from '@renderer/components/XMenu.vue';
+import nameOrPassword from './children/nameOrPassword.vue';
 import iconShouhuituzi from '@renderer/components/iconfont/iconShouhuituzi.vue';
 import options from '@renderer/assets/particles';
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import service from '@renderer/apis/service';
 import request_url from '@renderer/apis/request_url';
 import { resultPrompt } from '@renderer/assets/public';
 import { encrypt, decrypt } from '@renderer/assets/public/cryptoJs';
 import { getNavLocation } from '@renderer/utils';
-import type { Rule } from 'ant-design-vue/es/form';
 import { MenuItem } from '@renderer/components/model';
 import { UserParticles } from '@renderer/assets/particles';
-
-interface FormState {
-  username: string;
-  password: string;
-  remember: boolean;
-}
+import { UserForm } from '@renderer/views/login/model';
 
 const userStore = useUserStore();
-const { t } = useI18n();
+//const { t } = useI18n();
 const router = useRouter();
 const menuConfig = reactive({
   mode: 'inline',
@@ -147,11 +116,11 @@ const menuList = ref<MenuItem[]>([
 const loginLoading = ref(false);
 const current = ref<UserParticles[]>([userStore.getParticlesCurrent]); // 当前选中背景特性
 const particOPtions = ref(options[userStore.getParticlesCurrent]); // 背景特性参数
-const formState = reactive<FormState>({
+const formState = ref<UserForm>({
   // 登陆表单
   username: '',
   password: '',
-  remember: true
+  remember: userStore.getRemember
 });
 // 获取地理位置
 onMounted(() => {
@@ -164,17 +133,7 @@ onMounted(() => {
       userStore.setLocation({ longitude: 0, latitude: 0, message });
     });
 });
-let validatorPass = async (_rule: Rule, value: string): Promise<void> => {
-  if (value === '') {
-    return Promise.reject(t('login.Please input your password!'));
-  }
-};
-const rules: Record<string, Rule[]> = {
-  username: [
-    { required: true, message: t('login.Please input your username!'), trigger: 'change' }
-  ],
-  password: [{ required: true, validator: validatorPass, trigger: 'change' }]
-};
+
 // 背景特性选择
 const menuClick = async ({ key }) => {
   particOPtions.value = options[key];
@@ -192,7 +151,7 @@ const particlesInit = async (engine: Engine) => {
 // };
 // login 表单校验成功
 
-const onFinish = async (values: FormState) => {
+const onFinish = async (values: UserForm) => {
   try {
     const { username, password } = values;
     loginLoading.value = true;
@@ -207,13 +166,15 @@ const onFinish = async (values: FormState) => {
     });
     // 返回结果提示
     resultPrompt(result.data, '登录成功!', () => {
-      const { token, phone, avatar_url } = result.data?.data;
-      console.log(decrypt(token));
-
+      const { token, phone, avatar_url, age, label, gender } = result.data?.data;
       userStore.setUserName(username);
       userStore.setToken(token);
       userStore.setPhone(decrypt(phone));
-      userStore.setAvatarUrl(decrypt(avatar_url));
+      userStore.setAvatarUrl(avatar_url);
+      userStore.setAge(age);
+      userStore.setLabel(label);
+      userStore.setGender(gender);
+      userStore.setPassword(password);
       router.push('/home/chatGpt');
     });
   } finally {
@@ -223,6 +184,10 @@ const onFinish = async (values: FormState) => {
 // login 表单校验失败
 const onFinishFailed = (errorInfo: never): void => {
   console.log('Failed:', errorInfo);
+};
+const rememberChange = (e: Event) => {
+  if (!e.target) return;
+  userStore.setRemember(e.target['checked']);
 };
 </script>
 <style lang="less" scoped>
@@ -303,8 +268,7 @@ const onFinishFailed = (errorInfo: never): void => {
         .login-form-remember {
           color: #fff;
         }
-        .login-form-password {
-        }
+
         .login-form-register {
           color: #fff;
         }
@@ -387,8 +351,7 @@ const onFinishFailed = (errorInfo: never): void => {
         .login-form-remember {
           color: #fff;
         }
-        .login-form-password {
-        }
+
         .login-form-register {
           color: #fff;
         }

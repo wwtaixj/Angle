@@ -15,13 +15,6 @@ export async function getAllUser(req, res) {
       });
     } else {
       let urlKey = Object.keys(initParams)[0];
-      console.log(
-        'select * from users where ' +
-          urlKey +
-          " like '%" +
-          initParams[urlKey] +
-          "%'"
-      );
       const [rows] = await db.query(
         'select * from users where ' +
           urlKey +

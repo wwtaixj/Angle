@@ -1,4 +1,4 @@
-import { login, location} from '../controller/login.js';
+import { login } from '../controller/login.js';
 import { uploadPhoto, upload } from '../controller/photo.js';
 import express from 'express';
 import { getAllUser } from '../controller/user.js';
@@ -8,7 +8,6 @@ const router = new express.Router();
 
 // 挂载路由规划
 //login
-router.post('/location', location);
 router.post('/login', login);
 //user
 router.get('/user', getAllUser);
