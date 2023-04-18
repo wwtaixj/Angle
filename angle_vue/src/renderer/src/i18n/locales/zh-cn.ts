@@ -19,6 +19,8 @@ export default {
   'Please enter a new password': '请输入新密码',
   'The user information is modified successfully': '修改用户信息成功!',
   'Please enter the new password again': '请再次输入新密码',
+  'The two passwords are different': '两次输入密码不一样',
+  'The new password is the same as the old one': '新的密码和旧的密码一样',
   login: {
     Username: '用户名',
     Password: '密码',

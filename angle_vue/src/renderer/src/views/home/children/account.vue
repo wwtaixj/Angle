@@ -3,6 +3,7 @@
     v-model:visible="modelVisible"
     :ok-text="t('Ok')"
     :cancel-text="t('Cancel')"
+    :after-close="afterClose"
     @ok="okModal"
   >
     <XTabs v-model:activeKey="activeKey" :pane-list="paneList">
@@ -16,13 +17,13 @@
         <UnlockOutlined />
       </template>
       <template #changePasswordcontent>
-        <changePssword ref="changeRef" v-model:data="newPassword" />
+        <changePssword ref="changeRef" />
       </template>
     </XTabs>
   </a-modal>
 </template>
 <script lang="ts" setup>
-import { ref, defineProps, computed, defineEmits, reactive } from 'vue';
+import { ref, defineProps, computed, defineEmits } from 'vue';
 import { IdcardOutlined, UnlockOutlined } from '@ant-design/icons-vue';
 import XTabs from '@renderer/components/XTabs.vue';
 import { useI18n } from '@renderer/i18n';
@@ -33,6 +34,8 @@ import { updateApiData } from '@renderer/apis/service';
 import request_url from '@renderer/apis/request_url';
 import { resultPrompt } from '@renderer/assets/public';
 import { TabsPaneItem } from '@renderer/components/model';
+import { UserForm } from '@renderer/views/login/model';
+import { encrypt } from '@renderer/assets/public/cryptoJs';
 
 const userStore = useUserStore();
 const { t } = useI18n();
@@ -75,26 +78,24 @@ const userData = ref({
 });
 const editUser = async () => {
   console.log(userData.value);
-
-  const result = await updateApiData(request_url.user, userData);
+  const result = await updateApiData(request_url.user, userData.value);
   resultPrompt(result.data, t('The user information is modified successfully'));
 };
-const newPassword = reactive({
-  newPassword: '',
-  againNewPassword: ''
-});
+
+// 修改密码
 const changeRef = ref();
 const changePassword = async () => {
-  console.log(changeRef?.value.$refs.changePasswordRef.validate);
-  changeRef?.value.$refs.changePasswordRef.validate().then((nameList) => {
-    console.log(nameList);
+  changeRef?.value.$refs.changePasswordRef.validate().then(async (user: UserForm) => {
+    delete user.againNewPassword;
+    const result = await updateApiData(request_url.changePssword, {
+      username: encrypt(user.username),
+      password: encrypt(user.password),
+      newPassword: encrypt(user.newPassword)
+    });
+    resultPrompt(result.data, t('The user information is modified successfully'));
   });
-
-  // const result = await updateApiData(request_url.user);
-  // resultPrompt(result.data, t('The user information is modified successfully'));
 };
 const okModal = () => {
-  console.log(activeKey.value);
   if (activeKey.value === 'information') {
     editUser();
     return;
@@ -104,5 +105,8 @@ const okModal = () => {
     return;
   }
   // modelVisible.value = false;
+};
+const afterClose = () => {
+  changeRef?.value?.$refs?.changePasswordRef.resetFields();
 };
 </script>

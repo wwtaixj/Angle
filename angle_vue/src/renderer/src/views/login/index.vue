@@ -18,6 +18,7 @@
             name="normal_login"
             class="login-form"
             :label-col="{ span: 4 }"
+            :rules="loginRules"
             autocomplete="off"
             @finish="onFinish"
             @finish-failed="onFinishFailed"
@@ -76,7 +77,7 @@
 import { reactive, ref, onMounted } from 'vue';
 import { loadFull } from 'tsparticles';
 import { Engine } from 'tsparticles-engine';
-// import { useI18n } from '@renderer/i18n';
+import { useI18n } from '@renderer/i18n';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@renderer/store/userStore';
 import XMenu from '@renderer/components/XMenu.vue';
@@ -91,10 +92,19 @@ import { getNavLocation } from '@renderer/utils';
 import { MenuItem } from '@renderer/components/model';
 import { UserParticles } from '@renderer/assets/particles';
 import { UserForm } from '@renderer/views/login/model';
+import { Rule } from 'ant-design-vue/es/form';
 
 const userStore = useUserStore();
-//const { t } = useI18n();
+const { t } = useI18n();
 const router = useRouter();
+
+const loginRules: Record<string, Rule[]> = {
+  username: [{ required: true, message: t('login.Please input your username!') }],
+  password: [
+    { required: true, message: t('login.Please input your password!') },
+    { min: 6, message: t('login.The input content must contain more than 6 characters') }
+  ]
+};
 const menuConfig = reactive({
   mode: 'inline',
   theme: 'dark'

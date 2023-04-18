@@ -1,5 +1,6 @@
 import db from '../db/index.js';
 import tool from '../util/tool.js';
+import { decrypt, encrypt } from '../util/cryptoJs.js';
 
 export async function getAllUser(req, res) {
   let url = req.url;
@@ -9,7 +10,7 @@ export async function getAllUser(req, res) {
     if (url.indexOf('?') === -1) {
       const [rows] = await db.query('select * from users');
       res.send({
-        status: 0,
+        return_code: 0,
         message: '获取用户列表数据成功！',
         data: rows,
       });
@@ -23,7 +24,7 @@ export async function getAllUser(req, res) {
           '%"'
       );
       res.send({
-        status: 0,
+        return_code: 0,
         message: '查询用户列表数据成功！',
         data: rows,
       });
@@ -53,7 +54,7 @@ export async function getAllUser(req, res) {
       );
       if (ResultSetHeader.serverStatus === 2) {
         res.send({
-          status: 0,
+          return_code: 0,
           message: '添加用户列表数据成功！',
         });
       }
@@ -80,7 +81,7 @@ export async function getAllUser(req, res) {
       );
       if (ResultSetHeader.serverStatus === 2) {
         res.send({
-          status: 0,
+          return_code: 0,
           message: '更新用户列表数据成功！',
         });
       }
@@ -93,9 +94,59 @@ export async function getAllUser(req, res) {
     );
     if (ResultSetHeader.serverStatus === 2) {
       res.send({
-        status: 0,
+        return_code: 0,
         message: '删除用户列表数据成功！',
       });
     }
+  }
+}
+
+export async function changePassword(req, res) {
+  let return_code;
+  try {
+    const { username, password, newPassword } = req.body;
+    if (!(username && password && newPassword)) {
+      return_code = '-1';
+      throw new Error('参数错误');
+    }
+    const usernameDec = decrypt(username);
+    const passwordDec = decrypt(password);
+
+    const [[user]] = await db.query(
+      `select * from users where username = '${usernameDec}'`
+    );
+
+    if (!user) {
+      return_code = '-2';
+      throw new Error('用户名错误');
+    }
+
+    if (passwordDec !== user.password) {
+      return_code = '-3';
+      throw new Error('密码错误');
+    }
+    const [result] = await db.query(
+      `UPDATE users SET password = '${decrypt(
+        newPassword
+      )}' WHERE username = '${usernameDec}'`
+    );
+    if (result.serverStatus !== 2) {
+      return_code = '-4';
+      throw new Error('更新密码失败!');
+    }
+    res.send({
+      return_code: '0',
+      message: '更新密码成功！',
+    });
+  } catch (e) {
+    let { message, code } = e;
+    if (code) {
+      return_code = code;
+      message = '系统内部异常！';
+    }
+    return res.json({
+      return_code,
+      message,
+    });
   }
 }

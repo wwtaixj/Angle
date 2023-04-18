@@ -1,10 +1,10 @@
 <template>
-  <a-form-item :rules="usernameRules" name="username">
+  <a-form-item name="username">
     <a-input
       v-model:value="formState.username"
       :placeholder="usernamePlaceholder"
       :autocomplete="data?.remember ? 'on' : 'off'"
-      @input="handleInputChange('username')"
+      @input="handleInputChange('username')($event)"
       allowClear
     >
       <template #prefix>
@@ -13,10 +13,10 @@
     </a-input>
   </a-form-item>
 
-  <a-form-item :rules="passwordRules" name="password">
+  <a-form-item name="password">
     <a-input-password
       v-model:value="formState.password"
-      @input="handleInputChange('password')"
+      @input="handleInputChange('password')($event)"
       :placeholder="passwordPlaceholder"
       :autocomplete="data?.remember ? 'on' : 'new-password'"
       allowClear
@@ -44,17 +44,12 @@ const props = defineProps({
     })
   }
 });
-// username and password rules
-const usernameRules = [{ required: true, message: t('login.Please input your username!') }];
-const passwordRules = [
-  { required: true, message: t('login.Please input your password!') },
-  { min: 6, message: t('login.The input content must contain more than 6 characters') }
-];
+
 const usernamePlaceholder = t('login.Username');
 const passwordPlaceholder = t('login.Password');
 const formState = reactive({
-  password: props.data?.username,
-  username: '',
+  password: props.data?.password,
+  username: props.data?.username,
   remember: props.data?.remember
 });
 // 提取输入框值变化的处理函数

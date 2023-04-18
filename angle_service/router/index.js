@@ -1,7 +1,7 @@
 import { login } from '../controller/login.js';
 import { uploadPhoto, upload } from '../controller/photo.js';
 import express from 'express';
-import { getAllUser } from '../controller/user.js';
+import { getAllUser, changePassword } from '../controller/user.js';
 
 // 创建路由对象
 const router = new express.Router();
@@ -14,6 +14,7 @@ router.get('/user', getAllUser);
 router.post('/user', getAllUser);
 router.put('/user', getAllUser);
 router.delete('/user', getAllUser);
+router.put('/user/changePassword', changePassword);
 // photo
 router.post('/uploadPhoto', upload.single('images'), uploadPhoto);
 
