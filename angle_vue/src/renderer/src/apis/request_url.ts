@@ -1,7 +1,6 @@
 export default {
-  setLocation: 'api/location',
-  getAllPhoto: 'api/getAllPhoto',
-  login: 'api/login',
-  user: 'api/user',
-  changePssword: 'api/user/changePassword'
+  getAllPhoto: 'api/v1/getAllPhoto',
+  login: 'api/v1/login',
+  user: 'api/v1/user',
+  changePssword: 'api/v1/user/changePassword'
 };

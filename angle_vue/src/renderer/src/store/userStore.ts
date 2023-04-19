@@ -2,34 +2,15 @@ import { defineStore } from 'pinia';
 import { sStorage, lStorage } from '@renderer/assets/public/webStorage';
 import { Language } from '@renderer/i18n/model';
 import { UserParticles } from '@renderer/assets/particles';
+import { UserStore, Location } from './model';
+import { UserForm, Gender } from '@renderer/views/login/model';
 
-interface Location {
-  longitude: number;
-  latitude: number;
-  message?: string;
-}
-type Gender = '0' | '1' | undefined;
-// 用户信息
-interface User {
-  username: string;
-  token: string;
-  phone: string;
-  avatar_url: string;
-  location: Location;
-  lang: Language;
-  particles: UserParticles;
-  age: string;
-  gender: Gender;
-  label: string;
-  password: string;
-  remember: boolean;
-}
 export const useUserStore = defineStore('user', {
-  state: (): User => ({
+  state: (): UserStore => ({
     username: '',
     token: '',
     phone: '',
-    avatar_url: '',
+    avatarUrl: '',
     lang: undefined,
     location: { longitude: 0, latitude: 0 },
     particles: undefined,
@@ -66,9 +47,9 @@ export const useUserStore = defineStore('user', {
       return sStorage.get('gender');
     },
     getAvatarUrl(state) {
-      const avatar_url = state.avatar_url;
-      if (avatar_url) return avatar_url;
-      return sStorage.get('avatar_url');
+      const avatarUrl = state.avatarUrl;
+      if (avatarUrl) return avatarUrl;
+      return sStorage.get('avatarUrl');
     },
     getLabel(state) {
       const label = state.label;
@@ -102,47 +83,67 @@ export const useUserStore = defineStore('user', {
     }
   },
   actions: {
-    setUserName(name: string) {
+    setUserInfo(user: Omit<UserForm, 'password'>) {
+      const { username, phone, age, gender, avatarUrl, label } = user;
+      this.setUserName(username);
+      this.setPhone(phone);
+      this.setAge(age);
+      this.setGender(gender);
+      this.setAvatarUrl(avatarUrl);
+      this.setLabel(label);
+    },
+    setUserName(name?: string) {
+      if (!name) return;
       this.username = name;
       sStorage.set('username', name);
     },
     setToken(token: string) {
+      if (!token) return;
       this.token = token;
       sStorage.set('token', token);
     },
-    setPhone(phone: string) {
+    setPhone(phone?: string) {
+      if (!phone) return;
       this.phone = phone;
       sStorage.set('phone', phone);
     },
-    setAge(age: string) {
+    setAge(age?: string) {
+      if (!age) return;
       this.age = age;
       sStorage.set('age', age);
     },
-    setGender(gender: Gender) {
+    setGender(gender?: Gender) {
+      if (!gender) return;
       this.gender = gender;
       sStorage.set('gender', gender);
     },
-    setAvatarUrl(url: string) {
-      this.avatar_url = url;
-      sStorage.set('avatar_url', url);
+    setAvatarUrl(url?: string) {
+      if (!url) return;
+      this.avatarUrl = url;
+      sStorage.set('avatarUrl', url);
     },
-    setLabel(label: string) {
+    setLabel(label?: string) {
+      if (!label) return;
       this.label = label;
       sStorage.set('label', label);
     },
     setPassword(password: string) {
+      if (!password) return;
       this.password = password;
       sStorage.set('password', password);
     },
     setLocation(location: Location) {
+      if (!location) return;
       this.location = location;
       sStorage.set('location', location);
     },
     setLanguage(lang: Language) {
+      if (!lang) return;
       this.lang = lang;
       lStorage.set('language', lang);
     },
     setParticlesCurrent(particles: UserParticles) {
+      if (!particles) return;
       this.particles = particles;
       lStorage.set('particles', particles);
     },

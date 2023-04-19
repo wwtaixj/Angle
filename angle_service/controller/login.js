@@ -1,7 +1,7 @@
 import db from '../db/index.js';
 import { decrypt, encrypt } from '../util/cryptoJs.js';
-export const login = async (req, res, next) => {
-  let return_code, message;
+export const login = async (req, res) => {
+  let return_code = '1';
   try {
     const { username, password, token } = req.body;
     if (token) {
@@ -38,7 +38,7 @@ export const login = async (req, res, next) => {
       return_code: '0',
       message: null,
       data: {
-        token: encrypt(`${user.username},${new Date().getTime()}`),
+        token: encrypt(`${user.username},${Date.now()}`),
         phone: encrypt(phone),
         avatar_url: avatar_url,
         age,
@@ -47,6 +47,7 @@ export const login = async (req, res, next) => {
       },
     });
   } catch (e) {
+    console.log(e);
     let { message, code } = e;
     if (code) {
       return_code = code;

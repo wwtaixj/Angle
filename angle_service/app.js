@@ -1,12 +1,12 @@
 import express from 'express';
 import router from './router/index.js';
-import Public from './public/index.js';
+import { corsky } from './public/index.js';
 // import { send } from "express/lib/response";
 import express_art_template from 'express-art-template';
 import path from 'path';
 const app = express();
 
-app.use(Public.corsky);
+app.use(corsky);
 app.use(express.json());
 app.use(express.urlencoded());
 

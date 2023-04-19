@@ -11,7 +11,7 @@ class WebStorage {
   get(key: string, def: any = null): any {
     const valueStr = this.storage.getItem(md5(key));
     if (!valueStr) return def;
-    return JSON.parse(decrypt(valueStr))
+    return JSON.parse(decrypt(valueStr));
   }
   remove(key: string) {
     this.storage.removeItem(md5(key));
