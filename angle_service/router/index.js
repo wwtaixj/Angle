@@ -8,7 +8,7 @@ import {
   deleteUser,
   changePassword,
 } from '../controller/user.js';
-import { authentication } from '../public/index.js';
+import { authentication, apiPermission } from '../public/index.js';
 
 // 创建路由对象
 const router = express.Router();
@@ -17,15 +17,21 @@ const router = express.Router();
 //login
 router.post('/v1/login', login);
 //user
-router.get('/v1/user', authentication, getAllUser);
-router.post('/v1/user', authentication, addUser);
-router.put('/v1/user', authentication, updateUser);
-router.delete('/v1/user', authentication, deleteUser);
-router.put('/v1/user/changePassword', authentication, changePassword);
+router.get('/v1/user', authentication, apiPermission, getAllUser);
+router.post('/v1/user', authentication, apiPermission, addUser);
+router.put('/v1/user', authentication, apiPermission, updateUser);
+router.delete('/v1/user', authentication, apiPermission, deleteUser);
+router.put(
+  '/v1/user/changePassword',
+  authentication,
+  apiPermission,
+  changePassword
+);
 // photo
 router.post(
   '/v1/uploadPhoto',
   authentication,
+  apiPermission,
   upload.single('images'),
   uploadPhoto
 );

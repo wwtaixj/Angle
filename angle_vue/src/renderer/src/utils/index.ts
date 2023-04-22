@@ -27,6 +27,10 @@ interface Position {
   latitude: number;
   longitude: number;
 }
+/**
+ * 获取地理位置
+ * @returns
+ */
 export const getNavLocation = (): Promise<Position> => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -43,3 +47,16 @@ export const getNavLocation = (): Promise<Position> => {
     );
   });
 };
+declare type TargetContext = '_self' | '_blank';
+export function openWindow(
+  url: string,
+  opt?: { target?: TargetContext | string; noopener?: boolean; noreferrer?: boolean }
+) {
+  const { target = '__blank', noopener = true, noreferrer = true } = opt || {};
+  const feature: string[] = [];
+
+  noopener && feature.push('noopener=yes');
+  noreferrer && feature.push('noreferrer=yes');
+
+  window.open(url, target, feature.join(','));
+}

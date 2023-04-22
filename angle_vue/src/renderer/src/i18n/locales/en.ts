@@ -15,7 +15,7 @@ export default {
     'The input content must contain more than 6 characters':
       'The input content must contain more than 6 characters',
     'Remember me': 'Remember me',
-    'Forgot password': 'Forgot password',
+    'Forgot password': 'Forgot password?',
     'Log in': 'Log in',
     'register now': 'register now'
   },

@@ -37,7 +37,9 @@
     </a-layout>
     <div class="small-menu">
       <a-dropdown v-model:visible="smallMenuVisible" :trigger="['click']" placement="top">
-        <span class="small-menu-icon ant-avatar ant-avatar-circle ant-avatar-icon">
+        <span
+          class="small-menu-icon animation-rubberBand ant-avatar ant-avatar-circle ant-avatar-icon"
+        >
           <Transition>
             <FrownTwoTone v-show="!smallMenuVisible" />
           </Transition>

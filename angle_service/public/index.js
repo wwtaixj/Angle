@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from '../util/cryptoJs.js';
+import db from '../db/index.js';
 // corsky:表示cors跨域
 export const corsky = (req, res, next) => {
   // CORS→Cross Origin Resource Sharing
@@ -39,6 +40,13 @@ export const corsky = (req, res, next) => {
 // 登录超时时长
 const LOGIN_TIMEOUT = 8 * 60 * 60 * 1000;
 
+/**
+ * token 校验
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
 export const authentication = async (req, res, next) => {
   let return_code = '1000';
   try {
@@ -63,6 +71,49 @@ export const authentication = async (req, res, next) => {
     if (code) {
       return_code = code;
       message = '身份认证异常！';
+    }
+    return res.json({
+      return_code,
+      message,
+    });
+  }
+};
+
+/**
+ * API permission check
+ * @param {*} req
+ * @param {*} res
+ */
+export const apiPermission = async (req, res, next) => {
+  let return_code = '1';
+  try {
+    const headerUserName = decrypt(req.headers.username);
+    const sql = `SELECT api_permissions.api_name, api_permissions.api_type
+    FROM users
+    JOIN roles ON users.role_id = roles.id
+    JOIN roles_relation_api_permissions ON roles.id = roles_relation_api_permissions.role_id
+    JOIN api_permissions ON roles_relation_api_permissions.api_permission_id = api_permissions.id
+    WHERE users.username = ?`;
+
+    const [userList] = await db.query(sql, [headerUserName]);
+    if (userList.length === 0) {
+      return_code = '1003';
+      throw new Error('此账号没有权限');
+    }
+    const method = req.method.toLocaleLowerCase();
+    const url = req.originalUrl.split('?')[0];
+    if (!userList.some((i) => i.api_name === url && i.api_type === method)) {
+      return_code = '1004';
+      throw new Error('账号权限不足');
+    }
+    // 下一步
+    next();
+  } catch (e) {
+    console.log(e);
+    let { message, code } = e;
+    if (code) {
+      return_code = code;
+      message = 'API权限异常';
     }
     return res.json({
       return_code,

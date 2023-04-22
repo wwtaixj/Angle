@@ -12,7 +12,7 @@ if (!defaultLocale) {
   defaultLocale = getNavLanguage();
   userStore.setLanguage(defaultLocale);
 }
-const i18n = createI18n({
+export const i18n = createI18n({
   locale: defaultLocale,
   fallbackLocale: 'zh-cn', // 不存在默认则为中文
   allowComposition: true, // 允许组合式api
@@ -34,4 +34,8 @@ export const useI18n: any = () => {
   };
 };
 
-export default i18n;
+export default {
+  i18n,
+  useI18n,
+  setLocale
+};

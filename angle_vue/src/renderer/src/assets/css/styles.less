@@ -30,7 +30,6 @@ canvas {
   .small-menu-icon {
     width: 35px;
     height: 35px;
-    animation: rubberBand 1s; // rubberBand是animate.css辅助类
     font-size: 35px;
     color: #000;
     background-color: transparent;
@@ -38,11 +37,14 @@ canvas {
     transition: color 0.3s;
    
   }
-  .small-menu-icon:active {
-    animation: none;
-  }
 }
-
+// rubberBand是animate.css辅助类
+.animation-rubberBand {
+  animation: rubberBand 1s; 
+}
+.animation-rubberBand:active {
+  animation: none; 
+}
 // Transition 过渡动画
 .v-enter-active,
 .v-leave-active {
@@ -63,3 +65,9 @@ canvas {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+
+.color-white {
+  color: white !important;
+}
+

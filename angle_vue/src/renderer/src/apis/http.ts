@@ -4,7 +4,6 @@ import { useUserStore } from '@renderer/store/userStore';
 import { encrypt } from '@renderer/assets/public/cryptoJs';
 import request_url from './request_url';
 
-const userStore = useUserStore();
 // 创建axios实例
 const instance = axios.create({
   timeout: 10000 * 12
@@ -13,6 +12,7 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(
   function (config) {
+    const userStore = useUserStore();
     if (config.url !== request_url.login) {
       config.headers['token'] = userStore.getToken;
       config.headers['username'] = encrypt(userStore.getUserName);

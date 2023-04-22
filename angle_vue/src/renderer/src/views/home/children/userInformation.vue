@@ -2,7 +2,7 @@
   <a-row>
     <a-col :span="4" class="text-right">{{ t('login.Username') }}:</a-col>
     <a-col :span="20"
-      ><a-typography-paragraph v-model:content="user.username" class="inline-block" editable>
+      ><a-typography-paragraph v-model:content="user.username" editable>
         <template #editableTooltip>{{ t('Click to edit text') }}</template>
       </a-typography-paragraph></a-col
     >
@@ -22,7 +22,7 @@
   <a-row>
     <a-col :span="4" class="text-right">{{ t('Age') }}:</a-col>
     <a-col :span="20">
-      <a-typography-paragraph v-model:content="user.age" class="inline-block" editable>
+      <a-typography-paragraph v-model:content="user.age" editable>
         <template #editableTooltip>{{ t('Click to edit text') }}</template>
         <template #editableEnterIcon="{ className }">
           <CheckOutlined :class="className" />
@@ -33,7 +33,7 @@
   <a-row>
     <a-col :span="4" class="text-right">{{ t('Phone') }}:</a-col>
     <a-col :span="20">
-      <a-typography-paragraph v-model:content="user.phone" class="inline-block" editable>
+      <a-typography-paragraph v-model:content="user.phone" editable>
         <template #editableTooltip>{{ t('Click to edit text') }}</template>
         <template #editableEnterIcon="{ className }">
           <CheckOutlined :class="className" />
@@ -44,7 +44,7 @@
   <a-row>
     <a-col :span="4" class="text-right">{{ t('Avatar') }}:</a-col>
     <a-col :span="20">
-      <a-typography-paragraph v-model:content="user.avatarUrl" class="inline-block" editable>
+      <a-typography-paragraph v-model:content="user.avatarUrl" editable>
         <template #editableTooltip>{{ t('Click to edit text') }}</template>
       </a-typography-paragraph>
     </a-col>

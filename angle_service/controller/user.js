@@ -99,7 +99,7 @@ export async function deleteUser(req, res) {
  * @param {*} res
  * @returns
  */
-export async function updateUser(req, res) {
+export async function updateUser(req, res, next) {
   let return_code = '1';
   try {
     // 解析参数
