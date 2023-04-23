@@ -2,16 +2,13 @@
 import { computed, ref } from 'vue';
 import { NButton, NInput, NModal, useMessage } from 'naive-ui';
 import { fetchVerify } from '@renderer/api';
-import { useAuthStore } from '@renderer/store';
-import Icon403 from '@renderer/icons/403.vue';
+import Icon403 from '@renderer/assets/icons/403.vue';
 
 interface Props {
 	visible: boolean;
 }
 
 defineProps<Props>();
-
-const authStore = useAuthStore();
 
 const ms = useMessage();
 
@@ -28,12 +25,12 @@ async function handleVerify() {
 	try {
 		loading.value = true;
 		await fetchVerify(secretKey);
-		authStore.setToken(secretKey);
+		// authStore.setToken(secretKey);
 		ms.success('success');
 		window.location.reload();
 	} catch (error: any) {
 		ms.error(error.message ?? 'error');
-		authStore.removeToken();
+		// authStore.removeToken();
 		token.value = '';
 	} finally {
 		loading.value = false;

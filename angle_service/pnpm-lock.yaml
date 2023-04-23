@@ -39,6 +39,9 @@ devDependencies:
   '@antfu/eslint-config':
     specifier: ^0.35.3
     version: 0.35.3(eslint@8.35.0)(typescript@4.9.5)
+  '@types/crypto-js':
+    specifier: ^4.1.1
+    version: 4.1.1
   '@types/express':
     specifier: ^4.17.17
     version: 4.17.17
@@ -468,6 +471,10 @@ packages:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
       '@types/node': 18.14.6
+    dev: true
+
+  /@types/crypto-js@4.1.1:
+    resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
     dev: true
 
   /@types/express-serve-static-core@4.17.33:

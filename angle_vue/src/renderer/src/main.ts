@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createPinia } from 'pinia';
+import { setupStore } from './store';
 import router from './router';
 import { i18n } from './i18n';
 import Antd from './assets/antdv';
@@ -13,9 +13,9 @@ import 'animate.css';
 //const vConsole = new VConsole({ theme: 'dark' });
 // remove it when you finish debugging
 //vConsole.destroy();
-const pinia = createPinia();
+
 const app = createApp(App);
-app.use(pinia);
+setupStore(app);
 app.use(i18n);
 app.use(router);
 app.use(Antd);

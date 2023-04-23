@@ -5,7 +5,6 @@ import { corsky } from './utils/index';
 import express_art_template from 'express-art-template';
 import path from 'path';
 
-const port = 9310;
 const __dirname = './';
 const app = express();
 
@@ -14,8 +13,10 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use('/api', router);
 
-app.listen(port, 'localhost', () => {
-  console.log('server running at http://localhost:9310');
+app.listen(Number(process.env.LISTEN_PORT), process.env.LISTEN_URL, () => {
+  console.log(
+    `server running at http://${process.env.LISTEN_URL}:${process.env.LISTEN_PORT}`
+  );
 });
 
 // 在一个项目中会有一个静态资源文件夹
