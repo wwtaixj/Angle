@@ -31,9 +31,9 @@ import { useI18n } from '@renderer/i18n';
 import { MobileOutlined } from '@ant-design/icons-vue';
 import { UserForm } from '@renderer/views/login/model';
 import { Rule } from 'ant-design-vue/es/form';
-import { postApiData } from '@renderer/apis/service';
-import request_url from '@renderer/apis/request_url';
-import { resultPrompt } from '@renderer/assets/public';
+import { postApiData } from '@renderer/api/service';
+import request_url from '@renderer/api/request_url';
+import { resultPrompt } from '@renderer/utils/custom';
 
 const { t } = useI18n();
 const $emit = defineEmits(['update:data']);

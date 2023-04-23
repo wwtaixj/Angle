@@ -1,19 +1,36 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw, RouteComponent } from 'vue-router';
-import { useI18n } from '../i18n';
-import { useUserStore } from "@renderer/store/userStore";
+import { useI18n } from '@renderer/i18n';
+import { useUserStore } from '@renderer/store';
 
 const { t } = useI18n();
-const home: RouteComponent = () => import('../views/home/index.vue');
-const chatGpt: RouteComponent = () => import('../views/chatGpt/index.vue');
-const photo: RouteComponent = () => import('../views/photo/index.vue');
-const BrowsePhoto: RouteComponent = () => import('../views/photo/children/browsePhoto.vue');
-const AngellPhoto: RouteComponent = () => import('../views/photo/children/angellPhoto.vue');
-const UploadPhoto: RouteComponent = () => import('../views/photo/children/uploadPhoto.vue');
-const GradePhoto: RouteComponent = () => import('../views/photo/children/gradePhoto.vue');
-const about: RouteComponent = () => import('../views/about/index.vue');
-const login: RouteComponent = () => import('../views/login/index.vue');
+const home: RouteComponent = () => import('@renderer/views/home/index.vue');
+const chatGpt: RouteComponent = () => import('@renderer/views/chatGpt/index.vue');
+const photo: RouteComponent = () => import('@renderer/views/photo/index.vue');
+const BrowsePhoto: RouteComponent = () => import('@renderer/views/photo/children/browsePhoto.vue');
+const AngellPhoto: RouteComponent = () => import('@renderer/views/photo/children/angellPhoto.vue');
+const UploadPhoto: RouteComponent = () => import('@renderer/views/photo/children/uploadPhoto.vue');
+const GradePhoto: RouteComponent = () => import('@renderer/views/photo/children/gradePhoto.vue');
+const about: RouteComponent = () => import('@renderer/views/about/index.vue');
+const login: RouteComponent = () => import('@renderer/views/login/index.vue');
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('@renderer/views/exception/404/index.vue')
+  },
+
+  {
+    path: '/500',
+    name: '500',
+    component: () => import('@renderer/views/exception/500/index.vue')
+  },
+
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'notFound',
+    redirect: '/404'
+  },
   {
     path: '/',
     redirect: '/login'
@@ -33,7 +50,7 @@ const routes: RouteRecordRaw[] = [
         redirect: '/home/chatGpt'
       },
       {
-        path: 'chatGpt',
+        path: 'chatGpt/:uuid?',
         name: 'chatGpt',
         component: chatGpt,
         meta: {
@@ -115,13 +132,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(from)
+  console.log(from);
   const userStore = useUserStore();
   if (to.name !== 'login' && !userStore.getToken) {
-    next({name: 'login'})
+    next({ name: 'login' });
   } else {
     next();
   }
-})
+});
 
 export default router;

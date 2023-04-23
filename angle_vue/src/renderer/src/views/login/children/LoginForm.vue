@@ -37,11 +37,11 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@renderer/i18n';
-import service from '@renderer/apis/service';
-import { useUserStore } from '@renderer/store/userStore';
-import request_url from '@renderer/apis/request_url';
-import { resultPrompt } from '@renderer/assets/public';
-import { encrypt, decrypt } from '@renderer/assets/public/cryptoJs';
+import service from '@renderer/api/service';
+import { useUserStore } from '@renderer/store';
+import request_url from '@renderer/api/request_url';
+import { resultPrompt } from '@renderer/utils/custom';
+import { encrypt, decrypt } from '@renderer/utils/cryptoJs';
 import { Rule } from 'ant-design-vue/es/form';
 import nameOrPassword from './nameOrPassword.vue';
 import { UserForm } from '@renderer/views/login/model';

@@ -33,7 +33,7 @@ import { useI18n } from '@renderer/i18n';
 import XMenu from '@renderer/components/XMenu.vue';
 import account from './account.vue';
 import { UserOutlined, PoweroffOutlined } from '@ant-design/icons-vue';
-import { useUserStore } from '@renderer/store/userStore';
+import { useUserStore } from '@renderer/store';
 import { MenuItem } from '@renderer/components/model';
 
 const userStore = useUserStore();

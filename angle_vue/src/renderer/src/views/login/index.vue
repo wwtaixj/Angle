@@ -63,7 +63,7 @@
 import { reactive, ref } from 'vue';
 import { loadFull } from 'tsparticles';
 import { Engine } from 'tsparticles-engine';
-import { useUserStore } from '@renderer/store/userStore';
+import { useUserStore } from '@renderer/store';
 import { LoginStateEnum } from '@renderer/store/model';
 import XMenu from '@renderer/components/XMenu.vue';
 import LoginForm from './children/LoginForm.vue';

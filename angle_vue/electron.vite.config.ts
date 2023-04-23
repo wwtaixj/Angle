@@ -1,7 +1,7 @@
-import { resolve, join } from 'path';
+import { resolve } from 'path'; // join
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import vue from '@vitejs/plugin-vue';
-import { readFileSync } from 'fs';
+// import { readFileSync } from 'fs';
 
 export default defineConfig({
   main: {

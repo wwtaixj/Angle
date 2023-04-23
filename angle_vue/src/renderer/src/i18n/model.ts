@@ -1,1 +1,1 @@
-export type Language = 'zh-cn' | 'en' | undefined;
+export type Language = 'zh-cn' | 'en' | 'en-us' | undefined;

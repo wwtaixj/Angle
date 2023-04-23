@@ -3,39 +3,41 @@ import LangCN from './locales/zh-cn';
 import LangEN from './locales/en';
 import { getNavLanguage } from '@renderer/utils';
 import { createPinia } from 'pinia';
-import { useUserStore } from '@renderer/store/userStore';
+import { useUserStore } from '@renderer/store';
 import { Language } from './model';
 
+//保存语言
 const userStore = useUserStore(createPinia());
 let defaultLocale = userStore.getLanguage;
 if (!defaultLocale) {
-  defaultLocale = getNavLanguage();
-  userStore.setLanguage(defaultLocale);
+	defaultLocale = getNavLanguage();
+	userStore.setLanguage(defaultLocale);
 }
 export const i18n = createI18n({
-  locale: defaultLocale,
-  fallbackLocale: 'zh-cn', // 不存在默认则为中文
-  allowComposition: true, // 允许组合式api
-  messages: {
-    'zh-cn': LangCN,
-    en: LangEN,
-    'en-us': LangEN
-  }
+	locale: defaultLocale,
+	fallbackLocale: 'zh-cn', // 不存在默认则为中文
+	allowComposition: true, // 允许组合式api
+	messages: {
+		'zh-cn': LangCN,
+		en: LangEN,
+		'en-us': LangEN
+	}
 });
 
 export function setLocale(locale: Language) {
-  i18n.global.locale = locale;
+	i18n.global.locale = locale;
 }
 export const useI18n: any = () => {
-  const { t, ...methods } = i18n.global;
-  return {
-    ...methods,
-    t
-  };
+	const { t, ...methods } = i18n.global;
+	return {
+		...methods,
+		t
+	};
 };
+export const t: any = i18n.global.t;
 
 export default {
-  i18n,
-  useI18n,
-  setLocale
+	i18n,
+	useI18n,
+	setLocale
 };

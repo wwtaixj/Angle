@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { QrCode } from '@renderer/components/Qrcode/index';
 import { useI18n } from '@renderer/i18n';
-import { useUserStore } from '@renderer/store/userStore';
+import { useUserStore } from '@renderer/store';
 import { LoginStateEnum } from '@renderer/store/model';
 
 const { t } = useI18n();

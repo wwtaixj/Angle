@@ -1,5 +1,6 @@
 import db from '../db';
 import { decrypt, encrypt } from '../utils/cryptoJs';
+
 export const login = async (req, res) => {
   let return_code = '1';
   try {
@@ -19,9 +20,10 @@ export const login = async (req, res) => {
     const hashedPassword = decrypt(password);
     const hashedUsername = decrypt(username);
     // 在用户数据中查找是否存在与请求提供的用户名及密码匹配的用户记录
-    const [[user]] = await db.query(
+    const result = await db.query(
       `select * from users where username = '${hashedUsername}'`
     );
+    const user = result[0][0];
     // 用户不存在或密码错误
     if (!user) {
       return_code = '-2';

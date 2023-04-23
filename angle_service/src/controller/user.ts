@@ -8,14 +8,12 @@ import { decrypt, encrypt } from '../utils/cryptoJs';
  * @param {*} res
  * @returns
  */
-export async function getAllUser(req, res) {
-  let url = req.url,
-    return_code;
-  const method = req.method;
-  const initParams: any = tool.initParams(url);
+export async function getAllUser(req: any, res: any) {
+  let return_code: string;
   try {
+    const initParams: any = tool.initParams(req.url);
     const { username, avatarUrl, label, phone, age } = initParams;
-    if (url.indexOf('?') === -1) {
+    if (req.url.indexOf('?') === -1) {
       const [rows] = await db.query('select * from users');
       res.send({
         return_code: 0,
@@ -61,9 +59,10 @@ export async function getAllUser(req, res) {
  * @param {*} res
  * @returns
  */
-export async function deleteUser(req, res) {
+export async function deleteUser(req: any, res: any) {
   let return_code = '1';
   try {
+    const initParams: any = tool.initParams(req.url);
     // 解析参数
     const sql = 'delete from users where id = ? , username = ? ';
     if (!initParams['id'] && !initParams['username']) {
@@ -74,7 +73,7 @@ export async function deleteUser(req, res) {
       initParams['id'],
       initParams['username'],
     ]);
-    if (result.serverStatus === 2) {
+    if (result['serverStatus'] === 2) {
       res.send({
         return_code: '0',
         message: '删除用户列表数据成功！',
@@ -120,7 +119,7 @@ export async function updateUser(req, res, next) {
       age,
       username,
     ]);
-    if (result.serverStatus === 2) {
+    if (result['serverStatus'] === 2) {
       res.send({
         return_code: '0',
         message: '更新用户数据成功！',
@@ -166,7 +165,7 @@ export async function addUser(req, res) {
       decrypt(phone),
       age,
     ]);
-    if (result.serverStatus === 2) {
+    if (result['serverStatus'] === 2) {
       res.send({
         return_code: '0',
         message: '注册用户成功！',
@@ -203,10 +202,10 @@ export async function changePassword(req, res) {
     const usernameDec = decrypt(username);
     const passwordDec = decrypt(password);
 
-    const [[user]] = await db.query(
+    const userList = await db.query(
       `select * from users where username = '${usernameDec}'`
     );
-
+    const user = userList[0][0];
     if (!user) {
       return_code = '-2';
       throw new Error('用户名错误');
@@ -216,12 +215,12 @@ export async function changePassword(req, res) {
       return_code = '-3';
       throw new Error('密码错误');
     }
-    const [result] = await db.query(
+    const [updateUser] = await db.query(
       `UPDATE users SET password = '${decrypt(
         newPassword
       )}' WHERE username = '${usernameDec}'`
     );
-    if (result.serverStatus !== 2) {
+    if (updateUser['serverStatus'] !== 2) {
       return_code = '-4';
       throw new Error('更新密码失败!');
     }

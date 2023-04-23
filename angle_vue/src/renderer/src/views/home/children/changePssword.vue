@@ -34,7 +34,7 @@
 import { ref } from 'vue';
 import { LockOutlined } from '@ant-design/icons-vue';
 import { useI18n } from '@renderer/i18n';
-import { useUserStore } from '@renderer/store/userStore';
+import { useUserStore } from '@renderer/store';
 import nameOrPassword from '@renderer/views/login/children/nameOrPassword.vue';
 import { UserForm } from '@renderer/views/login/model';
 import { Rule } from 'ant-design-vue/es/form';

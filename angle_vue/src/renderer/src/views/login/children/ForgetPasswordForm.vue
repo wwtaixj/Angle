@@ -41,12 +41,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useI18n } from '@renderer/i18n';
-import { useUserStore } from '@renderer/store/userStore';
+import { useUserStore } from '@renderer/store';
 import { LoginStateEnum } from '@renderer/store/model';
-import { postApiData } from '@renderer/apis/service';
-import request_url from '@renderer/apis/request_url';
-import { resultPrompt } from '@renderer/assets/public';
-import { encrypt } from '@renderer/assets/public/cryptoJs';
+import { postApiData } from '@renderer/api/service';
+import request_url from '@renderer/api/request_url';
+import { resultPrompt } from '@renderer/utils/custom';
+import { encrypt } from '@renderer/utils/cryptoJs';
 import { Rule } from 'ant-design-vue/es/form';
 import { UserOutlined } from '@ant-design/icons-vue';
 import { UserForm } from '@renderer/views/login/model';
