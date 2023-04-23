@@ -1,4 +1,4 @@
-import db from '../db/index.js';
+import db from '../db';
 import multer from 'multer';
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -13,7 +13,8 @@ const storage = multer.diskStorage({
     //获取后缀名
     let exts = file.originalname.split('.');
     let ext = exts[exts.length - 1];
-    let tepname = new Date().getTime() + parseInt(Math.random() * 9999);
+    let tepname =
+      new Date().getTime() + parseInt((Math.random() * 9999).toString());
     //拼接名字
     cb(null, `${tepname}.${ext}`);
   },

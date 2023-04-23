@@ -1,5 +1,5 @@
-import db from '../db/index.js';
-import { decrypt, encrypt } from '../util/cryptoJs.js';
+import db from '../db';
+import { decrypt, encrypt } from '../utils/cryptoJs';
 export const login = async (req, res) => {
   let return_code = '1';
   try {

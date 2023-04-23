@@ -28,7 +28,7 @@
 
     <a-form-item class="login-form-button">
       <a-button :loading="loginLoading" block html-type="submit" ghost>
-        {{ $t('login.Log in') }}
+        {{ $t('login.Login') }}
       </a-button>
     </a-form-item>
   </a-form>
@@ -134,8 +134,6 @@ const rememberChange = (e: Event) => {
     color: #fff;
   }
   @media screen and(max-width: 750px) {
-  }
-  @media screen and(min-width: 751px) {
   }
 }
 </style>

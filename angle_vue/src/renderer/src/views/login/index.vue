@@ -32,18 +32,25 @@
           <div class="login-form-title">
             <a-typography-title :level="2">Live for today</a-typography-title>
           </div>
-          <login v-show="userStore.loginState === LoginStateEnum.LOGIN" />
-          <forgetPassword v-show="userStore.loginState === LoginStateEnum.RESET_PASSWORD" />
+          <LoginForm v-show="userStore.loginState === LoginStateEnum.LOGIN" />
+          <ForgetPasswordForm v-show="userStore.loginState === LoginStateEnum.RESET_PASSWORD" />
+          <MobileLoginForm v-show="userStore.loginState === LoginStateEnum.MOBILE" />
           <QrCodeForm v-show="userStore.loginState === LoginStateEnum.QR_CODE" />
           <template #actions>
             <div key="mobileLogin">
-              <span class="color-white">{{ $t('login.Mobile login') }}</span>
+              <span class="color-white" @click="userStore.setLoginState(LoginStateEnum.MOBILE)">{{
+                $t('login.Mobile login')
+              }}</span>
             </div>
             <div key="qrCode">
-              <span class="color-white">{{ $t('login.QrCode login') }}</span>
+              <span class="color-white" @click="userStore.setLoginState(LoginStateEnum.QR_CODE)">{{
+                $t('login.QrCode login')
+              }}</span>
             </div>
             <div key="register">
-              <span class="color-white">{{ $t('login.register now') }}</span>
+              <span class="color-white" @click="userStore.setLoginState(LoginStateEnum.REGISTER)">{{
+                $t('login.register now')
+              }}</span>
             </div>
           </template>
         </a-card>
@@ -56,11 +63,12 @@
 import { reactive, ref } from 'vue';
 import { loadFull } from 'tsparticles';
 import { Engine } from 'tsparticles-engine';
-import login from './children/login.vue';
 import { useUserStore } from '@renderer/store/userStore';
 import { LoginStateEnum } from '@renderer/store/model';
 import XMenu from '@renderer/components/XMenu.vue';
-import forgetPassword from './children/forgetPassword.vue';
+import LoginForm from './children/LoginForm.vue';
+import MobileLoginForm from './children/MobileLoginForm.vue';
+import ForgetPasswordForm from './children/ForgetPasswordForm.vue';
 import QrCodeForm from './children/QrCodeForm.vue';
 import iconShouhuituzi from '@renderer/components/iconfont/iconShouhuituzi.vue';
 import options from '@renderer/assets/particles';
@@ -89,6 +97,7 @@ const menuList = ref<MenuItem[]>([
 
 const current = ref<UserParticles[]>([userStore.getParticlesCurrent]); // 当前选中背景特性
 const particOPtions = ref(options[userStore.getParticlesCurrent]); // 背景特性参数
+console.log(import.meta.env);
 
 // 背景特性选择
 const menuClick = async ({ key }) => {

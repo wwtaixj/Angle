@@ -1,6 +1,6 @@
-import db from '../db/index.js';
-import tool from '../util/tool.js';
-import { decrypt, encrypt } from '../util/cryptoJs.js';
+import db from '../db';
+import tool from '../utils/tool';
+import { decrypt, encrypt } from '../utils/cryptoJs';
 
 /**
  * /api/user 获取所有用户
@@ -12,7 +12,7 @@ export async function getAllUser(req, res) {
   let url = req.url,
     return_code;
   const method = req.method;
-  const initParams = tool.initParams(url);
+  const initParams: any = tool.initParams(url);
   try {
     const { username, avatarUrl, label, phone, age } = initParams;
     if (url.indexOf('?') === -1) {

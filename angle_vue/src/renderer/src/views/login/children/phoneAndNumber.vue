@@ -31,9 +31,12 @@ import { useI18n } from '@renderer/i18n';
 import { MobileOutlined } from '@ant-design/icons-vue';
 import { UserForm } from '@renderer/views/login/model';
 import { Rule } from 'ant-design-vue/es/form';
+import { postApiData } from '@renderer/apis/service';
+import request_url from '@renderer/apis/request_url';
+import { resultPrompt } from '@renderer/assets/public';
 
 const { t } = useI18n();
-const $emit = defineEmits(['update:data', 'sendSMSCode']);
+const $emit = defineEmits(['update:data']);
 const props = defineProps({
   data: {
     type: Object as () => UserForm,
@@ -79,7 +82,11 @@ function handleInputChange(name: string) {
 const onSMSCode = async () => {
   try {
     sendLoading.value = true;
-    $emit('sendSMSCode', formState.phone);
+    const result = await postApiData(request_url.SMSCode, {
+      phone: formState.phone,
+      username: props.data?.username
+    });
+    resultPrompt(result.data, t('login.The SMS verification code is sent successfully'));
   } finally {
     sendLoading.value = false;
   }

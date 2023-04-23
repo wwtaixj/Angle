@@ -1,5 +1,29 @@
-import { decrypt, encrypt } from '../util/cryptoJs.js';
-import db from '../db/index.js';
+import { decrypt } from '../utils/cryptoJs';
+import db from '../db';
+
+interface SendResponseOptions<T = any> {
+  type: 'Success' | 'Fail';
+  message?: string;
+  data?: T;
+}
+
+export function sendResponse<T>(options: SendResponseOptions<T>) {
+  if (options.type === 'Success') {
+    return Promise.resolve({
+      message: options.message ?? null,
+      data: options.data ?? null,
+      status: options.type,
+    });
+  }
+
+  // eslint-disable-next-line prefer-promise-reject-errors
+  return Promise.reject({
+    message: options.message ?? 'Failed',
+    data: options.data ?? null,
+    status: options.type,
+  });
+}
+
 // corsky:表示cors跨域
 export const corsky = (req, res, next) => {
   // CORS→Cross Origin Resource Sharing
@@ -96,13 +120,17 @@ export const apiPermission = async (req, res, next) => {
     WHERE users.username = ?`;
 
     const [userList] = await db.query(sql, [headerUserName]);
-    if (userList.length === 0) {
+    if ((userList as Array<any>).length === 0) {
       return_code = '1003';
       throw new Error('此账号没有权限');
     }
     const method = req.method.toLocaleLowerCase();
     const url = req.originalUrl.split('?')[0];
-    if (!userList.some((i) => i.api_name === url && i.api_type === method)) {
+    if (
+      !(userList as Array<any>).some(
+        (i) => i.api_name === url && i.api_type === method
+      )
+    ) {
       return_code = '1004';
       throw new Error('账号权限不足');
     }

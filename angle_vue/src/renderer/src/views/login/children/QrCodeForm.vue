@@ -1,12 +1,13 @@
 <template>
-  <div class="enter-x min-w-64 min-h-64">
-    <QrCode :value="qrCodeUrl" class="enter-x flex justify-center xl:justify-start" :width="280" />
-    <a-divider class="enter-x">{{ t('login.QrCodeConfirmMessage') }}</a-divider>
+  <div class="qr-code-form">
+    <QrCode :value="qrCodeUrl" class="qr-code" :width="280" />
+    <a-divider class="color-white font-size-12">{{ t('login.QrCodeConfirmMessage') }}</a-divider>
     <a-button
-      size="large"
+      type="dashed"
       block
-      class="mt-4 enter-x"
+      class=""
       @click="userStore.setLoginState(LoginStateEnum.LOGIN)"
+      ghost
     >
       {{ t('login.Go back') }}
     </a-button>
@@ -23,3 +24,14 @@ const userStore = useUserStore();
 
 const qrCodeUrl = 'http://loose.net.cn/api/user/login';
 </script>
+<style lang="less" scoped>
+.qr-code-form {
+  .qr-code {
+    display: flex;
+    justify-content: center;
+    :deep(canvas) {
+      position: relative;
+    }
+  }
+}
+</style>

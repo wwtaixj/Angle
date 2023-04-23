@@ -33,7 +33,7 @@ export default {
     'The input content must contain more than 6 characters': '输入内容长度必须大于6',
     'Remember me': '记住我',
     'Forgot password': '忘记密码?',
-    'Log in': '登录',
+    Login: '登录',
     'register now': '立即注册',
     'Mobile login': '手机登录',
     'QrCode login': '二维码登录',
@@ -46,7 +46,7 @@ export default {
     'The SMS verification code is sent successfully': '发送短信验证码成功',
     'Please enter the phone number in the correct format': '请输入正确格式的手机号',
     'Verify to 4 bits': '验证为4位',
-    QrCodeConfirmMessage: `二维码登录扫码后点击"确认"，即可完成登录`
+    QrCodeConfirmMessage: `二维码后点击"确认"，即可完成登录`
   },
   photo: {
     'Browse photos': '浏览照片',
