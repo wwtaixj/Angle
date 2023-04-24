@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
 		token: '',
 		phone: '',
 		avatarUrl: '',
-		lang: undefined,
+		lang: 'zh-cn',
 		location: { longitude: 0, latitude: 0 },
 		particles: undefined,
 		age: '',

@@ -2,9 +2,82 @@ html,
 body,
 #app {
 	height: 100%;
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	--shadow-card: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
 }
-
 body {
 	padding-bottom: constant(safe-area-inset-bottom);
 	padding-bottom: env(safe-area-inset-bottom);
 }
+  body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+  }
+  
+  canvas {
+	position: fixed;
+	height: 100vh;
+	width: 100vw;
+  }
+  
+  .small-menu {
+	position: fixed;
+	right: 85%;
+	top: 75%;
+	z-index: 100;
+	display: flex !important;
+	flex-direction: column;
+	cursor: pointer;
+	.small-menu-icon {
+	  width: 35px;
+	  height: 35px;
+	  font-size: 35px;
+	  color: #000;
+	  background-color: transparent;
+	  box-shadow: var(--shadow-card);
+	  transition: color 0.3s;
+	 
+	}
+  }
+  // rubberBand是animate.css辅助类
+  .animation-rubberBand {
+	animation: rubberBand 1s; 
+  }
+  .animation-rubberBand:active {
+	animation: none; 
+  }
+  // Transition 过渡动画
+  .v-enter-active,
+  .v-leave-active {
+	transition: opacity 0.5s ease;
+  }
+  .v-enter-from,
+  .v-leave-to {
+	opacity: 0;
+  }
+  .inline-block {
+	display: inline-block;
+  }
+  
+  .text-right {
+	text-align: right;
+	padding-right: 1rem;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+  }
+  
+  
+  .color-white {
+	color: white !important;
+  }
+  .font-size-12 {
+	font-size: 1vw !important;
+  }
+  
+  

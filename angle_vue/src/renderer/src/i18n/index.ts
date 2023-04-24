@@ -1,20 +1,11 @@
+import type { App } from 'vue';
 import { createI18n } from 'vue-i18n';
 import LangCN from './locales/zh-cn';
 import LangEN from './locales/en';
-import { getNavLanguage } from '@renderer/utils';
-import { createPinia } from 'pinia';
-import { useUserStore } from '@renderer/store';
 import { Language } from './model';
 
-//保存语言
-const userStore = useUserStore(createPinia());
-let defaultLocale = userStore.getLanguage;
-if (!defaultLocale) {
-	defaultLocale = getNavLanguage();
-	userStore.setLanguage(defaultLocale);
-}
 export const i18n = createI18n({
-	locale: defaultLocale,
+	locale: 'zh-cn',
 	fallbackLocale: 'zh-cn', // 不存在默认则为中文
 	allowComposition: true, // 允许组合式api
 	messages: {
@@ -36,8 +27,7 @@ export const useI18n: any = () => {
 };
 export const t: any = i18n.global.t;
 
-export default {
-	i18n,
-	useI18n,
-	setLocale
-};
+export function setupI18n(app: App) {
+	app.use(i18n);
+}
+export default i18n;

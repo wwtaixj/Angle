@@ -1,7 +1,8 @@
 import CryptoJS from 'crypto-js';
 
-const key = import.meta.env.AUTH_ENCRYPTION_KEY;
-const iv = import.meta.env.AUTH_ENCRYPTION_IV;
+const key = 'C3F2D8228227742B18ACC8F883F67F11-xj';
+const iv: any = '97EF1845E6E1FC4CDDBB55B3DA89F80D-wwt';
+
 export const encrypt = (data: any) => {
 	// 生成哈希值
 	return CryptoJS.AES.encrypt(data, key, {
