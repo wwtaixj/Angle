@@ -1,16 +1,16 @@
 <template>
-	<a-layout class="login">
-		<a-layout class="login-content">
-			<a-layout-content>
+	<Layout class="login">
+		<Layout class="login-content">
+			<LayoutContent>
 				<Particles
 					id="tsparticles"
 					:options="particOPtions"
 					:particlesInit="particlesInit"
 					:key="current[0]"
 				/>
-				<a-card class="login-card">
+				<Card class="login-card">
 					<div class="small-menu" key="particles">
-						<a-dropdown :trigger="['hover']" placement="bottom">
+						<Dropdown :trigger="['hover']" placement="bottom">
 							<span
 								class="small-menu-icon animation-rubberBand ant-avatar ant-avatar-circle ant-avatar-icon"
 							>
@@ -27,10 +27,10 @@
 								>
 								</XMenu>
 							</template>
-						</a-dropdown>
+						</Dropdown>
 					</div>
 					<div class="login-form-title">
-						<a-typography-title :level="2">Live for today</a-typography-title>
+						<TypographyTitle :level="2">Live for today</TypographyTitle>
 					</div>
 					<LoginForm v-show="userStore.loginState === LoginStateEnum.LOGIN" />
 					<ForgetPasswordForm v-show="userStore.loginState === LoginStateEnum.RESET_PASSWORD" />
@@ -53,14 +53,15 @@
 							}}</span>
 						</div>
 					</template>
-				</a-card>
-			</a-layout-content>
-		</a-layout>
+				</Card>
+			</LayoutContent>
+		</Layout>
 		<!-- <a-layout-footer></a-layout-footer> -->
-	</a-layout>
+	</Layout>
 </template>
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
+import { Layout, LayoutContent, Card, Dropdown, TypographyTitle } from 'ant-design-vue';
 import { loadFull } from 'tsparticles';
 import { Engine } from 'tsparticles-engine';
 import { useUserStore } from '@renderer/store';
@@ -72,7 +73,7 @@ import ForgetPasswordForm from './children/ForgetPasswordForm.vue';
 import QrCodeForm from './children/QrCodeForm.vue';
 import iconShouhuituzi from '@renderer/components/iconfont/iconShouhuituzi.vue';
 import options from '@renderer/assets/particles';
-import { MenuItem } from '@renderer/components/model';
+import { XMenuItem } from '@renderer/components/model';
 import { UserParticles } from '@renderer/assets/particles';
 
 const userStore = useUserStore();
@@ -80,7 +81,7 @@ const menuConfig = reactive({
 	mode: 'inline',
 	theme: 'dark'
 });
-const menuList = ref<MenuItem[]>([
+const menuList = ref<XMenuItem[]>([
 	{
 		key: 'light',
 		title: 'light'

@@ -5,6 +5,7 @@ import '@renderer/styles/lib/github-markdown.less';
 import '@renderer/styles/global.less';
 import '@renderer/assets/iconfont/iconfont.js';
 import 'animate.css';
+import 'ant-design-vue/dist/antd.css';
 
 /** Tailwind's Preflight Style Override */
 function naiveStyleOverride() {

@@ -4,18 +4,17 @@ import { Language } from '@renderer/i18n/model';
 import { UserParticles } from '@renderer/assets/particles';
 import { UserStore, Location, LoginStateEnum } from '../model';
 import { UserForm, Gender } from '@renderer/views/login/model';
-import { postApiData } from '@renderer/api/service';
-import request_url from '@renderer/api/request_url';
 import { resultPrompt } from '@renderer/utils/custom';
 import { useI18n } from '@renderer/i18n';
 import router from '@renderer/router';
+import { login } from '@renderer/api';
+import { useAuthStore } from '@renderer/store';
 
 export const useUserStore = defineStore('user', {
 	state: (): UserStore => ({
 		loginState: LoginStateEnum.LOGIN,
 		SMSCode: '',
 		username: '',
-		token: '',
 		phone: '',
 		avatarUrl: '',
 		lang: 'zh-cn',
@@ -34,10 +33,10 @@ export const useUserStore = defineStore('user', {
 			if (username) return username;
 			return sStorage.get('username');
 		},
-		getToken(state) {
-			const token = state.token;
-			if (token) return token;
-			return sStorage.get('token');
+		getDescription(state) {
+			const description = state.description;
+			if (description) return description;
+			return sStorage.get('description');
 		},
 		getPhone(state) {
 			const phone = state.phone;
@@ -101,10 +100,10 @@ export const useUserStore = defineStore('user', {
 		},
 		async loginOut() {
 			const { t } = useI18n();
-			const result = await postApiData(request_url.login, {
-				token: this.getToken
+			const result = await login({
+				token: useAuthStore().getToken
 			});
-			resultPrompt(result.data, t('Sign out successfully'));
+			resultPrompt(result, t('Sign out successfully'));
 			sStorage.clear();
 			await router.push('/login');
 			location.reload();
@@ -118,15 +117,15 @@ export const useUserStore = defineStore('user', {
 			this.setAvatarUrl(avatarUrl);
 			this.setLabel(label);
 		},
+		setDescription(description?: string) {
+			if (!description) return;
+			this.description = description;
+			sStorage.set('description', description);
+		},
 		setUserName(name?: string) {
 			if (!name) return;
 			this.username = name;
 			sStorage.set('username', name);
-		},
-		setToken(token: string) {
-			if (!token) return;
-			this.token = token;
-			sStorage.set('token', token);
 		},
 		setPhone(phone?: string) {
 			if (!phone) return;

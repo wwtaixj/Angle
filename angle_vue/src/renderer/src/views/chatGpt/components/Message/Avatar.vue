@@ -12,7 +12,7 @@ defineProps<Props>();
 
 const userStore = useUserStore();
 
-const avatar = computed(() => userStore.$state.avatarUrl);
+const avatar = computed(() => userStore.getAvatarUrl);
 </script>
 
 <template>

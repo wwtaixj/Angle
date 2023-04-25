@@ -1,28 +1,20 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import { NButton, NInput, NPopconfirm, NSelect, useMessage } from 'naive-ui';
+import { computed } from 'vue';
+import { NButton, NPopconfirm, NSelect, useMessage } from 'naive-ui';
 import type { Language, Theme } from '@renderer/store/app/helper';
 import { SvgIcon } from '@renderer/components/common';
-import { useAppStore, useUserStore } from '@renderer/store';
-import { UserForm } from '@renderer/views/login/model';
+import { useAppStore } from '@renderer/store';
 import { getCurrentDate } from '@renderer/utils/functions';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';
 import { t } from '@renderer/i18n';
 
 const appStore = useAppStore();
-const userStore = useUserStore();
 
 const { isMobile } = useBasicLayout();
 
 const ms = useMessage();
 
 const theme = computed(() => appStore.theme);
-
-const avatarUrl = ref(userStore.avatarUrl ?? '');
-
-const username = ref(userStore.username ?? '');
-
-const description = ref(userStore.description ?? '');
 
 const language = computed({
 	get() {
@@ -55,17 +47,6 @@ const languageOptions: { label: string; key: Language; value: Language }[] = [
 	{ label: '简体中文', key: 'zh-cn', value: 'zh-cn' },
 	{ label: 'English', key: 'en-us', value: 'en-us' }
 ];
-
-function updateUserInfo(options: UserForm) {
-	userStore.updateUserInfo(options);
-	ms.success(t('common.success'));
-}
-
-function handleReset() {
-	// userStore.resetUserInfo();
-	ms.success(t('common.success'));
-	window.location.reload();
-}
 
 function exportData(): void {
 	const date = getCurrentDate();
@@ -116,33 +97,6 @@ function handleImportButtonClick(): void {
 <template>
 	<div class="p-4 space-y-5 min-h-[200px]">
 		<div class="space-y-6">
-			<div class="flex items-center space-x-4">
-				<span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
-				<div class="flex-1">
-					<NInput v-model:value="avatarUrl" placeholder="" />
-				</div>
-				<NButton size="tiny" text type="primary" @click="updateUserInfo({ avatarUrl })">
-					{{ $t('common.save') }}
-				</NButton>
-			</div>
-			<div class="flex items-center space-x-4">
-				<span class="flex-shrink-0 w-[100px]">{{ $t('setting.name') }}</span>
-				<div class="w-[200px]">
-					<NInput v-model:value="username" placeholder="" />
-				</div>
-				<NButton size="tiny" text type="primary" @click="updateUserInfo({ username })">
-					{{ $t('common.save') }}
-				</NButton>
-			</div>
-			<div class="flex items-center space-x-4">
-				<span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
-				<div class="flex-1">
-					<NInput v-model:value="description" placeholder="" />
-				</div>
-				<NButton size="tiny" text type="primary" @click="updateUserInfo({ description })">
-					{{ $t('common.save') }}
-				</NButton>
-			</div>
 			<div class="flex items-center space-x-4" :class="isMobile && 'items-start'">
 				<span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
 
@@ -201,12 +155,6 @@ function handleImportButtonClick(): void {
 						@update-value="(value) => appStore.setLanguage(value)"
 					/>
 				</div>
-			</div>
-			<div class="flex items-center space-x-4">
-				<span class="flex-shrink-0 w-[100px]">{{ $t('setting.resetUserInfo') }}</span>
-				<NButton size="small" @click="handleReset">
-					{{ $t('common.reset') }}
-				</NButton>
 			</div>
 		</div>
 	</div>

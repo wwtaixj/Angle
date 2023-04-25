@@ -1,6 +1,7 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios';
-import { post } from './request';
+import { post, put } from './request';
 import { useSettingStore } from '@renderer/store';
+import request_url from './request_url';
 
 export function fetchChatAPI<T = any>(
 	prompt: string,
@@ -8,7 +9,7 @@ export function fetchChatAPI<T = any>(
 	signal?: GenericAbortSignal
 ) {
 	return post<T>({
-		url: 'api/chat',
+		url: request_url.chatChat,
 		data: { prompt, options },
 		signal
 	});
@@ -16,7 +17,7 @@ export function fetchChatAPI<T = any>(
 
 export function fetchChatConfig<T = any>() {
 	return post<T>({
-		url: 'api/config'
+		url: request_url.chatconfig
 	});
 }
 
@@ -29,7 +30,7 @@ export function fetchChatAPIProcess<T = any>(params: {
 	const settingStore = useSettingStore();
 
 	return post<T>({
-		url: 'api/chat-process',
+		url: request_url.chatProcess,
 		data: {
 			prompt: params.prompt,
 			options: params.options,
@@ -40,15 +41,36 @@ export function fetchChatAPIProcess<T = any>(params: {
 	});
 }
 
-export function fetchSession<T>() {
+export function fetchVerify<T>(token: string) {
 	return post<T>({
-		url: 'api/session'
+		url: request_url.chatVerify,
+		data: { token }
 	});
 }
 
-export function fetchVerify<T>(token: string) {
+export function login<T>(data) {
 	return post<T>({
-		url: 'api/verify',
-		data: { token }
+		url: request_url.login,
+		data
+	});
+}
+export function updateUser<T>(data) {
+	return put<T>({
+		url: request_url.user,
+		data
+	});
+}
+
+export function updatePssword<T>(data) {
+	return put<T>({
+		url: request_url.changePssword,
+		data
+	});
+}
+
+export function resetPssword<T>(data) {
+	return put<T>({
+		url: request_url.resetPssword,
+		data
 	});
 }

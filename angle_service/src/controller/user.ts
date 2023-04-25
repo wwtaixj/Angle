@@ -9,14 +9,14 @@ import { decrypt, encrypt } from '../utils/cryptoJs';
  * @returns
  */
 export async function getAllUser(req: any, res: any) {
-  let return_code: string;
+  let status: string;
   try {
     const initParams: any = tool.initParams(req.url);
     const { username, avatarUrl, label, phone, age } = initParams;
     if (req.url.indexOf('?') === -1) {
       const [rows] = await db.query('select * from users');
       res.send({
-        return_code: 0,
+        status: '0',
         message: '获取用户列表数据成功！',
         data: rows,
       });
@@ -35,7 +35,7 @@ export async function getAllUser(req: any, res: any) {
         .map((value) => `%${value}%`);
       const [rows] = await db.query(sql, params);
       res.send({
-        return_code: '0',
+        status: '0',
         message: '查询用户列表数据成功！',
         data: rows,
       });
@@ -44,11 +44,11 @@ export async function getAllUser(req: any, res: any) {
     console.log(e);
     let { message, code } = e;
     if (code) {
-      return_code = code;
+      status = code;
       message = '系统内部异常！';
     }
     return res.json({
-      return_code,
+      status,
       message,
     });
   }
@@ -60,13 +60,13 @@ export async function getAllUser(req: any, res: any) {
  * @returns
  */
 export async function deleteUser(req: any, res: any) {
-  let return_code = '1';
+  let status = '1';
   try {
     const initParams: any = tool.initParams(req.url);
     // 解析参数
     const sql = 'delete from users where id = ? , username = ? ';
     if (!initParams['id'] && !initParams['username']) {
-      return_code = '-1';
+      status = '-1';
       throw new Error('参数错误');
     }
     const [result] = await db.query(sql, [
@@ -75,7 +75,7 @@ export async function deleteUser(req: any, res: any) {
     ]);
     if (result['serverStatus'] === 2) {
       res.send({
-        return_code: '0',
+        status: '0',
         message: '删除用户列表数据成功！',
       });
     }
@@ -83,11 +83,11 @@ export async function deleteUser(req: any, res: any) {
     console.log(e);
     let { message, code } = e;
     if (code) {
-      return_code = code;
+      status = code;
       message = '系统内部异常！';
     }
     return res.json({
-      return_code,
+      status,
       message,
     });
   }
@@ -99,14 +99,14 @@ export async function deleteUser(req: any, res: any) {
  * @returns
  */
 export async function updateUser(req, res, next) {
-  let return_code = '1';
+  let status = '1';
   try {
     // 解析参数
     let { avatarUrl, gender, label, phone, age, username } = req.body;
     username = decrypt(username);
     phone = decrypt(phone);
     if (!username) {
-      return_code = '-1';
+      status = '-1';
       throw new Error('用户名不能为空');
     }
     const sql =
@@ -121,7 +121,7 @@ export async function updateUser(req, res, next) {
     ]);
     if (result['serverStatus'] === 2) {
       res.send({
-        return_code: '0',
+        status: '0',
         message: '更新用户数据成功！',
       });
     }
@@ -129,11 +129,11 @@ export async function updateUser(req, res, next) {
     console.log(e);
     let { message, code } = e;
     if (code) {
-      return_code = code;
+      status = code;
       message = '系统内部异常！';
     }
     return res.json({
-      return_code,
+      status,
       message,
     });
   }
@@ -145,13 +145,13 @@ export async function updateUser(req, res, next) {
  * @returns
  */
 export async function addUser(req, res) {
-  let return_code = '1';
+  let status = '1';
   try {
     // 解析参数
     const { avatarUrl, gender, label, phone, age, username, password } =
       req.body;
     if (!username || !password) {
-      return_code = '-1';
+      status = '-1';
       throw new Error('参数错误');
     }
     const sql =
@@ -167,7 +167,7 @@ export async function addUser(req, res) {
     ]);
     if (result['serverStatus'] === 2) {
       res.send({
-        return_code: '0',
+        status: '0',
         message: '注册用户成功！',
       });
     }
@@ -175,11 +175,11 @@ export async function addUser(req, res) {
     console.log(e);
     let { message, code } = e;
     if (code) {
-      return_code = code;
+      status = code;
       message = '系统内部异常！';
     }
     return res.json({
-      return_code,
+      status,
       message,
     });
   }
@@ -192,11 +192,11 @@ export async function addUser(req, res) {
  * @returns
  */
 export async function changePassword(req, res) {
-  let return_code = '1';
+  let status = '1';
   try {
     const { username, password, newPassword } = req.body;
     if (!(username && password && newPassword)) {
-      return_code = '-1';
+      status = '-1';
       throw new Error('参数错误');
     }
     const usernameDec = decrypt(username);
@@ -207,12 +207,12 @@ export async function changePassword(req, res) {
     );
     const user = userList[0][0];
     if (!user) {
-      return_code = '-2';
+      status = '-2';
       throw new Error('用户名错误');
     }
 
     if (passwordDec !== user.password) {
-      return_code = '-3';
+      status = '-3';
       throw new Error('密码错误');
     }
     const [updateUser] = await db.query(
@@ -221,22 +221,22 @@ export async function changePassword(req, res) {
       )}' WHERE username = '${usernameDec}'`
     );
     if (updateUser['serverStatus'] !== 2) {
-      return_code = '-4';
+      status = '-4';
       throw new Error('更新密码失败!');
     }
     res.send({
-      return_code: '0',
+      status: '0',
       message: '更新密码成功！',
     });
   } catch (e) {
     console.log(e);
     let { message, code } = e;
     if (code) {
-      return_code = code;
+      status = code;
       message = '系统内部异常！';
     }
     return res.json({
-      return_code,
+      status,
       message,
     });
   }

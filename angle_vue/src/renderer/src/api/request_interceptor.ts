@@ -1,6 +1,6 @@
 import axios, { type AxiosResponse } from 'axios';
 import { XMessage } from '@renderer/utils/custom';
-import { useUserStore } from '@renderer/store';
+import { useUserStore, useAuthStore } from '@renderer/store';
 import { encrypt } from '@renderer/utils/cryptoJs';
 import request_url from './request_url';
 import { isObject } from '@renderer/utils/is';
@@ -16,8 +16,9 @@ instance.interceptors.request.use(
 		// 在发送请求之前做些什么
 		// 添加请求前添加token
 		const userStore = useUserStore();
+		const authStore = useAuthStore();
 		if (config.url !== request_url.login) {
-			config.headers['token'] = userStore.getToken;
+			config.headers['token'] = authStore.getToken;
 			config.headers['username'] = encrypt(userStore.getUserName);
 		}
 		return config;
@@ -29,16 +30,10 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
 	(response: AxiosResponse) => {
-		const return_code =
-			isObject(response.data) && response.data.return_code ? response.data.return_code : null;
-		if (return_code === '0') {
+		const status = isObject(response.data) && response.data.status ? response.data.status : '0';
+		if (status !== '0') {
 			XMessage.error(response.data.message);
 		}
-		// if (response.data?.status === 'Unauthorized') {
-		//   setTimeout(() => {
-		//     window.location.href = '/';
-		//   }, 2000);
-		// }
 		return response;
 	},
 	(error) => {

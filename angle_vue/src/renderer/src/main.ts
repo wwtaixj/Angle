@@ -4,7 +4,6 @@ import { setupStore } from './store';
 import { setupRouter } from './router';
 import { setupI18n } from './i18n';
 import { setupAssets, setupScrollbarStyle } from './plugins';
-import Antd from './assets/antdv';
 import Particles from 'vue3-particles';
 //import VConsole  from 'vconsole';
 // or init with options
@@ -19,7 +18,6 @@ async function init() {
 	setupStore(app);
 	setupI18n(app);
 	await setupRouter(app);
-	app.use(Antd);
 	app.use(Particles);
 	app.mount('#app');
 }

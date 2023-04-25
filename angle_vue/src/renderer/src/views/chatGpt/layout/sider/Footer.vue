@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from 'vue';
-import { HoverButton, SvgIcon, UserAvatar } from '@renderer/components/common';
+import { NButton } from 'naive-ui';
+import { HoverButton, SvgIcon, PromptStore } from '@renderer/components/common';
 
 const Setting = defineAsyncComponent(() => import('@renderer/components/common/Setting/index.vue'));
 
 const show = ref(false);
+const promptShow = ref(false);
 </script>
 
 <template>
@@ -12,7 +14,7 @@ const show = ref(false);
 		class="flex items-center justify-between min-w-0 p-4 overflow-hidden border-t dark:border-neutral-800"
 	>
 		<div class="flex-1 flex-shrink-0 overflow-hidden">
-			<UserAvatar />
+			<NButton block @click="promptShow = true"> Prompt Store </NButton>
 		</div>
 
 		<HoverButton @click="show = true">
@@ -22,5 +24,6 @@ const show = ref(false);
 		</HoverButton>
 
 		<Setting v-if="show" v-model:visible="show" />
+		<PromptStore v-model:visible="promptShow" />
 	</footer>
 </template>

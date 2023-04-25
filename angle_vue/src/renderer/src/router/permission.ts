@@ -1,12 +1,12 @@
 import type { Router } from 'vue-router';
-import { useUserStore } from '@renderer/store';
+import { useAuthStore } from '@renderer/store';
 
 export function setupPageGuard(router: Router) {
 	router.beforeEach(async (to, _from, next) => {
 		try {
-			const userStore = useUserStore();
+			const authStore = useAuthStore();
 
-			if (to.name !== 'login' && !userStore.getToken) {
+			if (to.name !== 'login' && !authStore.getToken) {
 				next({ name: 'login' });
 			} else {
 				next();

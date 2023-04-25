@@ -4,16 +4,14 @@ import { NLayout, NLayoutContent, NConfigProvider } from 'naive-ui';
 import { NaiveProvider } from '@renderer/components/common';
 import { useRouter } from 'vue-router';
 import Sider from './sider/index.vue';
-import Permission from './Permission.vue';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';
-import { useAppStore, useAuthStore, useChatStore } from '@renderer/store';
+import { useAppStore, useChatStore } from '@renderer/store';
 import { useTheme } from '@renderer/hooks/useTheme';
 import { useLanguage } from '@renderer/hooks/useLanguage';
 
 const router = useRouter();
 const appStore = useAppStore();
 const chatStore = useChatStore();
-const authStore = useAuthStore();
 
 const { theme, themeOverrides } = useTheme();
 const { language } = useLanguage();
@@ -23,8 +21,6 @@ router.replace({ name: 'Chat', params: { uuid: chatStore.active } });
 const { isMobile } = useBasicLayout();
 
 const collapsed = computed(() => appStore.siderCollapsed);
-
-const needPermission = computed(() => !!authStore.session?.auth && !authStore.token);
 
 const getMobileClass = computed(() => {
 	if (isMobile.value) return ['rounded-none', 'shadow-none'];
@@ -55,7 +51,6 @@ const getContainerClass = computed(() => {
 						</NLayoutContent>
 					</NLayout>
 				</div>
-				<Permission :visible="needPermission" />
 			</div>
 		</NaiveProvider>
 	</NConfigProvider>

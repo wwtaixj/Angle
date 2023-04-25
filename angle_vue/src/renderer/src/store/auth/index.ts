@@ -1,49 +1,40 @@
 import { defineStore } from 'pinia';
-import { getToken, removeToken, setToken } from './helper';
 import { store } from '@renderer/store';
-import { fetchSession } from '@renderer/api';
-
-interface SessionResponse {
-	auth: boolean;
-	model: 'ChatGPTAPI' | 'ChatGPTUnofficialProxyAPI';
-}
+import { sStorage } from '@renderer/utils/webStorage';
 
 export interface AuthState {
 	token: string | undefined;
-	session: SessionResponse | null;
 }
+
+const TOKEN_NAME = 'token';
 
 export const useAuthStore = defineStore('auth-store', {
 	state: (): AuthState => ({
-		token: getToken(),
-		session: null
+		token: ''
 	}),
 
 	getters: {
-		isChatGPTAPI(state): boolean {
-			return state.session?.model === 'ChatGPTAPI';
+		// TODO: 暂时设置isChatGPTAPI 为 true
+		isChatGPTAPI(): boolean {
+			return true;
+		},
+		getToken(state) {
+			const token = state.token;
+			if (token) return token;
+			return sStorage.get(TOKEN_NAME);
 		}
 	},
 
 	actions: {
-		async getSession() {
-			try {
-				const { data } = await fetchSession<SessionResponse>();
-				this.session = { ...data };
-				return Promise.resolve(data);
-			} catch (error) {
-				return Promise.reject(error);
-			}
-		},
-
 		setToken(token: string) {
+			if (!token) return;
 			this.token = token;
-			setToken(token);
+			sStorage.set(TOKEN_NAME, token);
 		},
 
 		removeToken() {
 			this.token = undefined;
-			removeToken();
+			sStorage.remove(TOKEN_NAME);
 		}
 	}
 });

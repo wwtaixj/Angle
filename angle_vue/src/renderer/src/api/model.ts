@@ -1,6 +1,6 @@
-export  interface Response  {
-  return_code: string,
-  message: string,
-  data?: any,
-  token?: string
+export interface Response {
+	status: string;
+	message: string | null;
+	data?: any;
+	token?: string;
 }

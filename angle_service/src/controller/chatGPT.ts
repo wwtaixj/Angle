@@ -123,7 +123,7 @@ async function chatReplyProcess(options: RequestOptions) {
       },
     });
 
-    return sendResponse({ type: 'Success', data: response });
+    return sendResponse({ type: '0', data: response });
   } catch (error: any) {
     const code = error.statusCode;
     global.console.log(error);
@@ -171,7 +171,7 @@ async function chatConfig() {
       ? `${process.env.SOCKS_PROXY_HOST}:${process.env.SOCKS_PROXY_PORT}`
       : '-';
   return sendResponse<ModelConfig>({
-    type: 'Success',
+    type: '0',
     data: {
       apiModel,
       reverseProxy,

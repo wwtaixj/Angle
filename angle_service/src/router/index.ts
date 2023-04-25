@@ -89,7 +89,7 @@ router.post('/config', authentication, apiPermission, async (req, res) => {
 router.post('/session', async (req, res) => {
   try {
     res.send({
-      status: 'Success',
+      status: '0',
       message: '',
       data: { auth: '', model: currentModel() },
     });
@@ -103,7 +103,7 @@ router.post('/verify', async (req, res) => {
     const { token } = req.body as { token: string };
     if (!token) throw new Error('Secret key is empty');
 
-    res.send({ status: 'Success', message: 'Verify successfully', data: null });
+    res.send({ status: '0', message: 'Verify successfully', data: null });
   } catch (error) {
     res.send({ status: 'Fail', message: error.message, data: null });
   }

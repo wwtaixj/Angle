@@ -9,16 +9,16 @@ import db from '../db';
  * @returns
  */
 export const authentication = async (req, res, next) => {
-  let return_code = '1000';
+  let status = '1000';
   try {
     const headerUserName = decrypt(req.headers.username);
     const [username, oldDate] = decrypt(req.headers.token).split(',');
     if (!headerUserName || !username) {
-      return_code = '1001';
+      status = '1001';
       throw new Error('无权访问');
     }
     if (headerUserName !== username) {
-      return_code = '1001';
+      status = '1001';
       throw new Error('身份信息错误');
     }
     // 判断登录时长
@@ -26,7 +26,7 @@ export const authentication = async (req, res, next) => {
       Date.now() - new Date(Number(oldDate)).getTime() >
       3600000 * Number(process.env.LOGIN_TIMEOUT)
     ) {
-      return_code = '1002';
+      status = '1002';
       throw new Error('登录超时');
     }
     next();
@@ -34,12 +34,11 @@ export const authentication = async (req, res, next) => {
     console.log(e);
     let { message, code } = e;
     if (code) {
-      return_code = code;
+      status = code;
       message = '身份认证异常！';
     }
     return res.json({
-      status: 'Unauthorized',
-      return_code,
+      status,
       message,
       data: null,
     });
@@ -52,7 +51,7 @@ export const authentication = async (req, res, next) => {
  * @param {*} res
  */
 export const apiPermission = async (req, res, next) => {
-  let return_code = '1';
+  let status = '1';
   try {
     const headerUserName = decrypt(req.headers.username);
     const sql = `SELECT api_permissions.api_name, api_permissions.api_type
@@ -64,7 +63,7 @@ export const apiPermission = async (req, res, next) => {
 
     const [userList] = await db.query(sql, [headerUserName]);
     if ((userList as Array<any>).length === 0) {
-      return_code = '1003';
+      status = '1003';
       throw new Error('此账号没有权限');
     }
     const method = req.method.toLocaleLowerCase();
@@ -74,7 +73,7 @@ export const apiPermission = async (req, res, next) => {
         (i) => i.api_name === url && i.api_type === method
       )
     ) {
-      return_code = '1004';
+      status = '1004';
       throw new Error('账号权限不足');
     }
     // 下一步
@@ -83,12 +82,11 @@ export const apiPermission = async (req, res, next) => {
     console.log(e);
     let { message, code } = e;
     if (code) {
-      return_code = code;
+      status = code;
       message = 'API权限异常';
     }
     return res.json({
-      status: 'Unauthorized',
-      return_code,
+      status,
       message,
       data: null,
     });

@@ -1,5 +1,5 @@
 <template>
-	<a-form
+	<Form
 		:model="formState"
 		name="normal_login"
 		class="login-form"
@@ -10,36 +10,36 @@
 		@finish-failed="onFinishFailed"
 	>
 		<nameOrPassword v-model:data="formState" />
-		<a-form-item>
-			<a-form-item name="remember" no-style>
-				<a-checkbox
+		<FormItem>
+			<FormItem name="remember" no-style>
+				<Checkbox
 					v-model:checked="formState.remember"
 					@change="rememberChange"
 					class="login-form-remember"
-					>{{ $t('login.Remember me') }}</a-checkbox
+					>{{ $t('login.Remember me') }}</Checkbox
 				>
-			</a-form-item>
-			<a-typography-link
+			</FormItem>
+			<TypographyLink
 				class="login-form-forgot"
 				@click="userStore.setLoginState(LoginStateEnum.RESET_PASSWORD)"
-				>{{ $t('login.Forgot password') }}</a-typography-link
+				>{{ $t('login.Forgot password') }}</TypographyLink
 			>
-		</a-form-item>
+		</FormItem>
 
-		<a-form-item class="login-form-button">
-			<a-button :loading="loginLoading" block html-type="submit" ghost>
+		<FormItem class="login-form-button">
+			<Button :loading="loginLoading" block html-type="submit" ghost>
 				{{ $t('login.Login') }}
-			</a-button>
-		</a-form-item>
-	</a-form>
+			</Button>
+		</FormItem>
+	</Form>
 </template>
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import { Form, FormItem, Checkbox, Button, TypographyLink } from 'ant-design-vue';
+import type { CheckboxChangeEvent } from 'ant-design-vue/lib/checkbox/interface';
 import { useRouter } from 'vue-router';
 import { useI18n } from '@renderer/i18n';
-import service from '@renderer/api/service';
-import { useUserStore } from '@renderer/store';
-import request_url from '@renderer/api/request_url';
+import { useUserStore, useAuthStore } from '@renderer/store';
 import { resultPrompt } from '@renderer/utils/custom';
 import { encrypt, decrypt } from '@renderer/utils/cryptoJs';
 import { Rule } from 'ant-design-vue/es/form';
@@ -47,10 +47,12 @@ import nameOrPassword from './nameOrPassword.vue';
 import { UserForm } from '@renderer/views/login/model';
 import { getNavLocation } from '@renderer/utils';
 import { LoginStateEnum } from '@renderer/store/model';
+import { login } from '@renderer/api';
 
 const { t } = useI18n();
 const router = useRouter();
 const userStore = useUserStore();
+const authStore = useAuthStore();
 const loginLoading = ref(false);
 const formState = ref<UserForm>({
 	// 登陆表单
@@ -86,16 +88,17 @@ const onFinish = async (values: UserForm) => {
 		const hashedPassword = encrypt(password);
 		const hashedUsername = encrypt(username);
 		// 存储 hash 值到数据库中
-		const result = await service.postApiData(request_url.login, {
+		const result = await login({
 			username: hashedUsername,
 			password: hashedPassword,
 			...userStore.getLocation // 地理位置信息
 		});
+
 		// 返回结果提示
-		resultPrompt(result.data, t('login.Login success'), () => {
-			const { token, phone, avatar_url, age, label, gender } = result.data?.data;
+		resultPrompt(result, t('login.Login success'), () => {
+			const { token, phone, avatar_url, age, label, gender } = result.data as any;
 			userStore.setUserName(username);
-			userStore.setToken(token);
+			authStore.setToken(token);
 			userStore.setPhone(decrypt(phone));
 			userStore.setAvatarUrl(avatar_url);
 			userStore.setAge(age);
@@ -109,10 +112,10 @@ const onFinish = async (values: UserForm) => {
 	}
 };
 // login 表单校验失败
-const onFinishFailed = (errorInfo: never): void => {
+const onFinishFailed = (errorInfo) => {
 	console.log('Failed:', errorInfo);
 };
-const rememberChange = (e: Event) => {
+const rememberChange = (e: CheckboxChangeEvent) => {
 	if (!e.target) return;
 	userStore.setRemember(e.target['checked']);
 };

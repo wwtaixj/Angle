@@ -1,11 +1,11 @@
 interface SendResponseOptions<T = any> {
-  type: 'Success' | 'Fail';
+  type: '0' | 'Fail';
   message?: string;
   data?: T;
 }
 
 export function sendResponse<T>(options: SendResponseOptions<T>) {
-  if (options.type === 'Success') {
+  if (options.type === '0') {
     return Promise.resolve({
       message: options.message ?? null,
       data: options.data ?? null,

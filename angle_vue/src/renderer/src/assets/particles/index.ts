@@ -1,7 +1,7 @@
 import { light, fireworks, amongUs } from './options';
 export default {
-  light,
-  fireworks,
-  amongUs
+	light,
+	fireworks,
+	amongUs
 };
-export type UserParticles = 'light' | 'fireworks' | 'amongUs' | undefined;
+export type UserParticles = 'light' | 'fireworks' | 'amongUs' | '';

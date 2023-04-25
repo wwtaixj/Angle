@@ -18,8 +18,8 @@ import { fetchChatAPIProcess } from '@renderer/api';
 import { t } from '@renderer/i18n';
 
 let controller = new AbortController();
-
-const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true';
+// TODO: import.meta.env.VITE_GLOB_OPEN_LONG_REPLY 无效，暂时固定为false
+const openLongReply = false;
 
 const route = useRoute();
 const dialog = useDialog();

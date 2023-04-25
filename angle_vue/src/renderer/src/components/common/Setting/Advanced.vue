@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { NButton, NInput, useMessage } from 'naive-ui';
 import { useSettingStore } from '@renderer/store';
-import type { SettingsState } from '@renderer/store/modules/settings/helper';
+import type { SettingsState } from '@renderer/store/settings/helper';
 import { t } from '@renderer/i18n';
 
 const settingStore = useSettingStore();
@@ -29,7 +29,12 @@ function handleReset() {
 			<div class="flex items-center space-x-4">
 				<span class="flex-shrink-0 w-[100px]">{{ $t('setting.role') }}</span>
 				<div class="flex-1">
-					<NInput v-model:value="systemMessage" placeholder="" />
+					<NInput
+						type="textarea"
+						v-model:value="systemMessage"
+						placeholder=""
+						:autosize="{ minRows: 2, maxRows: 10 }"
+					/>
 				</div>
 				<NButton size="tiny" text type="primary" @click="updateSettings({ systemMessage })">
 					{{ $t('common.save') }}

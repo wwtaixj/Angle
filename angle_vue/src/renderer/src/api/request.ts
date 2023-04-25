@@ -17,6 +17,7 @@ export interface Response<T = any> {
 	data: T;
 	message: string | null;
 	status: string;
+	token?: string;
 }
 
 function http<T = any>({

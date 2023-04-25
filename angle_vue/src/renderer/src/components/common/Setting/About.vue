@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { NSpin } from 'naive-ui';
 import { fetchChatConfig } from '@renderer/api';
-import pkg from '../../../../../../package.json';
+import pkg from '@renderer/../../../package.json';
 import { useAuthStore } from '@renderer/store';
 
 interface ConfigState {
