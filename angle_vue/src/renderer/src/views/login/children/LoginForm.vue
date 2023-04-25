@@ -102,7 +102,7 @@ const onFinish = async (values: UserForm) => {
 			userStore.setLabel(label);
 			userStore.setGender(gender);
 			userStore.setPassword(password);
-			router.push('/home/chat');
+			router.push('/home/chatGPT/chat');
 		});
 	} finally {
 		loginLoading.value = false;

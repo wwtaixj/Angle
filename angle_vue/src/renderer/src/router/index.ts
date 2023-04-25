@@ -27,12 +27,11 @@ const routes: RouteRecordRaw[] = [
 		name: '500',
 		component: () => import('@renderer/views/exception/500/index.vue')
 	},
-
-	{
-		path: '/:pathMatch(.*)*',
-		name: 'notFound',
-		redirect: '/404'
-	},
+	// {
+	// 	path: '/:pathMatch(.*)*',
+	// 	name: 'notFound',
+	// 	redirect: '/404'
+	// },
 	{
 		path: '/',
 		redirect: '/login'
@@ -52,13 +51,13 @@ const routes: RouteRecordRaw[] = [
 				redirect: '/home/chatGPT'
 			},
 			{
-				path: '/chatGPT',
-				name: 'chatGPT',
+				path: 'chatGpt',
+				name: 'chatGpt',
 				component: ChatLayout,
 				redirect: '/home/chatGPT/chat',
 				children: [
 					{
-						path: '/chat/:uuid?',
+						path: 'chat/:uuid?',
 						name: 'Chat',
 						component: chatGpt
 					}

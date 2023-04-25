@@ -2,19 +2,19 @@
 import { computed } from 'vue';
 import { NAvatar } from 'naive-ui';
 import { useUserStore } from '@renderer/store';
-import defaultAvatar from '@renderer/assets/avatar.jpg';
+import defaultAvatar from '@renderer/assets/images/avatar.jpg';
 import { isString } from '@renderer/utils/is';
 
 const userStore = useUserStore();
 
-const userInfo = computed(() => userStore.userInfo);
+const userInfo = computed(() => userStore.$state);
 </script>
 
 <template>
 	<div class="flex items-center overflow-hidden">
 		<div class="w-10 h-10 overflow-hidden rounded-full shrink-0">
-			<template v-if="isString(userInfo.avatar) && userInfo.avatar.length > 0">
-				<NAvatar size="large" round :src="userInfo.avatar" :fallback-src="defaultAvatar" />
+			<template v-if="isString(userInfo.avatarUrl) && userInfo.avatarUrl.length > 0">
+				<NAvatar size="large" round :src="userInfo.avatarUrl" :fallback-src="defaultAvatar" />
 			</template>
 			<template v-else>
 				<NAvatar size="large" round :src="defaultAvatar" />
@@ -22,7 +22,7 @@ const userInfo = computed(() => userStore.userInfo);
 		</div>
 		<div class="flex-1 min-w-0 ml-2">
 			<h2 class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
-				{{ userInfo.name ?? 'ChenZhaoYu' }}
+				{{ userInfo.username ?? 'ChenZhaoYu' }}
 			</h2>
 			<p class="overflow-hidden text-xs text-gray-500 text-ellipsis whitespace-nowrap">
 				<span

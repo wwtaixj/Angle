@@ -5,6 +5,7 @@ export function setupPageGuard(router: Router) {
 	router.beforeEach(async (to, _from, next) => {
 		try {
 			const userStore = useUserStore();
+
 			if (to.name !== 'login' && !userStore.getToken) {
 				next({ name: 'login' });
 			} else {

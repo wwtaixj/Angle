@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { NLayout, NLayoutContent } from 'naive-ui';
+import { NLayout, NLayoutContent, NConfigProvider } from 'naive-ui';
+import { NaiveProvider } from '@renderer/components/common';
 import { useRouter } from 'vue-router';
 import Sider from './sider/index.vue';
 import Permission from './Permission.vue';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';
 import { useAppStore, useAuthStore, useChatStore } from '@renderer/store';
+import { useTheme } from '@renderer/hooks/useTheme';
+import { useLanguage } from '@renderer/hooks/useLanguage';
 
 const router = useRouter();
 const appStore = useAppStore();
 const chatStore = useChatStore();
 const authStore = useAuthStore();
+
+const { theme, themeOverrides } = useTheme();
+const { language } = useLanguage();
 
 router.replace({ name: 'Chat', params: { uuid: chatStore.active } });
 
@@ -31,17 +37,26 @@ const getContainerClass = computed(() => {
 </script>
 
 <template>
-	<div class="h-full dark:bg-[#24272e] transition-all" :class="[isMobile ? 'p-0' : 'p-4']">
-		<div class="h-full overflow-hidden" :class="getMobileClass">
-			<NLayout class="z-40 transition" :class="getContainerClass" has-sider>
-				<Sider />
-				<NLayoutContent class="h-full">
-					<RouterView v-slot="{ Component, route }">
-						<component :is="Component" :key="route.fullPath" />
-					</RouterView>
-				</NLayoutContent>
-			</NLayout>
-		</div>
-		<Permission :visible="needPermission" />
-	</div>
+	<NConfigProvider
+		class="h-full"
+		:theme="theme"
+		:theme-overrides="themeOverrides"
+		:locale="language"
+	>
+		<NaiveProvider>
+			<div class="h-full dark:bg-[#24272e] transition-all" :class="[isMobile ? 'p-0' : 'p-4']">
+				<div class="h-full overflow-hidden" :class="getMobileClass">
+					<NLayout class="z-40 transition" :class="getContainerClass" has-sider>
+						<Sider />
+						<NLayoutContent class="h-full">
+							<RouterView v-slot="{ Component, route }">
+								<component :is="Component" :key="route.fullPath" />
+							</RouterView>
+						</NLayoutContent>
+					</NLayout>
+				</div>
+				<Permission :visible="needPermission" />
+			</div>
+		</NaiveProvider>
+	</NConfigProvider>
 </template>
