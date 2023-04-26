@@ -155,10 +155,10 @@ export async function addUser(req, res) {
       throw new Error('参数错误');
     }
     const sql =
-      'INSERT INTO users (username, avatar_url, gender, label, phone, age) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      'INSERT INTO users (username, password, avatar_url, gender, label, phone, age) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const [result] = await db.query(sql, [
       decrypt(username),
-      password,
+      decrypt(password),
       avatarUrl,
       gender,
       label,

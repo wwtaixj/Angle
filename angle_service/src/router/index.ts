@@ -18,7 +18,6 @@ import {
   currentModel,
 } from '../controller/chatGPT';
 import { limiter } from '../auth/limiter';
-import { isNotEmptyString } from '../utils/is';
 
 dotenv.config();
 
@@ -31,7 +30,7 @@ router.post('/v1/login', login);
 //user
 router.get('/v1/user', authentication, apiPermission, getAllUser);
 router.post('/v1/user', authentication, apiPermission, addUser);
-router.put('/v1/user', authentication, apiPermission, updateUser);
+router.put('/v1/user/', authentication, apiPermission, updateUser);
 router.delete('/v1/user', authentication, apiPermission, deleteUser);
 router.put(
   '/v1/user/changePassword',

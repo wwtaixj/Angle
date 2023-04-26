@@ -40,7 +40,7 @@ export const corsky = (req, res, next) => {
     res.set({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers':
-        'Content-Type,Content-Length, Authorization, Accept,X-Requested-With, authorization, Content-Type',
+        'Content-Type,Content-Length, Authorization, Accept,X-Requested-With, authorization, Content-Type, token, username',
       'Access-Control-Allow-Methods': '*',
     });
     // 跨域请求CORS中的预请求
@@ -57,4 +57,15 @@ export const corsky = (req, res, next) => {
       data: [],
     });
   }
+};
+
+export const formatDate = () => {
+  const date = new Date();
+  const year = date.getFullYear().toString().padStart(4, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  return `${year}${month}${day}${hours}${minutes}${seconds}`;
 };

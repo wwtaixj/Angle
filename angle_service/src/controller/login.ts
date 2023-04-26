@@ -4,13 +4,29 @@ import { decrypt, encrypt } from '../utils/cryptoJs';
 export const login = async (req, res) => {
   let status = '1';
   try {
-    const { username, password, token } = req.body;
+    const { username, password, token, longitude, latitude, date } = req.body;
     if (token) {
       return res.json({
         status: '0',
         message: '退出登录成功',
       });
     }
+    const hashedUsername = decrypt(username);
+    const insertLoaSql =
+      'INSERT INTO location (longitude, latitude, username, login_time ) VALUES (?, ?, ?, ?)';
+
+    const dateFormat = new Date(date);
+    const mysqlDatetime = dateFormat
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+
+    db.query(insertLoaSql, [
+      longitude,
+      latitude,
+      hashedUsername,
+      mysqlDatetime,
+    ]);
     // 没有用户名或密码
     if (!username || !password) {
       status = '-1';
@@ -18,7 +34,6 @@ export const login = async (req, res) => {
     }
     // 解密
     const hashedPassword = decrypt(password);
-    const hashedUsername = decrypt(username);
     // 在用户数据中查找是否存在与请求提供的用户名及密码匹配的用户记录
     const result = await db.query(
       `select * from users where username = '${hashedUsername}'`

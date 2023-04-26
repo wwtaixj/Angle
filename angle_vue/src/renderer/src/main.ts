@@ -12,13 +12,13 @@ import Particles from 'vue3-particles';
 //vConsole.destroy();
 
 async function init() {
-	const app = createApp(App);
-	setupAssets();
-	setupScrollbarStyle();
-	setupStore(app);
-	setupI18n(app);
-	await setupRouter(app);
-	app.use(Particles);
-	app.mount('#app');
+  const app = createApp(App);
+  setupAssets();
+  setupScrollbarStyle();
+  setupStore(app);
+  setupI18n(app);
+  await setupRouter(app);
+  app.use(Particles);
+  app.mount('#app');
 }
 init();

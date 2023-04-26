@@ -1,17 +1,22 @@
 <template>
-	<router-view></router-view>
+  <ConfigProvider>
+    <router-view :locale="language.antdv"></router-view>
+  </ConfigProvider>
 </template>
 <script setup lang="ts">
+import { ConfigProvider } from 'ant-design-vue';
 import { getNavLanguage } from '@renderer/utils';
-import { store } from '@renderer/store';
-import { useUserStore } from '@renderer/store';
-import { setLocale } from '@renderer/i18n';
+import { useAppStore } from '@renderer/store';
+import { Language } from '@renderer/i18n/model';
+import { useLanguage } from '@renderer/hooks/useLanguage';
+
 //设置语言
-const userStore = useUserStore(store);
-let defaultLocale = userStore.getLanguage;
+const appStore = useAppStore();
+const { language } = useLanguage();
+let defaultLocale = appStore.language;
 if (!defaultLocale) {
-	defaultLocale = getNavLanguage();
-	userStore.setLanguage(defaultLocale);
+  defaultLocale = getNavLanguage() as Language;
+  appStore.setLanguage(defaultLocale);
 }
-setLocale(defaultLocale);
+appStore.setLanguage(defaultLocale);
 </script>

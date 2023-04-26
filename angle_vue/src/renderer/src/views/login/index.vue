@@ -37,6 +37,7 @@
           <ForgetPasswordForm v-show="userStore.loginState === LoginStateEnum.RESET_PASSWORD" />
           <MobileLoginForm v-show="userStore.loginState === LoginStateEnum.MOBILE" />
           <QrCodeForm v-show="userStore.loginState === LoginStateEnum.QR_CODE" />
+          <RegisterForm v-show="userStore.loginState === LoginStateEnum.REGISTER" />
           <template #actions>
             <div key="mobileLogin">
               <span class="color-white" @click="userStore.setLoginState(LoginStateEnum.MOBILE)">{{
@@ -65,13 +66,14 @@ import { reactive, ref } from 'vue';
 import { Layout, LayoutContent, Card, Dropdown, TypographyTitle } from 'ant-design-vue';
 import { loadFull } from 'tsparticles';
 import { Engine } from 'tsparticles-engine';
-import { useUserStore } from '@renderer/store';
+import { useUserStore, useAppStore } from '@renderer/store';
 import { LoginStateEnum } from '@renderer/store/model';
 import XMenu from '@renderer/components/custom/XMenu.vue';
 import LoginForm from './children/LoginForm.vue';
 import MobileLoginForm from './children/MobileLoginForm.vue';
 import ForgetPasswordForm from './children/ForgetPasswordForm.vue';
 import QrCodeForm from './children/QrCodeForm.vue';
+import RegisterForm from './children/RegisterForm.vue';
 import iconShouhuituzi from '@renderer/components/iconfont/iconShouhuituzi.vue';
 import options from '@renderer/assets/particles';
 import { XMenuItem } from '@renderer/components/model';
@@ -79,6 +81,7 @@ import { UserParticles } from '@renderer/assets/particles';
 import { AppLocalePicker } from '@renderer/components/Application';
 
 const userStore = useUserStore();
+const appStore = useAppStore();
 const menuConfig = reactive({
   mode: 'inline',
   theme: 'dark'
@@ -98,14 +101,14 @@ const menuList = ref<XMenuItem[]>([
   }
 ]);
 
-const current = ref<UserParticles[]>([userStore.getParticlesCurrent]); // 当前选中背景特性
-const particOPtions = ref(options[userStore.getParticlesCurrent]); // 背景特性参数
+const current = ref<UserParticles[]>([appStore.particles]); // 当前选中背景特性
+const particOPtions = ref(options[appStore.particles]); // 背景特性参数
 
 // 背景特性选择
 const menuClick = async ({ key }) => {
   particOPtions.value = options[key];
   current.value[0] = key;
-  userStore.setParticlesCurrent(key);
+  appStore.setParticlesCurrent(key);
 };
 // 粒子特性初始化
 const particlesInit = async (engine: Engine) => {
