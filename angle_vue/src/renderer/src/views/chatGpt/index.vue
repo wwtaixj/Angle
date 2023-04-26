@@ -11,7 +11,7 @@ import { useChat } from './hooks/useChat';
 import { useCopyCode } from './hooks/useCopyCode';
 import { useUsingContext } from './hooks/useUsingContext';
 import HeaderComponent from './components/Header/index.vue';
-import { HoverButton, SvgIcon } from '@renderer/components/common';
+import { HoverButton, SvgIcon } from '@renderer/components/chat';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';
 import { useChatStore, usePromptStore } from '@renderer/store';
 import { fetchChatAPIProcess } from '@renderer/api';
@@ -146,7 +146,7 @@ async function onConversation() {
 		await fetchChatAPIOnce();
 	} catch (error: any) {
 		const errorMessage = error?.message ?? t('common.wrong');
-
+		debugger;
 		if (error.message === 'canceled') {
 			updateChatSome(+uuid, dataSources.value.length - 1, {
 				loading: false

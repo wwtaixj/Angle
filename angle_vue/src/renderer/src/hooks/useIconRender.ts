@@ -1,5 +1,5 @@
 import { h } from 'vue';
-import { SvgIcon } from '@renderer/components/common';
+import { SvgIcon } from '@renderer/components/chat';
 
 interface IconConfig {
 	icon?: string;

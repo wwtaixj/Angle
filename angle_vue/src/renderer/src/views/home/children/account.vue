@@ -27,7 +27,7 @@
 import { ref, defineProps, computed, defineEmits } from 'vue';
 import { Modal } from 'ant-design-vue';
 import { IdcardOutlined, UnlockOutlined } from '@ant-design/icons-vue';
-import XTabs from '@renderer/components/XTabs.vue';
+import XTabs from '@renderer/components/custom/XTabs.vue';
 import { useI18n } from '@renderer/i18n';
 import { useUserStore } from '@renderer/store';
 import changePssword from './changePssword.vue';

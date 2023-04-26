@@ -1,6 +1,6 @@
 import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios';
 import request from './request_interceptor';
-import { isEmpty } from '@renderer/utils/is';
+import { isNull } from '@renderer/utils/is';
 
 export interface HttpOption {
 	url: string;
@@ -31,7 +31,7 @@ function http<T = any>({
 	afterRequest
 }: HttpOption) {
 	const successHandler = (res: AxiosResponse<Response<T>>) => {
-		if (res.data.status === '0' || !isEmpty(res.data)) return res.data;
+		if (res.data.status === '0' || res.data?.data) return res.data;
 
 		return Promise.reject(res.data);
 	};

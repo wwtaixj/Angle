@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { NLayout, NLayoutContent, NConfigProvider } from 'naive-ui';
-import { NaiveProvider } from '@renderer/components/common';
+import { NaiveProvider } from '@renderer/components/chat';
 import { useRouter } from 'vue-router';
 import Sider from './sider/index.vue';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';

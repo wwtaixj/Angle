@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { NInput, NPopconfirm, NScrollbar } from 'naive-ui';
-import { SvgIcon } from '@renderer/components/common';
+import { SvgIcon } from '@renderer/components/chat';
 import { useAppStore, useChatStore } from '@renderer/store';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';
 

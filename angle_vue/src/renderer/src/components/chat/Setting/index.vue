@@ -5,7 +5,7 @@ import General from './General.vue';
 import Advanced from './Advanced.vue';
 import About from './About.vue';
 import { useAuthStore } from '@renderer/store';
-import { SvgIcon } from '@renderer/components/common';
+import { SvgIcon } from '@renderer/components/chat';
 
 interface Props {
 	visible: boolean;

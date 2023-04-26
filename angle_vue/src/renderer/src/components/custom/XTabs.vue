@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import { defineProps, PropType } from 'vue';
 import { Tabs, TabPane } from 'ant-design-vue';
-import { TabsPaneItem } from './model';
+import { TabsPaneItem } from '../model';
 
 defineProps({
 	paneList: {

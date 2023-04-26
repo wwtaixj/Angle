@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { NDropdown } from 'naive-ui';
 import AvatarComponent from './Avatar.vue';
 import TextComponent from './Text.vue';
-import { SvgIcon } from '@renderer/components/common';
+import { SvgIcon } from '@renderer/components/chat';
 import { copyText } from '@renderer/utils/format';
 import { useIconRender } from '@renderer/hooks/useIconRender';
 import { t } from '@renderer/i18n';

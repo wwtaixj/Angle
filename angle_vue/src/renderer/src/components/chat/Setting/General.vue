@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { NButton, NPopconfirm, NSelect, useMessage } from 'naive-ui';
 import type { Language, Theme } from '@renderer/store/app/helper';
-import { SvgIcon } from '@renderer/components/common';
+import { SvgIcon } from '@renderer/components/chat';
 import { useAppStore } from '@renderer/store';
 import { getCurrentDate } from '@renderer/utils/functions';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';

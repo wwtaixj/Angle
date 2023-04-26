@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import XMenu from '../../components/XMenu.vue';
+import XMenu from '../../components/custom/XMenu.vue';
 import { HomeOutlined, LikeOutlined, HeartOutlined, UploadOutlined } from '@ant-design/icons-vue';
 import { XMenuItem } from '@renderer/components/model';
 

@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 import { ref, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
-import XMenu from '@renderer/components/XMenu.vue';
+import XMenu from '@renderer/components/custom/XMenu.vue';
 import { AliwangwangOutlined, PictureOutlined, SmileOutlined } from '@ant-design/icons-vue';
 import { XMenuItem } from '@renderer/components/model';
 

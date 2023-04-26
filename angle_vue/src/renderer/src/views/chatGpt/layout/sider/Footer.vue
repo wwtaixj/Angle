@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from 'vue';
 import { NButton } from 'naive-ui';
-import { HoverButton, SvgIcon, PromptStore } from '@renderer/components/common';
+import { HoverButton, SvgIcon, PromptStore } from '@renderer/components/chat';
 
-const Setting = defineAsyncComponent(() => import('@renderer/components/common/Setting/index.vue'));
+const Setting = defineAsyncComponent(() => import('@renderer/components/chat/Setting/index.vue'));
 
 const show = ref(false);
 const promptShow = ref(false);

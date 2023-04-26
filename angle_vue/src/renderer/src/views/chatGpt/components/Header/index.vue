@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick } from 'vue';
-import { HoverButton, SvgIcon } from '@renderer/components/common';
+import { HoverButton, SvgIcon } from '@renderer/components/chat';
 import { useAppStore, useChatStore } from '@renderer/store';
 
 interface Props {

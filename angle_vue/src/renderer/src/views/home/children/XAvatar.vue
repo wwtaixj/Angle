@@ -33,7 +33,7 @@
 import { reactive, ref } from 'vue';
 import { Dropdown, Badge, Avatar } from 'ant-design-vue';
 import { useI18n } from '@renderer/i18n';
-import XMenu from '@renderer/components/XMenu.vue';
+import XMenu from '@renderer/components/custom/XMenu.vue';
 import account from './account.vue';
 import { UserOutlined, PoweroffOutlined } from '@ant-design/icons-vue';
 import { useUserStore } from '@renderer/store';

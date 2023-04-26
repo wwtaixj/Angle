@@ -20,7 +20,7 @@ import { PropType, defineProps, defineEmits, computed } from 'vue';
 import { Menu, MenuItem } from 'ant-design-vue';
 import { MenuClickEventHandler } from 'ant-design-vue/lib/menu/src/interface';
 import { Key } from 'ant-design-vue/lib/_util/type';
-import type { XMenuItem } from './model';
+import type { XMenuItem } from '../model';
 const $emit = defineEmits(['select', 'update:current', 'update:menuConfig', 'click']);
 
 const props = defineProps({
