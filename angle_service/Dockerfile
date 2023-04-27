@@ -6,13 +6,13 @@ RUN npm install pnpm -g
 
 WORKDIR /app
 
-COPY /service/package.json /app
+COPY package.json /app
 
-COPY /service/pnpm-lock.yaml /app
+COPY pnpm-lock.yaml /app
 
 RUN pnpm install
 
-COPY /service /app
+COPY . /app
 
 RUN pnpm build
 
@@ -23,17 +23,16 @@ RUN npm install pnpm -g
 
 WORKDIR /app
 
-COPY /service/package.json /app
+COPY package.json /app
 
-COPY /service/pnpm-lock.yaml /app
+COPY pnpm-lock.yaml /app
 
 RUN pnpm install --production && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
-COPY /service /app
-
+COPY . /app
 
 COPY --from=backend /app/build /app/build
 
-EXPOSE 3002
+EXPOSE 9310
 
-CMD ["pnpm", "run", "prod"]
+CMD ["pnpm", "run", "prod"] 

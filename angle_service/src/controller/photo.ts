@@ -39,6 +39,7 @@ export async function uploadPhoto(req, res) {
       url,
     });
   } catch (e) {
+    console.log(e);
     res.send({
       success: false,
       message: e.message,

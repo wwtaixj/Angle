@@ -4,7 +4,7 @@
       name="images"
       v-model:file-list="fileList"
       class="ant-upload-class"
-      action="http://localhost:9310/api/v1/uploadPhoto"
+      action="http://192.168.31.137:9310/api/v1/uploadPhoto"
       list-type="picture-card"
       :multiple="true"
       accept="image/*"
