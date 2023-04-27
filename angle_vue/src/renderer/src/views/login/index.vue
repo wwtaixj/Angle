@@ -142,7 +142,7 @@ const particlesInit = async (engine: Engine) => {
       right: 5%;
       top: 50%;
       transform: translateX(-5%) translateY(-50%);
-      min-width: 400px;
+      min-width: 300px;
       width: 30rem;
       box-shadow: var(--shadow-card);
       :deep(.ant-card-actions) {
@@ -175,11 +175,10 @@ const particlesInit = async (engine: Engine) => {
       }
     }
   }
-  @media screen and(max-width: 750px) {
+  @media screen and(max-width: 640px) {
     .login-content {
       .login-card {
-        padding: 0.5rem 1rem;
-        min-width: 300px;
+        padding: 0.5rem 0;
         width: 80%;
         :deep(.ant-card-actions) {
           background: transparent;

@@ -52,7 +52,8 @@ export default defineConfig(({ mode }) => {
         port: 5173,
         proxy: {
           '/api': {
-            target: 'http://192.168.31.137:9310',
+            //target: 'http://loose.net.cn:9310',
+            target: 'http://localhost:9310',
             changeOrigin: true,
             ws: true
           }

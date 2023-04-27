@@ -2,6 +2,8 @@ import * as dotenv from 'dotenv';
 import { login } from '../controller/login';
 import { uploadPhoto, upload } from '../controller/photo';
 import express from 'express';
+import { authentication, apiPermission } from '../auth';
+import { chatProcess, config } from '../controller/chat';
 import {
   getAllUser,
   addUser,
@@ -9,14 +11,7 @@ import {
   deleteUser,
   changePassword,
 } from '../controller/user';
-import { authentication, apiPermission } from '../auth';
-import type { RequestProps } from '../types';
-import type { ChatMessage } from '../controller/chatGPT';
-import {
-  chatConfig,
-  chatReplyProcess,
-  currentModel,
-} from '../controller/chatGPT';
+
 import { limiter } from '../auth/limiter';
 
 dotenv.config();
@@ -51,60 +46,7 @@ router.post(
   '/chat-process',
   [authentication, limiter],
   apiPermission,
-  async (req, res) => {
-    res.setHeader('Content-type', 'application/octet-stream');
-
-    try {
-      const { prompt, options = {}, systemMessage } = req.body as RequestProps;
-      let firstChunk = true;
-      await chatReplyProcess({
-        message: prompt,
-        lastContext: options,
-        process: (chat: ChatMessage) => {
-          res.write(
-            firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`
-          );
-          firstChunk = false;
-        },
-        systemMessage,
-      });
-    } catch (error) {
-      res.write(JSON.stringify(error));
-    } finally {
-      res.end();
-    }
-  }
+  chatProcess
 );
-
-router.post('/config', authentication, apiPermission, async (req, res) => {
-  try {
-    const response = await chatConfig();
-    res.send(response);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-router.post('/session', async (req, res) => {
-  try {
-    res.send({
-      status: '0',
-      message: '',
-      data: { auth: '', model: currentModel() },
-    });
-  } catch (error) {
-    res.send({ status: 'Fail', message: error.message, data: null });
-  }
-});
-
-router.post('/verify', async (req, res) => {
-  try {
-    const { token } = req.body as { token: string };
-    if (!token) throw new Error('Secret key is empty');
-
-    res.send({ status: '0', message: 'Verify successfully', data: null });
-  } catch (error) {
-    res.send({ status: 'Fail', message: error.message, data: null });
-  }
-});
+router.post('/config', authentication, apiPermission, config);
 export default router;

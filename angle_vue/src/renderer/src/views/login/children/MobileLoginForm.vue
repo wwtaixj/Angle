@@ -76,7 +76,7 @@ const onFinish = async (values: UserForm) => {
 </script>
 <style lang="less" scoped>
 .mobile-login {
-  @media screen and(max-width: 750px) {
+  @media screen and(max-width: 640px) {
   }
 }
 </style>

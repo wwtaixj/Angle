@@ -128,7 +128,7 @@ const rememberChange = (e: CheckboxChangeEvent) => {
   .login-form-remember {
     color: #fff;
   }
-  @media screen and(max-width: 750px) {
+  @media screen and(max-width: 640px) {
   }
 }
 </style>

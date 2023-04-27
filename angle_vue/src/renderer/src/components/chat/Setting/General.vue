@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { NButton, NPopconfirm, NSelect, useMessage } from 'naive-ui';
+import { NButton, NPopconfirm, useMessage } from 'naive-ui';
 import type { Theme } from '@renderer/store/app/helper';
-import type { Language } from '@renderer/i18n/model';
+
 import { SvgIcon } from '@renderer/components/chat';
 import { useAppStore } from '@renderer/store';
 import { getCurrentDate } from '@renderer/utils/functions';
@@ -16,15 +16,6 @@ const { isMobile } = useBasicLayout();
 const ms = useMessage();
 
 const theme = computed(() => appStore.theme);
-
-const language = computed({
-  get() {
-    return appStore.language;
-  },
-  set(value: Language) {
-    appStore.setLanguage(value);
-  }
-});
 
 const themeOptions: { label: string; key: Theme; icon: string }[] = [
   {
@@ -42,11 +33,6 @@ const themeOptions: { label: string; key: Theme; icon: string }[] = [
     key: 'dark',
     icon: 'ri:moon-foggy-line'
   }
-];
-
-const languageOptions: { label: string; key: Language; value: Language }[] = [
-  { label: '简体中文', key: 'zh-cn', value: 'zh-cn' },
-  { label: 'English', key: 'en-us', value: 'en-us' }
 ];
 
 function exportData(): void {
@@ -144,17 +130,6 @@ function handleImportButtonClick(): void {
               </template>
             </NButton>
           </template>
-        </div>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.language') }}</span>
-        <div class="flex flex-wrap items-center gap-4">
-          <NSelect
-            style="width: 140px"
-            :value="language"
-            :options="languageOptions"
-            @update-value="(value) => appStore.setLanguage(value)"
-          />
         </div>
       </div>
     </div>

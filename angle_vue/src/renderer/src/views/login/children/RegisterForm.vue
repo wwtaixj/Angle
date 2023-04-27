@@ -102,7 +102,7 @@ const onFinish = async (values: UserForm) => {
     }
   }
 
-  @media screen and(max-width: 750px) {
+  @media screen and(max-width: 640px) {
   }
 }
 </style>

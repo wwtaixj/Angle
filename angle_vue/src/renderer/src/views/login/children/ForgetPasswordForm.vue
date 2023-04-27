@@ -64,8 +64,8 @@ const formState = ref<UserForm>({
 });
 const usernamePlaceholder = t('login.Username');
 const forgetRules: Record<string, Rule[]> = {
-  username: usernameRules,
-  password: passwordRules
+  username: usernameRules.value,
+  password: passwordRules.value
 };
 // 提取输入框值变化的处理函数
 function handleInputChange(name: string) {
@@ -115,9 +115,7 @@ const onFinish = async (values: UserForm) => {
     }
   }
 
-  @media screen and(max-width: 750px) {
-  }
-  @media screen and(min-width: 751px) {
+  @media screen and(max-width: 640px) {
   }
 }
 </style>

@@ -3,14 +3,13 @@ import type { Ref } from 'vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui';
-import html2canvas from 'html2canvas';
+import { NAutoComplete, NButton, NInput, useDialog } from 'naive-ui';
 import { Message } from './components';
 import { useScroll } from './hooks/useScroll';
 import { useChat } from './hooks/useChat';
 import { useCopyCode } from './hooks/useCopyCode';
 import { useUsingContext } from './hooks/useUsingContext';
-import HeaderComponent from './components/Header/index.vue';
+import { uesExport } from './hooks/useExport';
 import { HoverButton, SvgIcon } from '@renderer/components/chat';
 import { useBasicLayout } from '@renderer/hooks/useBasicLayout';
 import { useChatStore, usePromptStore } from '@renderer/store';
@@ -23,7 +22,6 @@ const openLongReply = false;
 
 const route = useRoute();
 const dialog = useDialog();
-const ms = useMessage();
 
 const chatStore = useChatStore();
 
@@ -33,6 +31,7 @@ const { isMobile } = useBasicLayout();
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat();
 const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll();
 const { usingContext, toggleUsingContext } = useUsingContext();
+const { handleExport } = uesExport();
 
 const { uuid } = route.params as { uuid: string };
 
@@ -42,7 +41,14 @@ const conversationList = computed(() =>
 );
 
 const prompt = ref<string>('');
-const loading = ref<boolean>(false);
+let loading = computed({
+  get() {
+    return chatStore.loading;
+  },
+  set(value) {
+    chatStore.setLoading(value);
+  }
+});
 const inputRef = ref<Ref | null>(null);
 
 // 添加PromptStore
@@ -271,44 +277,6 @@ async function onRegenerate(index: number) {
   }
 }
 
-function handleExport() {
-  if (loading.value) return;
-
-  const d = dialog.warning({
-    title: t('chat.exportImage'),
-    content: t('chat.exportImageConfirm'),
-    positiveText: t('common.yes'),
-    negativeText: t('common.no'),
-    onPositiveClick: async () => {
-      try {
-        d.loading = true;
-        const ele = document.getElementById('image-wrapper');
-        const canvas = await html2canvas(ele as HTMLDivElement, {
-          useCORS: true
-        });
-        const imgUrl = canvas.toDataURL('image/png');
-        const tempLink = document.createElement('a');
-        tempLink.style.display = 'none';
-        tempLink.href = imgUrl;
-        tempLink.setAttribute('download', 'chat-shot.png');
-        if (typeof tempLink.download === 'undefined') tempLink.setAttribute('target', '_blank');
-
-        document.body.appendChild(tempLink);
-        tempLink.click();
-        document.body.removeChild(tempLink);
-        window.URL.revokeObjectURL(imgUrl);
-        d.loading = false;
-        ms.success(t('chat.exportSuccess'));
-        Promise.resolve();
-      } catch (error: any) {
-        ms.error(t('chat.exportFailed'));
-      } finally {
-        d.loading = false;
-      }
-    }
-  });
-}
-
 function handleDelete(index: number) {
   if (loading.value) return;
 
@@ -414,12 +382,6 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col w-full h-full">
-    <HeaderComponent
-      v-if="isMobile"
-      :using-context="usingContext"
-      @export="handleExport"
-      @toggle-using-context="toggleUsingContext"
-    />
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
         <div

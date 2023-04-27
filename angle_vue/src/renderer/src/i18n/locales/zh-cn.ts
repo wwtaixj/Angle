@@ -21,6 +21,9 @@ export default {
   'Please enter the new password again': '请再次输入新密码',
   'The two passwords are different': '两次输入密码不一样',
   'The new password is the same as the old one': '新的密码和旧的密码一样',
+  Chat: '对话',
+  Picture: '相册',
+  Me: '我',
   login: {
     Username: '用户名',
     Password: '密码',

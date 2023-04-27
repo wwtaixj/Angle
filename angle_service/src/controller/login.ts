@@ -11,6 +11,7 @@ export const login = async (req, res) => {
         message: '退出登录成功',
       });
     }
+    console.log(username, longitude, latitude, date);
     const hashedUsername = decrypt(username);
     const insertLoaSql =
       'INSERT INTO location (longitude, latitude, username, login_time ) VALUES (?, ?, ?, ?)';
