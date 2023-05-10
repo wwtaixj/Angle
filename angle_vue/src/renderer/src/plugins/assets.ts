@@ -1,6 +1,7 @@
 import 'katex/dist/katex.min.css';
 import '@renderer/styles/lib/tailwind.css';
 import '@renderer/styles/lib/highlight.less';
+import '@renderer/styles/lib/github-markdown.less';
 import '@renderer/styles/global.less';
 import '@renderer/assets/iconfont/iconfont.js';
 import 'animate.css';

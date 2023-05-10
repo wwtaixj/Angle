@@ -30,7 +30,7 @@ function http<T = any>({
   afterRequest
 }: HttpOption) {
   const successHandler = (res: AxiosResponse<Response<T>>) => {
-    if (res.data.status === '0' || res.data?.data) return res.data;
+    if (res.data.status === '0' || typeof res.data === 'string') return res.data;
 
     return Promise.reject(res.data);
   };

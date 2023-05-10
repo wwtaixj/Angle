@@ -56,7 +56,8 @@ export default {
     'Browse photos': '浏览照片',
     'Photo album': '相册',
     'Upload photos': '上传照片',
-    Other: '其他'
+    Other: '其他',
+    addFolder: '添加相薄'
   },
   common: {
     add: '添加',

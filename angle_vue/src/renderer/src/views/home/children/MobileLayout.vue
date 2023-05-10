@@ -1,15 +1,7 @@
 <template>
   <Layout class="mobile-layout">
-    <!-- header  -->
-    <LayoutHeader class="">
-      <HeaderComponent
-        :using-context="usingContext"
-        @export="handleExport"
-        @toggle-using-context="toggleUsingContext"
-      />
-    </LayoutHeader>
     <!-- router-view -->
-    <LayoutContent class="content">
+    <LayoutContent>
       <router-view v-slot="{ Component, route }">
         <keep-alive>
           <component :is="Component" v-if="route.meta.keepAlive" :key="route.fullPath"> </component>
@@ -21,19 +13,19 @@
     <LayoutFooter>
       <Row>
         <Col :span="8"
-          ><div class="footer-menu">
-            <Badge :count="1"> <AliwangwangOutlined style="font-size: 1.5rem" /></Badge>
+          ><div class="footer-menu" @click="goTo('/home/chatGPT')()">
+            <Badge :count="0"> <AliwangwangOutlined style="font-size: 1.5rem" /></Badge>
           </div>
           <div class="footer-title">{{ t('Chat') }}</div>
         </Col>
         <Col :span="8"
-          ><div class="footer-menu">
+          ><div class="footer-menu" @click="goTo('/home/photo')()">
             <Badge :count="0"><PictureOutlined style="font-size: 1.5rem" /></Badge>
           </div>
           <div class="footer-title">{{ t('Picture') }}</div>
         </Col>
         <Col :span="8"
-          ><div class="footer-menu">
+          ><div class="footer-menu" @click="goTo('/home/about')()">
             <Badge :count="0"><UserOutlined style="font-size: 1.5rem" /></Badge>
           </div>
           <div class="footer-title">{{ t('Me') }}</div></Col
@@ -43,22 +35,31 @@
   </Layout>
 </template>
 <script lang="ts" setup>
-import { Layout, LayoutHeader, LayoutContent, LayoutFooter, Row, Col, Badge } from 'ant-design-vue';
+import { useRouter } from 'vue-router';
+import { Layout, LayoutContent, LayoutFooter, Row, Col, Badge } from 'ant-design-vue';
 import { AliwangwangOutlined, PictureOutlined, UserOutlined } from '@ant-design/icons-vue';
-import HeaderComponent from '@renderer/views/chatGpt/components/Header/index.vue';
-import { useUsingContext } from '@renderer/views/chatGpt/hooks/useUsingContext';
-import { uesExport } from '@renderer/views/chatGpt/hooks/useExport';
 import { t } from '@renderer/i18n';
 
-const { usingContext, toggleUsingContext } = useUsingContext();
-const { handleExport } = uesExport();
+const router = useRouter();
+function goTo(path: string) {
+  return () => {
+    router.push(path);
+  };
+}
 </script>
 <style lang="less" scoped>
 .mobile-layout {
   height: 100%;
+  .ant-layout-content {
+    height: 92vh !important;
+  }
   .ant-layout-footer {
     padding: 0;
-    height: 4rem;
+    height: 8vh;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    bottom: 0;
     .ant-row {
       .ant-col {
         padding: 0.5rem 3rem;
