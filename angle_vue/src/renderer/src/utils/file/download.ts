@@ -1,6 +1,7 @@
 import { openWindow } from '..';
 import { dataURLtoBlob, urlToBase64 } from './base64Conver';
 
+declare type TargetContext = '_self' | '_blank';
 /**
  * Download online pictures
  * @param url
@@ -58,7 +59,7 @@ export function downloadByData(data: BlobPart, filename: string, mime?: string, 
 export function downloadByUrl({
   url,
   target = '_blank',
-  fileName,
+  fileName
 }: {
   url: string;
   target?: TargetContext;

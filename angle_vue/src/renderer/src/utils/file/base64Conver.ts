@@ -1,3 +1,5 @@
+type Nullable<T> = T | null;
+
 /**
  * @description: base64 to blob
  */

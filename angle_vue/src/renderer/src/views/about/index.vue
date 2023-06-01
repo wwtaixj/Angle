@@ -21,5 +21,4 @@
 <script lang="ts" setup>
 import { Card, CardMeta, Avatar } from 'ant-design-vue';
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
-import { ref } from 'vue';
 </script>

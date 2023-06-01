@@ -48,34 +48,34 @@ export function fetchVerify<T>(token: string) {
   });
 }
 
-export function login<T>(data) {
+export function login<T>(data: { token: any }) {
   return post<T>({
     url: request_url.login,
     data
   });
 }
-export function updateUser<T>(data) {
+export function updateUser<T>(data: any) {
   return put<T>({
     url: request_url.changeInfo,
     data
   });
 }
 
-export function updatePssword<T>(data) {
+export function updatePssword<T>(data: any) {
   return put<T>({
     url: request_url.changePssword,
     data
   });
 }
 
-export function resetPssword<T>(data) {
+export function resetPssword<T>(data: any) {
   return put<T>({
     url: request_url.resetPssword,
     data
   });
 }
 
-export function register<T>(data) {
+export function register<T>(data: any) {
   return post<T>({
     url: request_url.register,
     data

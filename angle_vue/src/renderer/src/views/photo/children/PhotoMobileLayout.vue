@@ -31,16 +31,7 @@
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import {
-  Layout,
-  LayoutContent,
-  LayoutHeader,
-  Drawer,
-  Button,
-  Divider,
-  Row,
-  Col
-} from 'ant-design-vue';
+import { Layout, LayoutContent, LayoutHeader, Drawer, Button, Divider } from 'ant-design-vue';
 import { MenuUnfoldOutlined, MenuFoldOutlined, FolderAddOutlined } from '@ant-design/icons-vue';
 import type { DrawerProps } from 'ant-design-vue';
 import { t } from '@renderer/i18n';

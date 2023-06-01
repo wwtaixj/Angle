@@ -77,7 +77,7 @@ initPage();
 <style lang="less" scoped>
 .photo {
   .menu {
-    background-image: url('../../assets/images/Beautiful Love.png');
+    background-image: url('../../../../../../../resources/images/Beautiful Love.png');
     background-size: contain;
     :deep(.ant-menu) {
       background: transparent;

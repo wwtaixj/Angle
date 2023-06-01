@@ -106,7 +106,7 @@ async function onConversation() {
         prompt: message,
         options,
         signal: controller.signal,
-        onDownloadProgress: ({ event }) => {
+        onDownloadProgress: ({ event }): any => {
           const xhr = event.target;
           const { responseText } = xhr;
           // Always process the final line
@@ -134,10 +134,9 @@ async function onConversation() {
               message = '';
               return fetchChatAPIOnce();
             }
-
             scrollToBottomIfAtBottom();
           } catch (error) {
-            //
+            throw new Error(`${error}`);
           }
         }
       });
@@ -212,7 +211,7 @@ async function onRegenerate(index: number) {
         prompt: message,
         options,
         signal: controller.signal,
-        onDownloadProgress: ({ event }) => {
+        onDownloadProgress: ({ event }): any => {
           const xhr = event.target;
           const { responseText } = xhr;
           // Always process the final line

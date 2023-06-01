@@ -39,7 +39,8 @@ export default defineConfig(({ mode }) => {
     renderer: {
       resolve: {
         alias: {
-          '@renderer': resolve(process.cwd(), 'src/renderer/src')
+          '@renderer': resolve(process.cwd(), 'src/renderer/src'),
+          'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
         }
       },
       plugins: setupPlugins(viteEnv),

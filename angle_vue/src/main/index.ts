@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow } from 'electron';
+import { app, shell, BrowserWindow, globalShortcut } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
@@ -12,10 +12,14 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.ts'),
+      preload: join(__dirname, '../preload/index'),
       sandbox: false
     }
   });
+  process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+
+  // 设置窗口的图标
+  mainWindow.setIcon(icon);
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
@@ -39,6 +43,18 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  // 注册全局快捷键
+  const ret = globalShortcut.register('F1', () => {
+    // 在这里执行你希望触发的操作
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    // 如果有活动窗口，则打开开发者工具
+    if (focusedWindow) {
+      focusedWindow.webContents.openDevTools();
+    }
+  });
+  if (!ret) {
+    console.error('注册快捷键失败！');
+  }
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
 
@@ -67,5 +83,8 @@ app.on('window-all-closed', () => {
   }
 });
 
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+});
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
