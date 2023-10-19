@@ -21,7 +21,7 @@ export const useAppStore = defineStore('app-store', {
       if (this.language !== language) {
         this.language = language;
         this.recordState();
-        window.location.reload();
+        //  window.location.reload();
       }
     },
     setParticlesCurrent(particles: UserParticles) {

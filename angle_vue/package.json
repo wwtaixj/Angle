@@ -6,7 +6,7 @@
   "author": "JX",
   "build": {
     "win": {
-      "icon": "/resources/pwa-512x512.png"
+      "icon": "/resources/icon.png"
     }
   },
   "scripts": {
