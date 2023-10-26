@@ -1,8 +1,15 @@
+<!--
+ * @Author: JX 761359511@qq.com
+ * @Date: 2023-04-16 14:02:23
+ * @LastEditors: JX 761359511@qq.com
+ * @LastEditTime: 2023-10-26 09:57:01
+ * @FilePath: \Angle\angle_vue\src\renderer\src\views\login\children\nameOrPassword.vue
+-->
 <template>
   <FormItem name="username">
     <Input
       v-model:value="formState.username"
-      :placeholder="usernamePlaceholder"
+      :placeholder="t('login.Username')"
       :autocomplete="data?.remember ? 'on' : 'off'"
       @input="handleInputChange('username')($event)"
       allowClear
@@ -17,7 +24,7 @@
     <InputPassword
       v-model:value="formState.password"
       @input="handleInputChange('password')($event)"
-      :placeholder="passwordPlaceholder"
+      :placeholder="t('login.Password')"
       :autocomplete="data?.remember ? 'on' : 'new-password'"
       allowClear
     >
@@ -45,9 +52,6 @@ const props = defineProps({
     })
   }
 });
-
-const usernamePlaceholder = t('login.Username');
-const passwordPlaceholder = t('login.Password');
 const formState = reactive({
   password: props.data?.password,
   username: props.data?.username,

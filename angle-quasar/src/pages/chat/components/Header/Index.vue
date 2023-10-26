@@ -6,7 +6,7 @@
  * @FilePath: \angle-quasar\src\pages\chat\components\Header\Index.vue
 -->
 <template>
-  <q-toolbar class="bg-grey-3 text-black">
+  <q-toolbar class="text-black bg-grey-3">
     <q-btn round flat>
       <q-avatar>
         <img :src="currentConversation?.avatar" />

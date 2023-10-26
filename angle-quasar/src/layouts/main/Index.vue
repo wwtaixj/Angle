@@ -2,8 +2,8 @@
  * @Author: JX 761359511@qq.com
  * @Date: 2023-10-12 11:08:01
  * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-19 11:11:13
- * @FilePath: \angle-quasar\src\layouts\main\index.vue
+ * @LastEditTime: 2023-10-26 10:11:37
+ * @FilePath: \Angle\angle-quasar\src\layouts\main\Index.vue
 -->
 <template>
   <q-layout view="hHh lpR fFf" class="bg-grey-1">
@@ -45,39 +45,56 @@
       <router-view />
     </q-page-container>
     <!-- dialog -->
-    <q-dialog v-model="mainStore.dialogVisible">
-      <Chat v-show="mainStore.dialogEvent === DialogEventEnum.CHAT" />
-      <Login v-show="mainStore.dialogEvent === DialogEventEnum.LOGIN" />
-    </q-dialog>
+    <XDialog
+      v-model="mainStore.dialog.visible"
+      :type="dialogType"
+      :options="{ title: mainStore.dialog.title }"
+      @hide="dialogHide"
+      persistent
+    >
+      <Chat v-show="mainStore.dialog.event === DialogEventEnum.CHAT" />
+      <Login v-show="mainStore.dialog.event === DialogEventEnum.LOGIN" />
+      <Account v-show="mainStore.dialog.event === DialogEventEnum.ACCOUNT" />
+    </XDialog>
   </q-layout>
 </template>
 
 <script lang="ts" setup>
-//import { ref } from 'vue';
+import { computed } from 'vue';
 // import { useRouter } from 'vue-router';
-import Header from '../../pages/header/Index.vue';
+import Header from '@/pages/header/Index.vue';
 import { DialogEventEnum } from '@/enums/main';
 import { getSideList } from './constant';
-import { useMainStore } from '../../stores/mainStore';
+import { useMainStore } from '@/stores/mainStore';
 import Chat from '@/pages/chat/Index.vue';
 import Login from '@/pages/login/Index.vue';
+import { XDialog, DialogTypeEnum } from '@/components/dialog';
+import Account from '@/pages/account/Index.vue';
 
 const mainStore = useMainStore();
+
+const dialogType = computed(() => {
+  if (mainStore.dialog.event === DialogEventEnum.CHAT)
+    return DialogTypeEnum.NATIVE;
+  if (mainStore.dialog.event === DialogEventEnum.LOGIN)
+    return DialogTypeEnum.CARD;
+  return DialogTypeEnum.CARD;
+});
 
 function listClick(e: Event, key: string) {
   switch (key) {
     case DialogEventEnum.CHAT:
-      mainStore.setDialogEvent(key);
+      mainStore.openDialog(key);
       break;
   }
-  mainStore.openDialog();
+}
+function dialogHide() {
+  mainStore.setDialog({ title: '' });
 }
 </script>
 
 <style lang="sass" scoped>
 .GNL
-
-
 
   &__drawer-item
     line-height: 24px

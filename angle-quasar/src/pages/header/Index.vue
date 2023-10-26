@@ -2,8 +2,8 @@
  * @Author: JX 761359511@qq.com
  * @Date: 2023-10-12 16:35:10
  * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-19 14:10:11
- * @FilePath: \angle-quasar\src\pages\header\index.vue
+ * @LastEditTime: 2023-10-25 18:11:11
+ * @FilePath: \Angle\angle-quasar\src\pages\header\Index.vue
 -->
 <template>
   <q-toolbar>
@@ -11,7 +11,7 @@
       flat
       dense
       round
-      @click="useMainStore().setLeftDrawerMini"
+      @click="mainStore.setLeftDrawerMini"
       aria-label="Menu"
       icon="menu"
       class="q-mr-sm"
@@ -20,7 +20,7 @@
     <q-toolbar-title
       v-if="$q.screen.gt.xs"
       shrink
-      class="row items-center no-wrap"
+      class="items-center row no-wrap"
     >
       <span class="q-ml-sm">Angle</span>
     </q-toolbar-title>
@@ -33,7 +33,6 @@
       v-model="search"
       color="bg-grey-7 shadow-1"
       placeholder="Search for topics, locations & sources"
-      class="w-300px"
     >
       <template v-slot:prepend>
         <q-icon v-if="search === ''" name="search" />
@@ -48,9 +47,9 @@
 
     <q-space />
 
-    <div class="q-gutter-sm row items-center no-wrap">
+    <div class="items-center q-gutter-sm row no-wrap">
       <q-btn-dropdown
-        :label="$t('language')"
+        :label="$t('Language')"
         round
         dense
         flat
@@ -88,7 +87,7 @@
         <q-badge color="red" text-color="white" floating> 2 </q-badge>
         <q-tooltip>Notifications</q-tooltip>
       </q-btn>
-      <q-btn round flat>
+      <q-btn round flat @click="openAccount">
         <q-avatar size="26px">
           <img :src="userStore.getAvatarUrl" />
         </q-avatar>
@@ -101,14 +100,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
-//import { useI18n } from '../../boot/i18n';
-import { LOCALE } from '../../i18n';
-import { useMainStore } from '../../stores/mainStore';
-import { useUserStore } from '../../stores/userStore';
+import { useI18n } from '@/boot/i18n';
+import { LOCALE } from '@/i18n';
+import { useMainStore } from '@/stores/mainStore';
+import { useUserStore } from '@/stores/userStore';
+import { DialogEventEnum } from '@/enums/main';
 
 const $q = useQuasar();
-const search = ref('');
+const { t } = useI18n();
+const mainStore = useMainStore();
 const userStore = useUserStore();
+const search = ref('');
 const localeOptions = [
   { value: LOCALE.ZH_CN, label: '中文' },
   { value: LOCALE.EN_US, label: 'English' },
@@ -118,5 +120,9 @@ function onItemClick(e: Event, value: LOCALE) {
 }
 function darkToggle(isDark: boolean) {
   userStore.setTheme(isDark);
+}
+function openAccount() {
+  mainStore.setDialog({ title: t('AccountInfo') });
+  mainStore.openDialog(DialogEventEnum.ACCOUNT);
 }
 </script>

@@ -79,7 +79,6 @@ export const useUserStore = defineStore('user', {
     updateUserInfo(userInfo: UserForm) {
       this.setUserInfo(userInfo);
     },
-
     // 设置登录界面显示
     setLoginState(state: LoginStateEnum) {
       this.loginState = state;
@@ -148,7 +147,6 @@ export const useUserStore = defineStore('user', {
       this.location = location;
       sStorage.set('location', location);
     },
-
     setRemember(remember: boolean) {
       this.remember = remember;
       lStorage.set('remember', remember);

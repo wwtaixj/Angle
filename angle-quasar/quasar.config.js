@@ -7,6 +7,7 @@
 
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
+
 const { configure } = require('quasar/wrappers');
 const path = require('path');
 
@@ -87,7 +88,7 @@ module.exports = configure(function (/* ctx */) {
             include: path.resolve(__dirname, './src/i18n/**'),
           },
         ],
-        ['vite-plugin-windicss'],
+        ['unplugin-vue-define-options/dist/vite'],
       ],
       alias: {
         '@': path.join(__dirname, './src/'),
@@ -97,7 +98,7 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true, // opens browser window automatically
+      open: false, // opens browser window automatically
       port: 9999,
       proxy: {
         '/api': {
@@ -123,7 +124,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['LocalStorage', 'SessionStorage'],
     },
 
     // animations: 'all', // --- includes all animations

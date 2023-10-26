@@ -1,41 +1,53 @@
+<!--
+ * @Author: JX 761359511@qq.com
+ * @Date: 2023-10-16 19:37:37
+ * @LastEditors: JX 761359511@qq.com
+ * @LastEditTime: 2023-10-26 14:12:46
+ * @FilePath: \angle-quasar\src\pages\login\components\LoginForm.vue
+-->
 <template>
   <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
     <q-input
-      filled
-      v-model="name"
-      label="Your name *"
-      hint="Name and surname"
+      v-model="username"
+      :label="t('login.Username') + '*'"
       lazy-rules
-      :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      :rules="getLoginFormRules().username"
     />
 
     <q-input
-      filled
-      type="number"
-      v-model="age"
-      label="Your age *"
+      type="password"
+      v-model="password"
+      :label="t('login.Password') + '*'"
       lazy-rules
-      :rules="[
-        (val) => (val !== null && val !== '') || 'Please type your age',
-        (val) => (val > 0 && val < 100) || 'Please type a real age',
-      ]"
+      :rules="getLoginFormRules().password"
+    />
+    <q-checkbox
+      v-model="accept"
+      :label="t('login.RememberMe')"
+      checked-icon="task_alt"
+      unchecked-icon="highlight_off"
     />
 
-    <q-toggle v-model="accept" label="I accept the license and terms" />
-
-    <div>
-      <q-btn label="Sign In" type="submit" color="primary" />
-      <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+    <div class="row justify-center">
+      <q-btn
+        :label="t('login.Login')"
+        class="full-width"
+        type="submit"
+        color="primary"
+      />
     </div>
   </q-form>
 </template>
 <script lang="ts" setup>
+import { useI18n } from '@/boot/i18n';
 import { useQuasar } from 'quasar';
+import { getLoginFormRules } from './constant';
 import { ref } from 'vue';
 
 const $q = useQuasar();
-const name = ref(null);
-const age = ref(null);
+const { t } = useI18n();
+const username = ref(null);
+const password = ref(null);
 const accept = ref(false);
 function onSubmit() {
   if (accept.value !== true) {
@@ -55,8 +67,8 @@ function onSubmit() {
   }
 }
 function onReset() {
-  name.value = null;
-  age.value = null;
+  username.value = null;
+  password.value = null;
   accept.value = false;
 }
 </script>
