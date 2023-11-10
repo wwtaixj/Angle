@@ -8,7 +8,7 @@
 import { unref } from 'vue';
 import { boot } from 'quasar/wrappers';
 import { createI18n } from 'vue-i18n';
-import { useUserStore } from '../stores/userStore';
+import { useUserStore } from '../stores/user';
 import messages, { LOCALE } from 'src/i18n';
 
 export type MessageLanguages = keyof typeof messages;

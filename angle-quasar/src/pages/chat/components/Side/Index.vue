@@ -97,8 +97,8 @@
 <script lang="ts" setup>
 import { useQuasar } from 'quasar';
 import { ref, computed, reactive } from 'vue';
-import { useUserStore } from '@/stores/userStore';
-import { useChatStore } from '@/stores/chatStore';
+import { useUserStore } from '@/stores/user';
+import { useChatStore } from '@/stores/chat';
 
 const userStore = useUserStore();
 const chatStore = useChatStore();

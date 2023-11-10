@@ -6,7 +6,7 @@
  * @FilePath: \Angle\angle-quasar\src\pages\login\Index.vue
 -->
 <template>
-  <div class="q-pa-md position-relative" style="max-width: 400px">
+  <div class="q-pa-lg position-relative">
     <LoginForm />
   </div>
 </template>

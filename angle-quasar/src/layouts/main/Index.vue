@@ -1,10 +1,3 @@
-<!--
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 11:08:01
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-26 10:11:37
- * @FilePath: \Angle\angle-quasar\src\layouts\main\Index.vue
--->
 <template>
   <q-layout view="hHh lpR fFf" class="bg-grey-1">
     <q-header class="bg-white text-grey-8" height-hint="64">
@@ -48,8 +41,8 @@
     <XDialog
       v-model="mainStore.dialog.visible"
       :type="dialogType"
-      :options="{ title: mainStore.dialog.title }"
-      @hide="dialogHide"
+      :options="mainStore.dialog"
+      @hide="mainStore.resetDialog"
       persistent
     >
       <Chat v-show="mainStore.dialog.event === DialogEventEnum.CHAT" />
@@ -65,7 +58,7 @@ import { computed } from 'vue';
 import Header from '@/pages/header/Index.vue';
 import { DialogEventEnum } from '@/enums/main';
 import { getSideList } from './constant';
-import { useMainStore } from '@/stores/mainStore';
+import { useMainStore } from '@/stores/main';
 import Chat from '@/pages/chat/Index.vue';
 import Login from '@/pages/login/Index.vue';
 import { XDialog, DialogTypeEnum } from '@/components/dialog';
@@ -87,9 +80,6 @@ function listClick(e: Event, key: string) {
       mainStore.openDialog(key);
       break;
   }
-}
-function dialogHide() {
-  mainStore.setDialog({ title: '' });
 }
 </script>
 

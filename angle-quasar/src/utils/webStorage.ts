@@ -14,10 +14,10 @@ function WebStorage(storage: Storage, crypto = true) {
       crypto ? encrypt(JSON.stringify(value)) : JSON.stringify(value)
     );
   };
-  const get = (key: string, def: unknown = null): unknown => {
+  const get = <T = unknown>(key: string, def = null) => {
     const valueStr = storage.getItem(md5(key));
     try {
-      return valueStr ? JSON.parse(decrypt(valueStr)) : def;
+      return (valueStr ? JSON.parse(decrypt(valueStr)) : def) as T;
     } catch (e) {
       throw new Error('WebStorage is set error: ' + e);
     }

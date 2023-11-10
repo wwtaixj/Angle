@@ -1,19 +1,15 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 11:08:01
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-25 17:40:58
- * @FilePath: \Angle\angle-quasar\src\stores\mainStore.ts
- */
 import { defineStore } from 'pinia';
+import { CSSProperties } from 'vue';
 import { DialogEventEnum } from '@/enums/main';
-import { useUserStore } from './userStore';
+import { useUserStore } from '../user';
 import { useI18n } from '@/boot/i18n';
 
 interface Dialog {
   visible: boolean;
   event: DialogEventEnum;
   title: string;
+  style: CSSProperties;
+  class: string;
 }
 interface MainState {
   leftDrawerOpen: boolean;
@@ -29,6 +25,7 @@ export const useMainStore = defineStore('main', {
       visible: false,
       event: DialogEventEnum.LOGIN,
       title: '',
+      style: {},
     },
   }),
   getters: {},
@@ -40,7 +37,7 @@ export const useMainStore = defineStore('main', {
       this.leftDrawerMini = !this.leftDrawerMini;
     },
     setDialog(config: Partial<Dialog>) {
-      this.dialog = config;
+      Object.assign(this.dialog, config);
     },
     openDialog(dialogEvent: DialogEventEnum) {
       if (dialogEvent) this.setDialog({ event: dialogEvent });
@@ -51,11 +48,13 @@ export const useMainStore = defineStore('main', {
           title: t('login.Login'),
         });
       }
-
-      this.dialog.visible = true;
+      this.setDialog({ visible: true });
     },
     closeDialog() {
-      this.dialog.visible = false;
+      this.setDialog({ visible: false });
+    },
+    resetDialog() {
+      this.setDialog({ title: '', style: {}, class: '' });
     },
   },
 });

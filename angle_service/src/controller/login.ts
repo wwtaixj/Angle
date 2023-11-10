@@ -43,14 +43,14 @@ export const login = async (req, res) => {
     // 用户不存在或密码错误
     if (!user) {
       status = '-2';
-      throw new Error('用户不存在!');
+      throw new Error('用户不存在或密码错误!');
     }
     // 密码错误
     if (hashedPassword !== user.password) {
       status = '-3';
       throw new Error('密码错误,请再试一次!');
     }
-    const { phone, avatar_url, age, label, gender } = user;
+    const { phone, avatar_url, age, tag, gender, email } = user;
     // 返回包含 token、status 和 message 的 JSON 响应
     return res.json({
       status: '0',
@@ -60,8 +60,9 @@ export const login = async (req, res) => {
         phone: encrypt(phone),
         avatar_url: avatar_url,
         age,
-        label,
+        tag,
         gender,
+        email,
       },
     });
   } catch (e) {

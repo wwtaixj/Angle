@@ -24,8 +24,8 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, reactive } from 'vue';
-import { useMainStore } from '@/stores/mainStore';
-import { useChatStore } from '@/stores/chatStore';
+import { useMainStore } from '@/stores/main';
+import { useChatStore } from '@/stores/chat';
 
 const mainStore = useMainStore();
 const chatStore = useChatStore();

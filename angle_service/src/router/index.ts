@@ -1,10 +1,3 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-04-23 09:40:12
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-19 17:31:28
- * @FilePath: \Angle\angle_service\src\router\index.ts
- */
 import * as dotenv from 'dotenv';
 import { login } from '../controller/login';
 import { uploadPhoto, upload } from '../controller/photo';
@@ -17,6 +10,8 @@ import {
   updateUser,
   deleteUser,
   changePassword,
+  register,
+  sendVerificationCode,
 } from '../controller/user';
 
 import { limiter } from '../auth/limiter';
@@ -34,6 +29,13 @@ router.get('/v1/user', authentication, apiPermission, getAllUser);
 router.post('/v1/user', authentication, apiPermission, addUser);
 router.put('/v1/user', authentication, apiPermission, updateUser);
 router.delete('/v1/user', authentication, apiPermission, deleteUser);
+router.post('/v1/user/register', authentication, apiPermission, register);
+router.post(
+  '/v1/user/verificationCode',
+  authentication,
+  apiPermission,
+  sendVerificationCode
+);
 router.put(
   '/v1/user/changePassword',
   authentication,

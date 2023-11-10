@@ -1,6 +1,7 @@
 import db from '../db';
 import tool from '../utils/tool';
-import { decrypt, encrypt } from '../utils/cryptoJs';
+import nodeMailer from 'nodemailer';
+import { decrypt } from '../utils/cryptoJs';
 
 /**
  * /api/user 获取所有用户
@@ -12,7 +13,7 @@ export async function getAllUser(req: any, res: any) {
   let status: string;
   try {
     const initParams: any = tool.initParams(req.url);
-    const { username, avatarUrl, label, phone, age } = initParams;
+    const { username, avatarUrl, tag, phone, age } = initParams;
     if (req.url.indexOf('?') === -1) {
       const [rows] = await db.query('select * from users');
       res.send({
@@ -26,11 +27,11 @@ export async function getAllUser(req: any, res: any) {
         WHERE 1=1
           ${username ? 'AND username LIKE ?' : ''}
           ${avatarUrl ? 'AND avatarUrl LIKE ?' : ''}
-          ${label ? 'AND label LIKE ?' : ''}
+          ${tag ? 'AND tag LIKE ?' : ''}
           ${phone ? 'AND phone LIKE ?' : ''}
           ${age ? 'AND age LIKE ?' : ''}`;
       // 过滤空字符串和格式转换
-      const params = [username, avatarUrl, label, phone, age]
+      const params = [username, avatarUrl, tag, phone, age]
         .filter(Boolean)
         .map((value) => `%${value}%`);
       const [rows] = await db.query(sql, params);
@@ -102,7 +103,7 @@ export async function updateUser(req, res, next) {
   let status = '1';
   try {
     // 解析参数
-    let { avatarUrl, gender, label, phone, age, username } = req.body;
+    let { avatarUrl, gender, tag, phone, age, username } = req.body;
     username = decrypt(username);
     phone = decrypt(phone);
     if (!username) {
@@ -110,11 +111,11 @@ export async function updateUser(req, res, next) {
       throw new Error('用户名不能为空');
     }
     const sql =
-      'UPDATE users SET avatar_url = ?, gender = ?, label = ?, phone = ?, age = ? WHERE username = ?';
+      'UPDATE users SET avatar_url = ?, gender = ?, tag = ?, phone = ?, age = ? WHERE username = ?';
     const [result] = await db.query(sql, [
       avatarUrl,
       gender,
-      label,
+      tag,
       phone,
       age,
       username,
@@ -148,20 +149,19 @@ export async function addUser(req, res) {
   let status = '1';
   try {
     // 解析参数
-    const { avatarUrl, gender, label, phone, age, username, password } =
-      req.body;
+    const { avatarUrl, gender, tag, phone, age, username, password } = req.body;
     if (!username || !password) {
       status = '-1';
       throw new Error('参数错误');
     }
     const sql =
-      'INSERT INTO users (username, password, avatar_url, gender, label, phone, age) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      'INSERT INTO users (username, password, avatar_url, gender, tag, phone, age) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const [result] = await db.query(sql, [
       decrypt(username),
       decrypt(password),
       avatarUrl,
       gender,
-      label,
+      tag,
       decrypt(phone),
       age,
     ]);
@@ -228,6 +228,73 @@ export async function changePassword(req, res) {
       status: '0',
       message: '更新密码成功！',
     });
+  } catch (e) {
+    console.log(e);
+    let { message, code } = e;
+    if (code) {
+      status = code;
+      message = '系统内部异常！';
+    }
+    return res.json({
+      status,
+      message,
+    });
+  }
+}
+
+export async function sendVerificationCode(req, res) {
+  // 创建一个SMTP传输对象
+  const transporter = nodeMailer.createTransport({
+    service: 'Gmail', // 使用的邮箱服务提供商，例如Gmail、QQ邮箱等
+    auth: {
+      user: 'your-email@gmail.com', // 发送验证码的邮箱地址
+      pass: 'your-password', // 邮箱密码或授权码
+    },
+  });
+
+  // 定义要发送的邮件内容
+  const mailOptions = {
+    from: 'your-email@gmail.com', // 发件人邮箱
+    to: 'recipient-email@example.com', // 收件人邮箱
+    subject: '验证码', // 邮件主题
+    text: '您的验证码是：123456', // 邮件正文，可以是纯文本或HTML格式
+  };
+
+  // 发送邮件
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log('发送邮件失败：', error);
+    } else {
+      console.log('邮件发送成功：', info.response);
+    }
+  });
+}
+export async function register(req, res) {
+  let status = '1';
+  try {
+    // 解析参数
+    const { avatarUrl, gender, tag, phone, age, username, password } = req.body;
+    if (!username || !password) {
+      status = '-1';
+      throw new Error('参数错误');
+    }
+    const sql =
+      'INSERT INTO users (username, password, avatar_url, gender, tag, phone, age) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const [result] = await db.query(sql, [
+      decrypt(username),
+      decrypt(password),
+      avatarUrl,
+      gender,
+      tag,
+      decrypt(phone),
+      age,
+    ]);
+    if (result['serverStatus'] === 2) {
+      res.send({
+        status: '0',
+        message: '注册成功!',
+      });
+    }
   } catch (e) {
     console.log(e);
     let { message, code } = e;

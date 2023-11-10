@@ -10,4 +10,3 @@ export interface Location {
   latitude: number;
   message?: string;
 }
-export type Gender = '0' | '1' | null;

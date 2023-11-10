@@ -1,10 +1,3 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 16:26:06
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-26 10:27:25
- * @FilePath: \Angle\angle-quasar\src\i18n\zh-CN\index.ts
- */
 export default {
   Chat: '对话',
   Picture: '相册',
@@ -13,7 +6,7 @@ export default {
   ChatGPT: 'ChatGPT',
   About: '关于我们',
   SignOut: '退出登录',
-  AccountInfo: '账户信息',
+  AccountInfo: '用户信息',
   SignOutSuccessfully: '退出登录成功!',
   Ok: '确定',
   Cancel: '取消',
@@ -24,6 +17,7 @@ export default {
   Avatar: '头像',
   Man: '男',
   Woman: '女',
+  Email: '邮箱',
   ClickToEditText: '点击编辑',
   PersonalityLabel: '个性标签',
   PleaseEnterANewPassword: '请输入新密码',
@@ -41,7 +35,7 @@ export default {
     PleaseEnterYourMobilePhoneNumber: '请输入手机号!',
     PleaseEnterTheVerificationcCode: '请输入验证码!',
     TheInputContentMustContainMoreThan6Characters: '输入内容长度必须大于6',
-    RememberMe: '记住我',
+    RememberMe: '记住登录凭证',
     ForgotPassword: '忘记密码?',
     Login: '登录',
     RegisterNow: '立即注册',
@@ -57,7 +51,7 @@ export default {
     TheSMSVerificationCodeIsSentSuccessfully: '发送短信验证码成功',
     PleaseEnterThePhoneNumberInTheCorrectFormat: '请输入正确格式的手机号',
     VerifyTo4Bits: '验证为4位',
-    QrCodeConfirmMessage: `二维码后点击"确认"，即可完成登录`,
+    QrCodeConfirmMessage: '二维码后点击"确认"，即可完成登录',
   },
   photo: {
     BrowsePhotos: '浏览照片',

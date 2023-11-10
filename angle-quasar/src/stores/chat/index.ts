@@ -1,14 +1,7 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 11:08:01
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-16 17:59:59
- * @FilePath: \angle-quasar\src\stores\chatStore.ts
- */
 import { defineStore } from 'pinia';
-import { sStorage } from '../utils/webStorage';
+import { sStorage } from '@/utils/webStorage';
 import { isNumber } from '@/utils/is';
-import { Chat } from './typings/chat';
+import { Chat } from '../typings/chat';
 
 interface ChatState {
   chatList: Chat[];

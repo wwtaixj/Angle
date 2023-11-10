@@ -1,1 +1,11 @@
 // app global css in SCSS form
+
+$header-hight: 50px !important;
+
+.q-notifications__list.q-notifications__list--top {
+  margin-top: $header-hight;
+}
+
+.inline {
+  display: inline;
+}

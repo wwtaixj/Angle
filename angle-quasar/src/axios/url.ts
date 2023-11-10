@@ -3,11 +3,10 @@ export default {
   login: 'api/v1/login',
   changeInfo: 'api/v1/user',
   changePssword: 'api/v1/user/changePassword',
-  SMSCode: 'api/v1/user/SMSCode',
-  resetPssword: 'api/v1/user/resetPassword',
-  register: 'api/v1/user',
+  verCode: 'api/v1/user/verificationCode',
+  register: 'api/v1/user/register',
   chatChat: 'api/chat',
   chatconfig: 'api/config',
   chatProcess: 'api/chat-process',
-  chatVerify: 'api/verify'
+  chatVerify: 'api/verify',
 };

@@ -49,7 +49,7 @@ import { useQuasar } from 'quasar';
 import { ref, computed, reactive } from 'vue';
 import Header from './components/Header/Index.vue';
 import Side from './components/Side/Index.vue';
-// import { useMainStore } from '../../stores/mainStore';
+// import { useMainStore } from '../../stores/main';
 
 const $q = useQuasar();
 const leftDrawerOpen = ref(false);

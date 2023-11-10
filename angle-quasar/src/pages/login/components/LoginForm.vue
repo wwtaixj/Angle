@@ -1,14 +1,12 @@
-<!--
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-16 19:37:37
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-26 14:12:46
- * @FilePath: \angle-quasar\src\pages\login\components\LoginForm.vue
--->
 <template>
-  <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+  <q-form
+    ref="loginForm"
+    @submit="submitLogin"
+    @reset="onReset"
+    class="q-gutter-md q-x-md"
+  >
     <q-input
-      v-model="username"
+      v-model="userStore.username"
       :label="t('login.Username') + '*'"
       lazy-rules
       :rules="getLoginFormRules().username"
@@ -16,59 +14,53 @@
 
     <q-input
       type="password"
-      v-model="password"
+      v-model="userStore.password"
       :label="t('login.Password') + '*'"
       lazy-rules
       :rules="getLoginFormRules().password"
     />
-    <q-checkbox
-      v-model="accept"
+    <q-toggle
       :label="t('login.RememberMe')"
-      checked-icon="task_alt"
-      unchecked-icon="highlight_off"
+      v-model="userStore.remember"
+      checked-icon="check"
+      unchecked-icon="clear"
     />
 
-    <div class="row justify-center">
-      <q-btn
+    <div class="q-gutter-md">
+      <XButton
         :label="t('login.Login')"
         class="full-width"
         type="submit"
         color="primary"
+        :loading="loginLoading"
       />
+      <q-space />
+      <q-btn outline label="注册" class="full-width" color="primary" />
     </div>
   </q-form>
 </template>
 <script lang="ts" setup>
-import { useI18n } from '@/boot/i18n';
-import { useQuasar } from 'quasar';
-import { getLoginFormRules } from './constant';
 import { ref } from 'vue';
+import { useI18n } from '@/boot/i18n';
+import { QFormProps } from 'quasar';
+import { getLoginFormRules } from './constant';
+import { useUserStore } from '@/stores/user';
+import { XButton } from '@/components/button';
 
-const $q = useQuasar();
 const { t } = useI18n();
-const username = ref(null);
-const password = ref(null);
-const accept = ref(false);
-function onSubmit() {
-  if (accept.value !== true) {
-    $q.notify({
-      color: 'red-5',
-      textColor: 'white',
-      icon: 'warning',
-      message: 'You need to accept the license and terms first',
-    });
-  } else {
-    $q.notify({
-      color: 'green-4',
-      textColor: 'white',
-      icon: 'cloud_done',
-      message: 'Submitted',
-    });
+const loginForm = ref<QFormProps>();
+const userStore = useUserStore();
+const loginLoading = ref(false);
+async function submitLogin() {
+  loginLoading.value = true;
+  try {
+    await userStore.login();
+  } finally {
+    loginLoading.value = false;
   }
 }
 function onReset() {
-  username.value = null;
-  password.value = null;
-  accept.value = false;
+  userStore.username = '';
+  userStore.password = '';
 }
 </script>

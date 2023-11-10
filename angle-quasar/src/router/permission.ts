@@ -1,6 +1,6 @@
 import type { Router } from 'vue-router';
-import { useUserStore } from '@/stores/userStore';
-import { useMainStore } from '@/stores/mainStore';
+import { useUserStore } from '@/stores/user';
+import { useMainStore } from '@/stores/main';
 import { DialogEventEnum } from '@/enums/main';
 
 export function setupPageGuard(router: Router) {

@@ -1,12 +1,8 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 11:08:01
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-26 14:17:25
- * @FilePath: \angle-quasar\src\boot\axios.ts
- */
 import { boot } from 'quasar/wrappers';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { useUserStore } from '@/stores/user';
+import { isObject, encrypt, notify } from '@/utils';
+import Url from '@/axios/url';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -23,16 +19,14 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   timeout: 1000 * 60 * 5,
-  baseURL: 'http://loose.net.cn:9310',
 });
 api.interceptors.request.use(
   (config) => {
-    // 在发送请求之前做些什么
     // 添加请求前添加token
     const userStore = useUserStore();
-    const authStore = useAuthStore();
-    if (config.url !== request_url.login) {
-      config.headers['token'] = authStore.getToken;
+
+    if (config.url !== Url.login) {
+      config.headers['token'] = userStore.getToken;
       config.headers['username'] = encrypt(userStore.getUserName);
     }
     return config;
@@ -41,6 +35,36 @@ api.interceptors.request.use(
     return Promise.reject(error.response);
   }
 );
+// 响应拦截器
+api.interceptors.response.use(
+  (response: AxiosResponse) => {
+    const status =
+      isObject(response.data) && response.data.status
+        ? response.data.status
+        : '0';
+    if (status !== '0') {
+      notify({
+        message: response.data.message,
+        type: 'negative',
+      });
+    }
+    return response;
+  },
+  (error) => {
+    let message = '';
+    if (error.toString().includes('500') || error.toString().includes('502')) {
+      message = '服务未启动!';
+    } else {
+      message = '服务出错!';
+    }
+    notify({
+      message,
+      type: 'negative',
+    });
+    return Promise.reject(error);
+  }
+);
+
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 

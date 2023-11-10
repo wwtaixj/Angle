@@ -102,8 +102,8 @@ module.exports = configure(function (/* ctx */) {
       port: 9999,
       proxy: {
         '/api': {
-          target: 'http://loose.net.cn:9310',
-          //target: 'http://localhost:9310',
+          //target: 'http://loose.net.cn:9310',
+          target: 'http://localhost:9310',
           changeOrigin: true,
           ws: true,
         },
@@ -124,7 +124,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['LocalStorage', 'SessionStorage'],
+      plugins: ['LocalStorage', 'SessionStorage', 'Notify'],
     },
 
     // animations: 'all', // --- includes all animations

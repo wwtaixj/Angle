@@ -8,6 +8,7 @@
 // 侧边栏key
 export enum SideListKeyEnum {
   CHAT = 'chat',
+  PHOTO = 'photo',
 }
 export enum DialogEventEnum {
   CHAT = SideListKeyEnum.CHAT,
