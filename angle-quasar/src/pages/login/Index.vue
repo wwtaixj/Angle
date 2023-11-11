@@ -1,15 +1,14 @@
-<!--
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-16 18:37:20
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-25 17:27:42
- * @FilePath: \Angle\angle-quasar\src\pages\login\Index.vue
--->
 <template>
   <div class="q-pa-lg position-relative">
-    <LoginForm />
+    <LoginForm v-show="loginDialogType === LoginDialogTypeEnum.LOGIN" />
+    <RegisterForm v-show="loginDialogType === LoginDialogTypeEnum.REGISTER" />
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from 'vue';
 import LoginForm from './components/LoginForm.vue';
+import RegisterForm from './components/RegisterForm.vue';
+import { LoginDialogTypeEnum } from '@/enums/login';
+
+const loginDialogType = ref<LoginDialogTypeEnum>(LoginDialogTypeEnum.LOGIN);
 </script>

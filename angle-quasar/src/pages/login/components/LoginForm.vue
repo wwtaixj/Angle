@@ -4,6 +4,10 @@
     @submit="submitLogin"
     @reset="onReset"
     class="q-gutter-md q-x-md"
+    autocorrect="off"
+    autocapitalize="off"
+    autocomplete="off"
+    spellcheck="false"
   >
     <q-input
       v-model="userStore.username"
@@ -35,7 +39,7 @@
         :loading="loginLoading"
       />
       <q-space />
-      <q-btn outline label="注册" class="full-width" color="primary" />
+      <XButton outline label="注册" class="full-width" color="primary" />
     </div>
   </q-form>
 </template>
