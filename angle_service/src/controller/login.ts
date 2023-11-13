@@ -4,7 +4,7 @@ import { decrypt, encrypt } from '../utils/cryptoJs';
 import { GlobalResponse, GlobalRequest } from '@/types';
 import { LoginParams, LoginResponse, LogoutParams } from './types';
 import { User } from '@/db/types';
-import Cache from '@/utils/nodeCache';
+import Cache from '@/stores/user';
 
 export const login = async (
   req: GlobalRequest<LoginParams>,
@@ -55,7 +55,7 @@ export const login = async (
     // 登录添加权限列表到缓存
     const [userList] = await getUserPermissions(hashedUsername);
 
-    Cache.set(hashedUsername, userList);
+    Cache.set(hashedUsername, userList, 3600 * 8);
     // 返回包含 token、status 和 message 的 JSON 响应
     return res.json({
       status: '0',

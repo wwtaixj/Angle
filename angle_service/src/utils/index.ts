@@ -3,7 +3,29 @@ export * from './chatGPT';
 export * from './is';
 export * from './nodeCache';
 export * from './tool';
+export function generateRandomCode(
+  length: number,
+  type: 'number' | 'string' = 'number'
+): string {
+  // 定义包含所有可能字符的字符串
+  const characters: string =
+    type === 'number'
+      ? '0123456789'
+      : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  // 初始化代码字符串
+  let code: string = '';
 
+  // 循环生成指定长度的随机代码
+  for (let i: number = 0; i < length; i++) {
+    // 生成随机索引
+    const randomIndex: number = Math.floor(Math.random() * characters.length);
+    // 将随机字符添加到代码字符串中
+    code += characters.charAt(randomIndex);
+  }
+
+  // 返回生成的随机代码
+  return code;
+}
 interface SendResponseOptions<T = any> {
   type: '0' | 'Fail';
   message?: string;
@@ -76,20 +98,3 @@ export const formatDate = () => {
   const seconds = date.getSeconds().toString().padStart(2, '0');
   return `${year}${month}${day}${hours}${minutes}${seconds}`;
 };
-
-export function getEmailServiceProvider(email: string) {
-  const emailProviders = [
-    { name: 'Gmail', domain: /@gmail\.com$/ },
-    { name: 'QQ邮箱', domain: /@(qq|foxmail)\.(com|cn)$/ },
-    { name: '163邮箱', domain: /@163\.com$/ },
-    // 添加更多的邮箱服务提供商及其对应的域名正则表达式...
-  ];
-
-  for (const provider of emailProviders) {
-    if (provider.domain.test(email)) {
-      return provider.name;
-    }
-  }
-
-  return '其他邮箱'; // 如果没有匹配到常见的邮箱服务提供商，则返回"其他邮箱"
-}

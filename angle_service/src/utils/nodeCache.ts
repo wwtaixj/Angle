@@ -14,8 +14,8 @@ class Cache {
     return this.cache.get<T>(key);
   }
 
-  set<T>(key: NodeCache.Key, value: T) {
-    return this.cache.set(key, value);
+  set<T>(key: NodeCache.Key, value: T, ttl?: number | string) {
+    return this.cache.set(key, value, ttl);
   }
 
   del(keys: NodeCache.Key | NodeCache.Key[]) {
@@ -33,4 +33,4 @@ class Cache {
   }
 }
 
-export default new Cache();
+export default Cache;

@@ -4,7 +4,7 @@ import { getUserPermissions } from '@/db/user';
 import { RolesJoinApiPermissions } from '@/db/types';
 import { GlobalResponse, GlobalRequest } from '@/types';
 import { Url } from '@/enums/url';
-import Cache from '@/utils/nodeCache';
+import Cache from '@/stores/user';
 
 /**
  * token 校验

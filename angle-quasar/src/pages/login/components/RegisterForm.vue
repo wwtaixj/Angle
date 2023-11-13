@@ -66,6 +66,7 @@
 import { ref, reactive } from 'vue';
 import { useI18n } from '@/boot/i18n';
 //import { QFormProps } from 'quasar';
+import { encrypt } from '@/utils';
 import { getLoginFormRules } from './constant';
 import { useUserStore } from '@/stores/user';
 import { LoginDialogTypeEnum } from '@/enums/login';
@@ -95,7 +96,12 @@ async function beforeSend() {
 async function submitRegister() {
   registerLoading.value = true;
   try {
-    await userStore.register(registerForm);
+    await userStore.register({
+      username: encrypt(registerForm.username),
+      password: encrypt(registerForm.password),
+      email: registerForm.email,
+      verCode: registerForm.verCode,
+    });
   } finally {
     registerLoading.value = false;
   }

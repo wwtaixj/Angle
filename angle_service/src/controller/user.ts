@@ -1,9 +1,10 @@
 import db from '../db';
 import tool from '../utils/tool';
 import nodeMailer from 'nodemailer';
-import { decrypt, getEmailServiceProvider } from '@/utils';
+import { decrypt, generateRandomCode } from '@/utils';
 import { GlobalResponse, GlobalRequest } from '@/types';
 import { RegisterParams, SendVerificationCodeParams } from './types';
+import verCodeCache from '@/stores/VerificationCode';
 
 /**
  * /api/user 获取所有用户
@@ -248,10 +249,10 @@ export async function sendVerificationCode(
   req: GlobalRequest<SendVerificationCodeParams>,
   res: GlobalResponse<null>
 ) {
-  let status = '1',
-    message = '';
+  let status = '1';
   try {
     const { email } = req.body;
+    const verCode = generateRandomCode(6);
     // 创建一个SMTP传输对象
     const transporter = nodeMailer.createTransport({
       service: 'QQ邮箱', // 使用的邮箱服务提供商，例如Gmail、QQ邮箱等
@@ -265,30 +266,31 @@ export async function sendVerificationCode(
     const mailOptions = {
       from: '761359511@qq.com', // 发件人邮箱
       to: email, // 收件人邮箱
-      subject: '验证码', // 邮件主题
-      text: '您的验证码是：123456', // 邮件正文，可以是纯文本或HTML格式
+      subject: `电子邮件验证码：${verCode}`, // 邮件主题
+      html: `Angle收到了将<span style="font-weight: bold; color: #1976d2;">${email}</span>申请账号的请求。</br>
+       请使用此验证码完成账号注册:&nbsp;&nbsp; <span style="font-weight: bold; font-size: 20px;">${verCode}</span>`, // 邮件正文
     };
 
     // 发送邮件
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         status = '2';
-        message = '发送邮件失败';
-        console.log('发送邮件失败：', error);
+        throw new Error('发送邮件失败');
       } else {
-        status = '0';
-        message = '邮件发送成功';
-        console.log('邮件发送成功：', info.response);
+        verCodeCache.set(email, verCode, 60);
+        return res.json({
+          status: '0',
+          message: '邮件发送成功',
+        });
       }
     });
   } catch (e) {
     console.log(e);
-    let { code } = e;
+    let { code, message } = e;
     if (code) {
       status = code;
       message = '系统内部异常！';
     }
-  } finally {
     return res.json({
       status,
       message,
@@ -303,15 +305,23 @@ export async function register(
   try {
     // 解析参数
     const { username, password, email, verCode } = req.body;
-    if (!username || !password) {
+    if (!username || !password || !email) {
       status = '-1';
       throw new Error('参数错误');
     }
+    console.log(verCodeCache.get(email));
+    if (!verCodeCache.get(email)) throw new Error('验证码超时');
+    if (verCodeCache.get(email) !== verCode) {
+      status = '-2';
+      throw new Error('验证码错误');
+    }
     const sql =
-      'INSERT INTO users (username, password, avatar_url, gender, tag, phone, age) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      'INSERT INTO users (username, password, email, status) VALUES (?, ?, ?> ?)';
     const [result] = await db.query(sql, [
       decrypt(username),
       decrypt(password),
+      email,
+      '1',
     ]);
     if (result['serverStatus'] === 2) {
       res.send({
