@@ -1,5 +1,10 @@
 import { decrypt } from '../utils/cryptoJs';
-import db from '../db';
+import { NextFunction } from 'express';
+import { getUserPermissions } from '@/db/user';
+import { RolesJoinApiPermissions } from '@/db/types';
+import { GlobalResponse, GlobalRequest } from '@/types';
+import { Url } from '@/enums/url';
+import Cache from '@/utils/nodeCache';
 
 /**
  * token 校验
@@ -8,15 +13,27 @@ import db from '../db';
  * @param {*} next
  * @returns
  */
-export const authentication = async (req, res, next) => {
+export const authentication = async (
+  req: GlobalRequest<any>,
+  res: GlobalResponse<any>,
+  next: NextFunction
+) => {
   let status = '1000';
   try {
-    const headerUserName = decrypt(req.headers.username);
-    const [username, oldDate] = decrypt(req.headers.token).split(',');
+    if (req.url === Url.API + Url.LOGIN) {
+      next();
+      return;
+    }
+    if (!req.headers.username || !req.headers.token) {
+      throw new Error('身份认证异常！');
+    }
+    const headerUserName = decrypt(req.headers.username as string);
+    const [username, oldDate] = decrypt(req.headers.token as string).split(',');
     if (!headerUserName || !username) {
       status = '1001';
       throw new Error('无权访问');
     }
+
     if (headerUserName !== username) {
       status = '1001';
       throw new Error('身份信息错误');
@@ -27,6 +44,7 @@ export const authentication = async (req, res, next) => {
       3600000 * Number(process.env.LOGIN_TIMEOUT)
     ) {
       status = '1002';
+      Cache.del(headerUserName);
       throw new Error('登录超时');
     }
     next();
@@ -50,29 +68,37 @@ export const authentication = async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  */
-export const apiPermission = async (req, res, next) => {
+export const apiPermission = async (
+  req: GlobalRequest<any>,
+  res: GlobalResponse<any>,
+  next: NextFunction
+) => {
   let status = '1';
   try {
-    const headerUserName = decrypt(req.headers.username);
-    const sql = `SELECT api_permissions.api_name, api_permissions.api_type
-    FROM users
-    JOIN roles ON users.role_id = roles.id
-    JOIN roles_relation_api_permissions ON roles.id = roles_relation_api_permissions.role_id
-    JOIN api_permissions ON roles_relation_api_permissions.api_permission_id = api_permissions.id
-    WHERE users.username = ?`;
-
-    const [userList] = await db.query(sql, [headerUserName]);
-    if ((userList as Array<any>).length === 0) {
+    const headerUserName = decrypt(
+      (req.headers.username as string) || req.body.username
+    );
+    // 登录
+    if (req.url === Url.API + Url.LOGIN) {
+      next();
+      return;
+    }
+    // 退出登录
+    if (req.url === Url.API + Url.LOGOUT) {
+      next();
+      return;
+    }
+    let permissions = Cache.get<RolesJoinApiPermissions[]>(headerUserName);
+    if (!permissions) {
+      permissions = (await getUserPermissions(headerUserName))[0];
+    }
+    if (permissions.length === 0) {
       status = '1003';
       throw new Error('此账号没有权限');
     }
     const method = req.method.toLocaleLowerCase();
     const url = req.originalUrl.split('?')[0];
-    if (
-      !(userList as Array<any>).some(
-        (i) => i.api_name === url && i.api_type === method
-      )
-    ) {
+    if (!permissions.some((i) => i.api_name === url && i.api_type === method)) {
       status = '1004';
       throw new Error('账号权限不足');
     }

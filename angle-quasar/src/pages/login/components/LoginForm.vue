@@ -39,7 +39,13 @@
         :loading="loginLoading"
       />
       <q-space />
-      <XButton outline label="注册" class="full-width" color="primary" />
+      <XButton
+        outline
+        label="注册"
+        class="full-width"
+        color="primary"
+        @click="loginStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER)"
+      />
     </div>
   </q-form>
 </template>
@@ -49,11 +55,14 @@ import { useI18n } from '@/boot/i18n';
 import { QFormProps } from 'quasar';
 import { getLoginFormRules } from './constant';
 import { useUserStore } from '@/stores/user';
+import { useLoginStore } from '@/stores/login';
 import { XButton } from '@/components/button';
+import { LoginDialogTypeEnum } from '@/enums/login';
 
 const { t } = useI18n();
 const loginForm = ref<QFormProps>();
 const userStore = useUserStore();
+const loginStore = useLoginStore();
 const loginLoading = ref(false);
 async function submitLogin() {
   loginLoading.value = true;

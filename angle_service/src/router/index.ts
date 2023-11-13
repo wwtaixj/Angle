@@ -1,9 +1,9 @@
 import * as dotenv from 'dotenv';
-import { login } from '../controller/login';
+import { login, logout } from '../controller/login';
 import { uploadPhoto, upload } from '../controller/photo';
 import express from 'express';
-import { authentication, apiPermission } from '../auth';
 import { chatProcess, config } from '../controller/chat';
+import { Url } from '@/enums/url';
 import {
   getAllUser,
   addUser,
@@ -23,39 +23,19 @@ const router = express.Router();
 
 // 挂载路由规划
 //login
-router.post('/v1/login', login);
+router.post(Url.LOGIN, login);
+router.post(Url.LOGOUT, logout);
 //user
-router.get('/v1/user', authentication, apiPermission, getAllUser);
-router.post('/v1/user', authentication, apiPermission, addUser);
-router.put('/v1/user', authentication, apiPermission, updateUser);
-router.delete('/v1/user', authentication, apiPermission, deleteUser);
-router.post('/v1/user/register', authentication, apiPermission, register);
-router.post(
-  '/v1/user/verificationCode',
-  authentication,
-  apiPermission,
-  sendVerificationCode
-);
-router.put(
-  '/v1/user/changePassword',
-  authentication,
-  apiPermission,
-  changePassword
-);
+router.get(Url.USER, getAllUser);
+router.post(Url.USER, addUser);
+router.put(Url.USER, updateUser);
+router.delete(Url.USER, deleteUser);
+router.post(Url.REGISTER, register);
+router.post(Url.VERIFICATION_CODE, sendVerificationCode);
+router.put(Url.CHANGE_PASSWORD, changePassword);
 // photo
-router.post(
-  '/v1/uploadPhoto',
-  authentication,
-  apiPermission,
-  upload.single('images'),
-  uploadPhoto
-);
+router.post(Url.UPLOAD_PHOTO, upload.single('images'), uploadPhoto);
 // chatGPT
-router.post(
-  '/chat-process',
-  [authentication, limiter],
-  apiPermission,
-  chatProcess
-);
-router.post('/config', authentication, apiPermission, config);
+router.post(Url.CHAT_PROCESS, limiter, chatProcess);
+router.post(Url.CONFIG, config);
 export default router;

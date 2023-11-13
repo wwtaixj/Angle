@@ -57,7 +57,7 @@ export function login(data: Params.Login) {
 }
 export function loginOut(data: Params.LoginOut) {
   return post<undefined>({
-    url: request_url.login,
+    url: request_url.logout,
     data,
   });
 }

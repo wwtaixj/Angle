@@ -1,6 +1,7 @@
 export default {
   getAllPhoto: 'api/v1/getAllPhoto',
   login: 'api/v1/login',
+  logout: 'api/v1/logout',
   changeInfo: 'api/v1/user',
   changePssword: 'api/v1/user/changePassword',
   verCode: 'api/v1/user/verificationCode',

@@ -84,14 +84,17 @@ export const useUserStore = defineStore('user', {
       this.loginState = state;
     },
     async loginOut() {
-      const { t } = useI18n();
-      const result = await login({
-        token: useAuthStore().getToken
-      });
-      resultPrompt(result, t('Sign out successfully'));
-      sStorage.clear();
-      await router.push('/login');
-      location.href = '/';
+      try {
+        const { t } = useI18n();
+        const result = await login({
+          token: useAuthStore().getToken
+        });
+        resultPrompt(result, t('Sign out successfully'));
+        sStorage.clear();
+        await router.push('/login');
+      } catch (e) {
+        throw new Error('logout failed');
+      }
     },
     setUserInfo(user: Omit<UserForm, 'password'>) {
       const { username, phone, age, gender, avatarUrl, label } = user;

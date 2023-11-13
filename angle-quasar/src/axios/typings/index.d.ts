@@ -17,6 +17,7 @@ export declare namespace Params {
   }
   interface LoginOut {
     token: string;
+    username: string;
   }
   interface UpdateUser {
     age: string;

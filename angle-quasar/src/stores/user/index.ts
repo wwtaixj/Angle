@@ -272,6 +272,7 @@ export const useUserStore = defineStore('user', {
       const { t } = useI18n();
       const result = await loginOut({
         token: this.getToken,
+        username: encrypt(this.getUserName),
       });
       resultPrompt(result, { message: t('Sign out successfully') }, () => {
         this.resetUserInfo();
