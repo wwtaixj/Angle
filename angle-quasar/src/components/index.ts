@@ -1,4 +1,5 @@
-export * from './dialog';
-export * from './button';
+export * from './Dialog';
+export * from './Button';
 export * from './PopupEdit';
 export * from './InputPopupEdit';
+export * from './Input';

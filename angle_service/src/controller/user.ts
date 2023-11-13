@@ -1,7 +1,9 @@
 import db from '../db';
 import tool from '../utils/tool';
 import nodeMailer from 'nodemailer';
-import { decrypt } from '../utils/cryptoJs';
+import { decrypt, getEmailServiceProvider } from '@/utils';
+import { GlobalResponse, GlobalRequest } from '@/types';
+import { RegisterParams, SendVerificationCodeParams } from './types';
 
 /**
  * /api/user 获取所有用户
@@ -242,38 +244,65 @@ export async function changePassword(req, res) {
   }
 }
 
-export async function sendVerificationCode(req, res) {
-  // 创建一个SMTP传输对象
-  const transporter = nodeMailer.createTransport({
-    service: 'Gmail', // 使用的邮箱服务提供商，例如Gmail、QQ邮箱等
-    auth: {
-      user: 'your-email@gmail.com', // 发送验证码的邮箱地址
-      pass: 'your-password', // 邮箱密码或授权码
-    },
-  });
+export async function sendVerificationCode(
+  req: GlobalRequest<SendVerificationCodeParams>,
+  res: GlobalResponse<null>
+) {
+  let status = '1',
+    message = '';
+  try {
+    const { email } = req.body;
+    // 创建一个SMTP传输对象
+    const transporter = nodeMailer.createTransport({
+      service: 'QQ邮箱', // 使用的邮箱服务提供商，例如Gmail、QQ邮箱等
+      auth: {
+        user: '761359511@qq.com', // 发送验证码的邮箱地址
+        pass: 'cfmmlhngdxeabbhe', // 邮箱密码或授权码
+      },
+    });
 
-  // 定义要发送的邮件内容
-  const mailOptions = {
-    from: 'your-email@gmail.com', // 发件人邮箱
-    to: 'recipient-email@example.com', // 收件人邮箱
-    subject: '验证码', // 邮件主题
-    text: '您的验证码是：123456', // 邮件正文，可以是纯文本或HTML格式
-  };
+    // 定义要发送的邮件内容
+    const mailOptions = {
+      from: '761359511@qq.com', // 发件人邮箱
+      to: email, // 收件人邮箱
+      subject: '验证码', // 邮件主题
+      text: '您的验证码是：123456', // 邮件正文，可以是纯文本或HTML格式
+    };
 
-  // 发送邮件
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log('发送邮件失败：', error);
-    } else {
-      console.log('邮件发送成功：', info.response);
+    // 发送邮件
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        status = '2';
+        message = '发送邮件失败';
+        console.log('发送邮件失败：', error);
+      } else {
+        status = '0';
+        message = '邮件发送成功';
+        console.log('邮件发送成功：', info.response);
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    let { code } = e;
+    if (code) {
+      status = code;
+      message = '系统内部异常！';
     }
-  });
+  } finally {
+    return res.json({
+      status,
+      message,
+    });
+  }
 }
-export async function register(req, res) {
+export async function register(
+  req: GlobalRequest<RegisterParams>,
+  res: GlobalResponse<null>
+) {
   let status = '1';
   try {
     // 解析参数
-    const { avatarUrl, gender, tag, phone, age, username, password } = req.body;
+    const { username, password, email, verCode } = req.body;
     if (!username || !password) {
       status = '-1';
       throw new Error('参数错误');
@@ -283,11 +312,6 @@ export async function register(req, res) {
     const [result] = await db.query(sql, [
       decrypt(username),
       decrypt(password),
-      avatarUrl,
-      gender,
-      tag,
-      decrypt(phone),
-      age,
     ]);
     if (result['serverStatus'] === 2) {
       res.send({

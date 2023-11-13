@@ -81,3 +81,10 @@ export function register(data: Params.register) {
     data,
   });
 }
+
+export function sendVerCode(data: Params.verCode) {
+  return post<undefined>({
+    url: request_url.verCode,
+    data,
+  });
+}

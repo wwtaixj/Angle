@@ -1,3 +1,9 @@
+export * from './cryptoJs';
+export * from './chatGPT';
+export * from './is';
+export * from './nodeCache';
+export * from './tool';
+
 interface SendResponseOptions<T = any> {
   type: '0' | 'Fail';
   message?: string;
@@ -70,3 +76,20 @@ export const formatDate = () => {
   const seconds = date.getSeconds().toString().padStart(2, '0');
   return `${year}${month}${day}${hours}${minutes}${seconds}`;
 };
+
+export function getEmailServiceProvider(email: string) {
+  const emailProviders = [
+    { name: 'Gmail', domain: /@gmail\.com$/ },
+    { name: 'QQ邮箱', domain: /@(qq|foxmail)\.(com|cn)$/ },
+    { name: '163邮箱', domain: /@163\.com$/ },
+    // 添加更多的邮箱服务提供商及其对应的域名正则表达式...
+  ];
+
+  for (const provider of emailProviders) {
+    if (provider.domain.test(email)) {
+      return provider.name;
+    }
+  }
+
+  return '其他邮箱'; // 如果没有匹配到常见的邮箱服务提供商，则返回"其他邮箱"
+}

@@ -61,7 +61,7 @@ import { getSideList } from './constant';
 import { useMainStore } from '@/stores/main';
 import Chat from '@/pages/chat/Index.vue';
 import Login from '@/pages/login/Index.vue';
-import { XDialog, DialogTypeEnum } from '@/components/dialog';
+import { XDialog, DialogTypeEnum } from '@/components';
 import Account from '@/pages/account/Index.vue';
 
 const mainStore = useMainStore();

@@ -32,11 +32,15 @@ export declare namespace Params {
     newPassword: string;
     password?: string;
     username: string;
-    emailCode?: string;
+    verCode?: string;
   }
   interface register {
     username: string;
     password: string;
+    email: string;
+    verCode: string;
+  }
+  interface verCode {
     email: string;
   }
 }

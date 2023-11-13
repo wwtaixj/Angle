@@ -20,7 +20,12 @@ export const authentication = async (
 ) => {
   let status = '1000';
   try {
-    if (req.url === Url.API + Url.LOGIN) {
+    if (
+      req.url === Url.API + Url.LOGIN ||
+      req.url === Url.API + Url.REGISTER ||
+      req.url === Url.API + Url.LOGOUT ||
+      req.url === Url.API + Url.VERIFICATION_CODE
+    ) {
       next();
       return;
     }
@@ -78,13 +83,13 @@ export const apiPermission = async (
     const headerUserName = decrypt(
       (req.headers.username as string) || req.body.username
     );
-    // 登录
-    if (req.url === Url.API + Url.LOGIN) {
-      next();
-      return;
-    }
-    // 退出登录
-    if (req.url === Url.API + Url.LOGOUT) {
+    // 登录 退出登录 注册逃过
+    if (
+      req.url === Url.API + Url.LOGIN ||
+      req.url === Url.API + Url.REGISTER ||
+      req.url === Url.API + Url.LOGOUT ||
+      req.url === Url.API + Url.VERIFICATION_CODE
+    ) {
       next();
       return;
     }

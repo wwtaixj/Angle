@@ -1,17 +1,25 @@
 import { defineStore } from 'pinia';
 import { LOCALE } from '@/i18n';
 import { setLocale } from '@/boot/i18n';
-import { lStorage, sStorage } from '@/utils/webStorage';
-import { getNavLanguage } from '@/utils/local';
-import { isNull, isString, isBoolean } from '@/utils/is';
 import { LoginStateEnum } from '@/enums/main';
 import { Location } from '../typings/main';
 import { Gender } from '@/axios/typings';
 import { Dark } from 'quasar';
-import { login, loginOut } from '@/axios';
-import { resultPrompt, encrypt, decrypt } from '@/utils';
+import { login, loginOut, register, sendVerCode } from '@/axios';
 import { useMainStore } from '../main';
 import { useI18n } from '@/boot/i18n';
+import { LoginDialogTypeEnum } from '@/enums/login';
+import { Params } from '@/axios/typings';
+import {
+  getNavLanguage,
+  lStorage,
+  sStorage,
+  isString,
+  isBoolean,
+  resultPrompt,
+  encrypt,
+  decrypt,
+} from '@/utils';
 
 interface UserState {
   locale: LOCALE;
@@ -20,7 +28,7 @@ interface UserState {
   avatarUrl: string;
   token: string;
   loginState: LoginStateEnum;
-  SMSCode: string;
+  verCode: string;
   username: string;
   password: string;
   remember: boolean;
@@ -32,6 +40,8 @@ interface UserState {
   againNewPassword: string;
   description: string;
   email: string;
+  loginDialogType: LoginDialogTypeEnum;
+  verCodeTimer: number;
 }
 
 export const useUserStore = defineStore('user', {
@@ -41,7 +51,7 @@ export const useUserStore = defineStore('user', {
     avatarUrl: 'public\\icons\\default_icon.png',
     token: '',
     loginState: LoginStateEnum.LOGIN,
-    SMSCode: '',
+    verCode: '',
     username: '',
     phone: '',
     location: { longitude: 0, latitude: 0 },
@@ -54,6 +64,8 @@ export const useUserStore = defineStore('user', {
     email: '',
     newPassword: '', // 新密码
     againNewPassword: '',
+    loginDialogType: LoginDialogTypeEnum.LOGIN,
+    verCodeTimer: 0,
   }),
   getters: {
     getToken(state) {
@@ -199,6 +211,9 @@ export const useUserStore = defineStore('user', {
       this.email = email;
       lStorage.set('EMAIL', email);
     },
+    setLoginDialogType(type: LoginDialogTypeEnum) {
+      this.loginDialogType = type;
+    },
     /**
      * @description 登录
      */
@@ -274,10 +289,36 @@ export const useUserStore = defineStore('user', {
         token: this.getToken,
         username: encrypt(this.getUserName),
       });
-      resultPrompt(result, { message: t('Sign out successfully') }, () => {
+      resultPrompt(result, { message: t('SignOutSuccessfully') }, () => {
         this.resetUserInfo();
         useMainStore().closeDialog();
       });
+    },
+    /**
+     * @description 注册
+     */
+    async register(data: Params.register) {
+      const { t } = useI18n();
+      const result = await register(data);
+      resultPrompt(
+        result,
+        { message: t('login.SuccessfulRegistration') },
+        () => {
+          useMainStore().closeDialog();
+        }
+      );
+    },
+    /**
+     * @description 发送验证码
+     */
+    async sendVerCode(email: string) {
+      //const { t } = useI18n();
+      let status = false;
+      const result = await sendVerCode({ email });
+      resultPrompt(result, { message: '验证码已发送' }, () => {
+        status = true;
+      });
+      return status;
     },
   },
 });

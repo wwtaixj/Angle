@@ -1,10 +1,3 @@
-<!--
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 18:30:11
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-16 18:02:02
- * @FilePath: \angle-quasar\src\pages\chat\Index.vue
--->
 <template>
   <div class="WAL position-relative bg-grey-4" :style="style">
     <q-layout view="lHh Lpr lFf" class="WAL__layout shadow-3" container>

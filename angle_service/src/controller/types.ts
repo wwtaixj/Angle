@@ -1,5 +1,14 @@
 import type { ChatMessage } from 'chatgpt';
 
+export interface SendVerificationCodeParams {
+  email: string;
+}
+export interface RegisterParams {
+  username: string;
+  password: string;
+  email: string;
+  verCode: string;
+}
 export interface RequestOptions {
   message: string;
   lastContext?: { conversationId?: string; parentMessageId?: string };

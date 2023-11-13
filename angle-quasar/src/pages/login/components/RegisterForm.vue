@@ -1,30 +1,47 @@
 <template>
   <q-form
-    ref="registerForm"
+    ref="registerFormRef"
     @submit="submitRegister"
-    @reset="onReset"
     class="q-gutter-md q-x-md"
   >
-    <q-input
-      v-model="userStore.username"
+    <XInput
+      v-model="registerForm.username"
       :label="t('login.Username') + '*'"
       lazy-rules
       :rules="getLoginFormRules().username"
     />
 
-    <q-input
-      type="password"
-      v-model="userStore.password"
-      :label="t('login.Password') + '*'"
+    <XInputPassword
+      v-model="registerForm.password"
+      :label="'设置密码' + '*'"
       lazy-rules
       :rules="getLoginFormRules().password"
     />
-    <q-toggle
-      :label="t('login.RememberMe')"
-      v-model="userStore.remember"
-      checked-icon="check"
-      unchecked-icon="clear"
+    <XInputPassword
+      v-model="registerForm.confirmPassword"
+      :label="'确认密码' + '*'"
+      lazy-rules
+      :rules="getLoginFormRules().password"
     />
+    <XInput
+      ref="emailRef"
+      v-model="registerForm.email"
+      :label="'邮箱' + '*'"
+      lazy-rules
+      :rules="getLoginFormRules().email"
+    />
+    <XInput
+      v-model="registerForm.verCode"
+      :label="'验证码' + '*'"
+      :rules="getLoginFormRules().verCode"
+    >
+      <template v-slot:after>
+        <XButtonVerifyCode
+          v-model="userStore.verCodeTimer"
+          :before-click="beforeSend"
+        />
+      </template>
+    </XInput>
 
     <div class="q-gutter-md">
       <XButton
@@ -37,38 +54,50 @@
       <q-space />
       <XButton
         outline
-        label="注册"
+        :label="t('login.GoBack')"
         class="full-width"
         color="primary"
-        @click="loginStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER)"
+        @click="userStore.setLoginDialogType(LoginDialogTypeEnum.LOGIN)"
       />
     </div>
   </q-form>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { useI18n } from '@/boot/i18n';
 //import { QFormProps } from 'quasar';
 import { getLoginFormRules } from './constant';
 import { useUserStore } from '@/stores/user';
-import { useLoginStore } from '@/stores/login';
 import { LoginDialogTypeEnum } from '@/enums/login';
-import { XButton } from '@/components/button';
+import {
+  XButton,
+  XInput,
+  XInputPassword,
+  XButtonVerifyCode,
+} from '@/components';
 
 const { t } = useI18n();
 const userStore = useUserStore();
-const loginStore = useLoginStore();
 const registerLoading = ref(false);
+const emailRef = ref<typeof XInput>();
+const registerForm = reactive({
+  username: '',
+  password: '',
+  confirmPassword: '',
+  email: '',
+  verCode: '',
+});
+async function beforeSend() {
+  const isTrue = await emailRef.value?.$refs.inputRef.validate();
+  if (!isTrue) return isTrue;
+  return await userStore.sendVerCode(registerForm.email);
+}
 async function submitRegister() {
   registerLoading.value = true;
   try {
-    await userStore.login();
+    await userStore.register(registerForm);
   } finally {
     registerLoading.value = false;
   }
-}
-function onReset() {
-  userStore.username = '';
-  userStore.password = '';
 }
 </script>

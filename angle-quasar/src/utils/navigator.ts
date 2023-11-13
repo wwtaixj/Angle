@@ -1,27 +1,29 @@
-export const getNavLanguage = (lang = 'zh-cn'): string => {
+export const getNavLanguage = (): string => {
+  let locale = '';
   if (typeof navigator === 'undefined') {
-    return lang;
+    return locale;
   }
   if (navigator.languages && navigator.languages.length) {
     // 支持HTML5的浏览器语言设置
-    lang = navigator.languages[0];
+    locale = navigator.languages[0];
   } else if ((navigator as any).userLanguage) {
     // IE浏览器使用用户操作系统语言
-    lang = (navigator as any).userLanguage;
+    locale = (navigator as any).userLanguage;
   } else {
     // 其他浏览器使用浏览器默认语言
-    lang =
+    locale =
       navigator.language ||
       (navigator as any).browserLanguage ||
       (navigator as any).systemLanguage ||
       (navigator as any).userLanguage ||
       '';
   }
-  if (lang && lang.indexOf('_') !== -1) {
+  if (locale && locale.indexOf('_') !== -1) {
     // 将语言转换成带下划线的格式
-    lang = lang.split('_')[0] + '-' + lang.split('_')[1];
+    locale = locale.split('_')[0] + '-' + locale.split('_')[1];
   }
-  return lang.toLowerCase();
+  if (locale === 'en') return 'en-US';
+  return locale;
 };
 interface Position {
   latitude: number;

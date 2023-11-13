@@ -55,6 +55,7 @@ export function resultPrompt<T>(
 export * from './cryptoJs';
 export * from './indexedDB';
 export * from './is';
-export * from './local';
 export * from './message';
 export * from './webStorage';
+export * from './timer';
+export * from './navigator';

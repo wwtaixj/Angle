@@ -90,7 +90,7 @@ export async function logout(
 ) {
   let status = '1';
   try {
-    const { username, token } = req.body;
+    const { username } = req.body;
     const hashedUsername = decrypt(username);
     Cache.del(hashedUsername);
     return res.json({

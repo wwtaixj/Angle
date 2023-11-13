@@ -1,5 +1,5 @@
 <template>
-  <q-btn v-bind="options">
+  <q-btn v-bind="useAttrs()">
     <slot />
     <template v-slot:loading>
       <template v-if="slots.loading">
@@ -10,18 +10,12 @@
   </q-btn>
 </template>
 <script lang="ts" setup>
-import { PropType, useSlots } from 'vue';
-import { QBtnProps, QBtnSlots } from 'quasar';
+import { useSlots, useAttrs } from 'vue';
+import { QBtnSlots } from 'quasar';
 
 const slots: Partial<QBtnSlots> = useSlots();
 
 defineOptions({
   name: 'XButton',
-});
-defineProps({
-  options: {
-    type: Object as PropType<QBtnProps>,
-    default: () => ({}),
-  },
 });
 </script>

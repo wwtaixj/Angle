@@ -44,7 +44,7 @@
         label="注册"
         class="full-width"
         color="primary"
-        @click="loginStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER)"
+        @click="register"
       />
     </div>
   </q-form>
@@ -55,14 +55,14 @@ import { useI18n } from '@/boot/i18n';
 import { QFormProps } from 'quasar';
 import { getLoginFormRules } from './constant';
 import { useUserStore } from '@/stores/user';
-import { useLoginStore } from '@/stores/login';
-import { XButton } from '@/components/button';
+import { useMainStore } from '@/stores/main';
+import { XButton } from '@/components';
 import { LoginDialogTypeEnum } from '@/enums/login';
 
 const { t } = useI18n();
 const loginForm = ref<QFormProps>();
 const userStore = useUserStore();
-const loginStore = useLoginStore();
+const mainStore = useMainStore();
 const loginLoading = ref(false);
 async function submitLogin() {
   loginLoading.value = true;
@@ -71,6 +71,10 @@ async function submitLogin() {
   } finally {
     loginLoading.value = false;
   }
+}
+function register() {
+  mainStore.setDialog({ title: '注册' });
+  userStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER);
 }
 function onReset() {
   userStore.username = '';
