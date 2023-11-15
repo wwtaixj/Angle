@@ -102,7 +102,7 @@ const search = ref('');
 function setCurrentConversation(id: number) {
   const chat = chatStore.getChatList[id];
   chatStore.setChatListSelectedId(chat.id);
-  router.replace({ name: 'Chat', params: { uuid: chatStore.active } });
+  router.replace({ name: 'Chat', params: { uuid: id } });
 }
 </script>
 <style lang="sass" scoped>
