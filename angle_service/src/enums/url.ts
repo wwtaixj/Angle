@@ -9,6 +9,7 @@ export enum Url {
   UPLOAD_PHOTO = '/v1/uploadPhoto',
   CHAT_PROCESS = '/chat-process',
   CONFIG = '/config',
+  SOCKET = '/socket.io',
 }
 
 export default Url;

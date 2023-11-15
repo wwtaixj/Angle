@@ -9,15 +9,14 @@
     autocomplete="off"
     spellcheck="false"
   >
-    <q-input
+    <XInput
       v-model="userStore.username"
       :label="t('login.Username') + '*'"
       lazy-rules
       :rules="getLoginFormRules().username"
     />
 
-    <q-input
-      type="password"
+    <XInputPassword
       v-model="userStore.password"
       :label="t('login.Password') + '*'"
       lazy-rules
@@ -56,7 +55,7 @@ import { QFormProps } from 'quasar';
 import { getLoginFormRules } from './constant';
 import { useUserStore } from '@/stores/user';
 import { useMainStore } from '@/stores/main';
-import { XButton } from '@/components';
+import { XButton, XInputPassword, XInput } from '@/components';
 import { LoginDialogTypeEnum } from '@/enums/login';
 
 const { t } = useI18n();

@@ -28,6 +28,7 @@ export interface LoginParams {
 }
 
 export interface LoginResponse {
+  id: number;
   token: string;
   phone: string;
   avatar_url: string;

@@ -1,4 +1,20 @@
 import { RowDataPacket } from 'mysql2';
+
+export interface SelectUserInfoRespone extends RowDataPacket {
+  id: number;
+  username: string;
+  password: string;
+  gender: string;
+  email: string;
+  phone: string;
+  avatar_url: string;
+  tag: string;
+}
+export interface SelectApiPermissionsRespone extends RowDataPacket {
+  api_name: string;
+  api_type: string;
+}
+
 export interface User extends RowDataPacket {
   id: number;
   username: string;
@@ -22,10 +38,6 @@ export interface Roles extends RowDataPacket {
   updateTime: string;
 }
 
-export interface RolesJoinApiPermissions extends RowDataPacket {
-  api_name: string;
-  api_type: string;
-}
 export interface ApiPermissions extends RowDataPacket {
   id: number;
   api_name: string;

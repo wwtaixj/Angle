@@ -15,7 +15,9 @@
       </q-drawer>
 
       <q-page-container>
-        <router-view />
+        <router-view v-slot="{ Component, route }">
+          <component :is="Component" :key="route.fullPath" />
+        </router-view>
       </q-page-container>
 
       <q-footer>
@@ -30,7 +32,7 @@
             v-model="message"
             placeholder="Type a message"
           />
-          <q-btn round flat icon="mic" />
+          <q-btn round flat icon="send" @click="onSend" :loading="sending" />
         </q-toolbar>
       </q-footer>
     </q-layout>
@@ -39,18 +41,34 @@
 
 <script lang="ts" setup>
 import { useQuasar } from 'quasar';
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, unref } from 'vue';
 import Header from './components/Header/Index.vue';
 import Side from './components/Side/Index.vue';
 // import { useMainStore } from '../../stores/main';
+import { useChatStore } from '@/stores/chat';
+import { useUserStore } from '@/stores/user';
 
 const $q = useQuasar();
+const chatStore = useChatStore();
+const userStore = useUserStore();
 const leftDrawerOpen = ref(false);
 const message = ref('');
+const sending = ref(false);
+
+// 监听服务器发送的消息
+chatStore.getSocket?.on(userStore.getUserName, (data) => {
+  sending.value = false;
+  console.log('Received message from server:', data);
+});
 
 const style = computed(() => ({
   height: $q.screen.height + 'px',
 }));
+function onSend() {
+  sending.value = true;
+  // 发送消息到服务器
+  chatStore.getSocket?.emit(userStore.getUserName, message.value);
+}
 </script>
 
 <style lang="sass" scoped>

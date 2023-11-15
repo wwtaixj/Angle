@@ -7,16 +7,13 @@ class Countdown {
     this.time = Date.now() + time * 1000;
     this.intervalId = null;
   }
-
   start(): void {
     if (this.intervalId) {
       throw new Error('Countdown timer is already running.');
     }
-
     this.intervalId = setInterval(() => {
       const currentTime = Date.now();
       const remainingTime = this.time - currentTime;
-
       if (remainingTime <= 0) {
         this.stop();
       } else {

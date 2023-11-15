@@ -24,6 +24,7 @@ api.interceptors.request.use(
   (config) => {
     // 添加请求前添加token
     const userStore = useUserStore();
+    console.log(config);
 
     if (config.url !== Url.login) {
       config.headers['token'] = userStore.getToken;

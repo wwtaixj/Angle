@@ -41,11 +41,11 @@
     <XDialog
       v-model="mainStore.dialog.visible"
       :type="dialogType"
-      :options="mainStore.dialog"
+      v-bind="mainStore.dialog"
       @hide="mainStore.resetDialog"
       persistent
     >
-      <Chat v-show="mainStore.dialog.event === DialogEventEnum.CHAT" />
+      <Chat v-if="mainStore.dialog.event === DialogEventEnum.CHAT" />
       <Login v-show="mainStore.dialog.event === DialogEventEnum.LOGIN" />
       <Account v-show="mainStore.dialog.event === DialogEventEnum.ACCOUNT" />
     </XDialog>

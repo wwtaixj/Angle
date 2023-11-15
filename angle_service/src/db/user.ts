@@ -1,15 +1,115 @@
 import db from './index';
 import { Sql } from '@/enums/sql';
-import { RolesJoinApiPermissions } from './types';
+import {
+  SelectUserInfoRespone,
+  SelectApiPermissionsRespone,
+  User,
+} from './types';
 
 /**
- * 异步函数，用于获取指定用户名的用户权限
+ * 用于获取指定用户名的用户权限
  * @param {string} username - 用户名
  * @returns {Promise<Array<Array<string|number>>} - 包含api名称和api类型的权限列表
  */
-export async function getUserPermissions(username: string) {
-  return await db.query<RolesJoinApiPermissions[]>(
-    Sql.ROLES_JOIN_API_PERMISSIONS,
+export async function getUserPermissions(username: User['username']) {
+  return await db.query<SelectApiPermissionsRespone[]>(
+    Sql.SELECT_API_PERMISSIONS_FROM_USERNAME,
     [username]
+  );
+}
+/**
+ * 用于查询用户信息
+ * @param {string} username - 用户名
+ * @returns {Promise<Array<Array<string|number>>} - 包含用户信息列表
+ */
+export async function selectUserInfo(username: User['username']) {
+  return await db.query<SelectUserInfoRespone[]>(
+    Sql.SELECT_USER_FROM_USERNAME,
+    [username]
+  );
+}
+export async function selectUserInfoWhereAllDB(
+  params: Omit<User, 'role_id' | 'id'>
+) {
+  let fieldsStr = ``,
+    values = [];
+  for (let key of Object.keys(params)) {
+    if (params[key]) {
+      fieldsStr += fieldsStr ? ` AND ${key} = ? ` : ` ${key} = ? `;
+      values.push(params[key]);
+    }
+  }
+  return await db.query<User[]>(
+    `select * from users where ${fieldsStr}`,
+    values.filter(Boolean)
+  );
+}
+/**
+ * 用于模糊查询所有用户信息
+ * @returns {Promise<Array<Array<string|number>>} - 所有用户信息列表
+ */
+export async function selectUserInfoLikeAll(
+  params?: Omit<User, 'role_id' | 'id'>
+) {
+  const { username, avatarUrl, tag, phone, age, email } = params;
+  return await db.query<User[]>(
+    `SELECT * FROM users
+    WHERE 1=1
+    ${username ? 'AND username LIKE ?' : ''}
+    ${avatarUrl ? 'AND avatar_url LIKE ?' : ''}
+    ${tag ? 'AND tag LIKE ?' : ''}
+    ${phone ? 'AND phone LIKE ?' : ''}
+    ${email ? 'AND email LIKE ?' : ''}
+    ${age ? 'AND age LIKE ?' : ''}`,
+    [username, avatarUrl, tag, phone, email, age]
+      .filter(Boolean)
+      .map((value) => `%${value}%`)
+  );
+}
+
+export async function deleteUserDB({
+  id,
+  username,
+}: Pick<User, 'id' | 'username'>) {
+  return await db.query(Sql.DELETE_USER_FROM_ID, [id, username]);
+}
+
+export async function updateUserDB(user: Omit<User, 'role_id' | 'id'>) {
+  const { avatar_url, gender, tag, phone, age, password, email, username } =
+    user;
+  return await db.query(
+    `UPDATE users SET 
+    ${avatar_url ? 'avatar_url =?,' : ''}
+    ${gender ? 'gender =?,' : ''}
+    ${tag ? 'tag =?,' : ''}
+    ${phone ? 'phone =?,' : ''}
+    ${age ? 'age =?,' : ''}
+    ${password ? 'password =?,' : ''}
+    ${email ? 'email =?,' : ''}
+     WHERE 
+     username = ?`,
+    [avatar_url, gender, tag, phone, age, password, email, username].filter(
+      Boolean
+    )
+  );
+}
+export async function addUserDB(params: Omit<User, 'role_id' | 'id'> & Object) {
+  let fieldsStr = ``,
+    valuesStr = ``,
+    values = [];
+  for (let key of Object.keys(params)) {
+    if (params[key]) {
+      fieldsStr += `${key},`;
+      valuesStr += '?,';
+      values.push(params[key]);
+    }
+  }
+  return await db.query(
+    `INSERT INTO users (${fieldsStr.slice(0, -1)}) VALUES (${valuesStr.slice(
+      0,
+      -1
+    )})`,
+
+    values.filter(Boolean)
   );
 }

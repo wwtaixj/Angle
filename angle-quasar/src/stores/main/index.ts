@@ -46,6 +46,7 @@ export const useMainStore = defineStore('main', {
         this.setDialog({
           event: DialogEventEnum.LOGIN,
           title: t('login.Login'),
+          class: 'q-dialog-plugin',
         });
       }
       this.setDialog({ visible: true });

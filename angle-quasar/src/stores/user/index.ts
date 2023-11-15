@@ -10,6 +10,7 @@ import { useMainStore } from '../main';
 import { useI18n } from '@/boot/i18n';
 import { LoginDialogTypeEnum } from '@/enums/login';
 import { Params } from '@/axios/typings';
+import { useChatStore } from '@/stores/chat';
 import {
   getNavLanguage,
   lStorage,
@@ -219,9 +220,10 @@ export const useUserStore = defineStore('user', {
      */
     async login() {
       const { username, password, remember } = this.$state;
+      const hasUsername = encrypt(username);
       resultPrompt(
         await login({
-          username: encrypt(username),
+          username: hasUsername,
           password: encrypt(password),
           date: new Date(),
           longitude: 0,
@@ -229,6 +231,8 @@ export const useUserStore = defineStore('user', {
         }),
         { message: '登录成功！' },
         ({ data }) => {
+          // 连接Socket服务端
+          useChatStore().connectionSocket(data.token, hasUsername);
           this.setUserInfo({
             ...data,
             username,

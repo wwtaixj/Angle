@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { io, Socket } from 'socket.io-client';
 import { sStorage } from '@/utils/webStorage';
 import { isNumber } from '@/utils/is';
 import { Chat } from '../typings/chat';
@@ -6,6 +7,7 @@ import { Chat } from '../typings/chat';
 interface ChatState {
   chatList: Chat[];
   chatListSelectedId: number | null;
+  socket: Socket | null;
 }
 
 export const useChatStore = defineStore('chat', {
@@ -30,6 +32,7 @@ export const useChatStore = defineStore('chat', {
       },
     ],
     chatListSelectedId: null,
+    socket: null,
   }),
   getters: {
     getChatList(state) {
@@ -42,6 +45,10 @@ export const useChatStore = defineStore('chat', {
       if (id) return id;
       return sStorage.get('CHAT_LIST_SELECTED_ID') as number;
     },
+    getSocket(state) {
+      const socket = state.socket;
+      if (socket) return socket;
+    },
   },
   actions: {
     setChatList(chatList: Chat[]) {
@@ -53,6 +60,15 @@ export const useChatStore = defineStore('chat', {
       if (!isNumber(id)) return;
       this.chatListSelectedId = id;
       sStorage.set('CHAT_LIST_SELECTED_ID', id);
+    },
+    connectionSocket(token: string, username: string) {
+      this.socket = io('http://localhost:9310', {
+        path: '/socket.io',
+        extraHeaders: {
+          token,
+          username,
+        },
+      });
     },
   },
 });

@@ -4,7 +4,6 @@ import PopupEdit from './Index.vue';
 
 export const XPopupEdit = withInstall(PopupEdit);
 
-export interface XPopupEditProps {
+export interface XPopupEditProps extends QPopupEditProps {
   modelValue: string | null;
-  options: Omit<QPopupEditProps, 'modelValue'>;
 }

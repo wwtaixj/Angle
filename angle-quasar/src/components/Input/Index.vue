@@ -1,9 +1,9 @@
 <template>
   <q-input
+    v-bind="attrs"
     ref="inputRef"
     :model-value="modelValue"
     @update:model-value="updateModelValue"
-    v-bind="attrs"
   >
     <template v-slot:append>
       <q-icon

@@ -11,3 +11,6 @@ const pool = mysql.createPool({
 });
 
 export default pool.promise();
+export const db = pool.promise();
+export * from './user';
+export * from './other';

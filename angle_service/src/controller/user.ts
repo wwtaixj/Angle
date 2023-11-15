@@ -1,4 +1,10 @@
-import db from '../db';
+import {
+  selectUserInfoLikeAll,
+  deleteUserDB,
+  updateUserDB,
+  addUserDB,
+  selectUserInfoWhereAllDB,
+} from '../db';
 import tool from '../utils/tool';
 import nodeMailer from 'nodemailer';
 import { decrypt, generateRandomCode } from '@/utils';
@@ -16,28 +22,16 @@ export async function getAllUser(req: any, res: any) {
   let status: string;
   try {
     const initParams: any = tool.initParams(req.url);
-    const { username, avatarUrl, tag, phone, age } = initParams;
+
     if (req.url.indexOf('?') === -1) {
-      const [rows] = await db.query('select * from users');
+      const [rows] = await selectUserInfoLikeAll();
       res.send({
         status: '0',
         message: '获取用户列表数据成功！',
         data: rows,
       });
     } else {
-      // 准备查询语句
-      const sql = `SELECT * FROM users
-        WHERE 1=1
-          ${username ? 'AND username LIKE ?' : ''}
-          ${avatarUrl ? 'AND avatarUrl LIKE ?' : ''}
-          ${tag ? 'AND tag LIKE ?' : ''}
-          ${phone ? 'AND phone LIKE ?' : ''}
-          ${age ? 'AND age LIKE ?' : ''}`;
-      // 过滤空字符串和格式转换
-      const params = [username, avatarUrl, tag, phone, age]
-        .filter(Boolean)
-        .map((value) => `%${value}%`);
-      const [rows] = await db.query(sql, params);
+      const [rows] = await selectUserInfoLikeAll(initParams);
       res.send({
         status: '0',
         message: '查询用户列表数据成功！',
@@ -68,15 +62,12 @@ export async function deleteUser(req: any, res: any) {
   try {
     const initParams: any = tool.initParams(req.url);
     // 解析参数
-    const sql = 'delete from users where id = ? , username = ? ';
+
     if (!initParams['id'] && !initParams['username']) {
       status = '-1';
       throw new Error('参数错误');
     }
-    const [result] = await db.query(sql, [
-      initParams['id'],
-      initParams['username'],
-    ]);
+    const [result] = await deleteUserDB(initParams);
     if (result['serverStatus'] === 2) {
       res.send({
         status: '0',
@@ -106,23 +97,23 @@ export async function updateUser(req, res, next) {
   let status = '1';
   try {
     // 解析参数
-    let { avatarUrl, gender, tag, phone, age, username } = req.body;
+    let { avatar_url, gender, tag, phone, age, username, email } = req.body;
     username = decrypt(username);
     phone = decrypt(phone);
     if (!username) {
       status = '-1';
       throw new Error('用户名不能为空');
     }
-    const sql =
-      'UPDATE users SET avatar_url = ?, gender = ?, tag = ?, phone = ?, age = ? WHERE username = ?';
-    const [result] = await db.query(sql, [
-      avatarUrl,
+
+    const [result] = await updateUserDB({
+      avatar_url,
       gender,
       tag,
       phone,
       age,
       username,
-    ]);
+      email,
+    });
     if (result['serverStatus'] === 2) {
       res.send({
         status: '0',
@@ -152,26 +143,27 @@ export async function addUser(req, res) {
   let status = '1';
   try {
     // 解析参数
-    const { avatarUrl, gender, tag, phone, age, username, password } = req.body;
+    const { avatar_url, gender, tag, phone, age, username, password, email } =
+      req.body;
     if (!username || !password) {
       status = '-1';
       throw new Error('参数错误');
     }
-    const sql =
-      'INSERT INTO users (username, password, avatar_url, gender, tag, phone, age) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    const [result] = await db.query(sql, [
-      decrypt(username),
-      decrypt(password),
-      avatarUrl,
+
+    const [result] = await addUserDB({
+      avatar_url,
       gender,
       tag,
-      decrypt(phone),
+      phone,
       age,
-    ]);
+      username,
+      password,
+      email,
+    });
     if (result['serverStatus'] === 2) {
       res.send({
         status: '0',
-        message: '注册用户成功！',
+        message: '新增用户成功！',
       });
     }
   } catch (e) {
@@ -205,9 +197,7 @@ export async function changePassword(req, res) {
     const usernameDec = decrypt(username);
     const passwordDec = decrypt(password);
 
-    const userList = await db.query(
-      `select * from users where username = '${usernameDec}'`
-    );
+    const userList = await selectUserInfoWhereAllDB({ usernameDec });
     const user = userList[0][0];
     if (!user) {
       status = '-2';
@@ -218,11 +208,10 @@ export async function changePassword(req, res) {
       status = '-3';
       throw new Error('密码错误');
     }
-    const [updateUser] = await db.query(
-      `UPDATE users SET password = '${decrypt(
-        newPassword
-      )}' WHERE username = '${usernameDec}'`
-    );
+    const [updateUser] = await updateUserDB({
+      username: usernameDec,
+      password: newPassword,
+    });
     if (updateUser['serverStatus'] !== 2) {
       status = '-4';
       throw new Error('更新密码失败!');
@@ -252,6 +241,9 @@ export async function sendVerificationCode(
   let status = '1';
   try {
     const { email } = req.body;
+    if (verCodeCache.get(email)) {
+      throw new Error('验证码已经发送');
+    }
     const verCode = generateRandomCode(6);
     // 创建一个SMTP传输对象
     const transporter = nodeMailer.createTransport({
@@ -305,24 +297,26 @@ export async function register(
   try {
     // 解析参数
     const { username, password, email, verCode } = req.body;
-    if (!username || !password || !email) {
+    const [rows] = await selectUserInfoWhereAllDB({ email });
+    if (rows && rows.length > 0) {
       status = '-1';
+      throw new Error('邮箱已被注册');
+    }
+    if (!username || !password || !email) {
+      status = '-2';
       throw new Error('参数错误');
     }
-    console.log(verCodeCache.get(email));
-    if (!verCodeCache.get(email)) throw new Error('验证码超时');
+    if (!verCodeCache.get(email)) throw new Error('验证码已超时');
     if (verCodeCache.get(email) !== verCode) {
-      status = '-2';
+      status = '-3';
       throw new Error('验证码错误');
     }
-    const sql =
-      'INSERT INTO users (username, password, email, status) VALUES (?, ?, ?> ?)';
-    const [result] = await db.query(sql, [
-      decrypt(username),
-      decrypt(password),
+    const [result] = await addUserDB({
+      username: decrypt(username),
+      password: decrypt(password),
       email,
-      '1',
-    ]);
+      status: '1',
+    });
     if (result['serverStatus'] === 2) {
       res.send({
         status: '0',

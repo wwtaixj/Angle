@@ -1,15 +1,15 @@
 <template>
   <XPopupEdit
+    v-bind="attrs"
+    v-slot="scope"
     :model-value="modelValue"
     @update:model-value="updateModelValue"
-    v-bind="options"
-    v-slot="scope"
   >
     <q-input
       autofocus
       dense
       v-model="scope.value"
-      :hint="options?.hint"
+      :hint="attrs.hint"
       :rules="[(val) => scope.validate(val)]"
     >
       <template v-slot:after>
@@ -38,22 +38,19 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, defineEmits } from 'vue';
-import { XPopupEdit, XPopupEditProps } from '../PopupEdit';
+import { PropType, defineEmits, useAttrs } from 'vue';
+import { XPopupEdit } from '../PopupEdit';
 import { XInputPopupEditProps } from './index';
+
+const attrs: Omit<XInputPopupEditProps, 'modelValue'> = useAttrs();
 
 const $emits = defineEmits(['update:modelValue']);
 defineProps({
   modelValue: {
-    type: String as PropType<XPopupEditProps['modelValue']>,
-  },
-  options: {
-    type: Object as PropType<
-      XPopupEditProps['options'] & Omit<XInputPopupEditProps, 'modelValue'>
-    >,
+    type: String as PropType<XInputPopupEditProps['modelValue']>,
   },
 });
-function updateModelValue(value: XPopupEditProps['modelValue']) {
+function updateModelValue(value: XInputPopupEditProps['modelValue']) {
   $emits('update:modelValue', value);
 }
 </script>

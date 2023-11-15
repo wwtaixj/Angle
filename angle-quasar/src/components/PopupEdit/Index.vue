@@ -2,10 +2,10 @@
   <div class="cursor-pointer">
     {{ modelValue }}
     <q-popup-edit
+      v-bind="useAttrs()"
+      v-slot="scope"
       :model-value="modelValue"
       @update:model-value="updateModelValue"
-      v-bind="options"
-      v-slot="scope"
     >
       <slot v-bind="scope" />
     </q-popup-edit>
@@ -13,16 +13,13 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, defineEmits } from 'vue';
+import { PropType, defineEmits, useAttrs } from 'vue';
 import { XPopupEditProps } from './index';
 
 const $emits = defineEmits(['update:modelValue']);
 defineProps({
   modelValue: {
     type: String as PropType<XPopupEditProps['modelValue']>,
-  },
-  options: {
-    type: Object as PropType<XPopupEditProps['options']>,
   },
 });
 function updateModelValue(value: XPopupEditProps['modelValue']) {

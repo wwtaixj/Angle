@@ -1,10 +1,3 @@
-<!--
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-16 14:22:07
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-16 18:16:40
- * @FilePath: \angle-quasar\src\pages\chat\components\Side\Index.vue
--->
 <template>
   <q-toolbar class="bg-grey-3">
     <q-avatar class="cursor-pointer">
@@ -97,16 +90,19 @@
 <script lang="ts" setup>
 import { useQuasar } from 'quasar';
 import { ref, computed, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { useChatStore } from '@/stores/chat';
 
+const router = useRouter();
 const userStore = useUserStore();
 const chatStore = useChatStore();
 const search = ref('');
 
-function setCurrentConversation(index: number) {
-  const chat = chatStore.getChatList[index];
+function setCurrentConversation(id: number) {
+  const chat = chatStore.getChatList[id];
   chatStore.setChatListSelectedId(chat.id);
+  router.replace({ name: 'Chat', params: { uuid: chatStore.active } });
 }
 </script>
 <style lang="sass" scoped>
