@@ -11,6 +11,7 @@ import { useI18n } from '@/boot/i18n';
 import { LoginDialogTypeEnum } from '@/enums/login';
 import { Params } from '@/axios/typings';
 import { useChatStore } from '@/stores/chat';
+import { useDBStore } from '../database';
 import {
   getNavLanguage,
   lStorage,
@@ -20,9 +21,11 @@ import {
   resultPrompt,
   encrypt,
   decrypt,
+  isNumber,
 } from '@/utils';
 
 interface UserState {
+  userId?: string;
   locale: LOCALE;
   theme: boolean;
   location: Location;
@@ -67,8 +70,14 @@ export const useUserStore = defineStore('user', {
     againNewPassword: '',
     loginDialogType: LoginDialogTypeEnum.LOGIN,
     verCodeTimer: 0,
+    userId: void 0,
   }),
   getters: {
+    getUserId(state) {
+      const userId = state.userId;
+      if (userId) return userId;
+      return lStorage.get<UserState['userId']>('USER_ID');
+    },
     getToken(state) {
       const token = state.token;
       if (token) return token;
@@ -212,6 +221,11 @@ export const useUserStore = defineStore('user', {
       this.email = email;
       lStorage.set('EMAIL', email);
     },
+    setUserId(userId?: string) {
+      if (!isNumber(userId)) return;
+      this.userId = userId;
+      return lStorage.set('USER_ID', userId);
+    },
     setLoginDialogType(type: LoginDialogTypeEnum) {
       this.loginDialogType = type;
     },
@@ -225,7 +239,6 @@ export const useUserStore = defineStore('user', {
         await login({
           username: hasUsername,
           password: encrypt(password),
-          date: new Date(),
           longitude: 0,
           latitude: 0,
         }),
@@ -239,8 +252,10 @@ export const useUserStore = defineStore('user', {
             password,
             remember,
             avatarUrl: data.avatar_url,
+            userId: data.id,
           });
           useMainStore().setDialog({ visible: false });
+          useDBStore().initDatabase();
         }
       );
     },
@@ -257,6 +272,7 @@ export const useUserStore = defineStore('user', {
         | 'remember'
         | 'token'
         | 'phone'
+        | 'userId'
       >
     ) {
       this.setUsername(info.username);
@@ -269,6 +285,7 @@ export const useUserStore = defineStore('user', {
       this.setPhone(decrypt(info.phone));
       this.setRemember(info.remember);
       this.setEmail(info.email);
+      this.setUserId(info.userId);
     },
     resetUserInfo() {
       this.setUserInfo({

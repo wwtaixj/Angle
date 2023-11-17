@@ -7,7 +7,6 @@
 
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
-
 const { configure } = require('quasar/wrappers');
 const path = require('path');
 
@@ -88,8 +87,10 @@ module.exports = configure(function (/* ctx */) {
             include: path.resolve(__dirname, './src/i18n/**'),
           },
         ],
-        ['unplugin-vue-define-options/dist/vite'],
+        [require('unplugin-vue-define-options')],
+        [require('@rollup/plugin-commonjs')],
       ],
+
       alias: {
         '@': path.join(__dirname, './src/'),
       },

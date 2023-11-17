@@ -1,12 +1,16 @@
 import { defineStore } from 'pinia';
 import { io, Socket } from 'socket.io-client';
 import { sStorage } from '@/utils/webStorage';
-import { isNumber } from '@/utils/is';
-import { Chat } from '../typings/chat';
+import { isNumber, isObject } from '@/utils/is';
+import { Chat, Message } from '../typings/chat';
+const { VITE_GLOB_SOCKET_URL } = import.meta.env;
 
 interface ChatState {
   chatList: Chat[];
-  chatListSelectedId: number | null;
+  chatActive?: {
+    id: number;
+    message: Message[];
+  };
   socket: Socket | null;
 }
 
@@ -15,8 +19,8 @@ export const useChatStore = defineStore('chat', {
     chatList: [
       {
         id: 1,
-        name: 'Razvan Stoenescu',
-        avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
+        username: 'Razvan Stoenescu',
+        avatarUrl: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
         caption: "I'm working on Quasar!",
         time: '15:00',
         sent: true,
@@ -24,14 +28,14 @@ export const useChatStore = defineStore('chat', {
       },
       {
         id: 2,
-        name: 'Dan Popescu',
-        avatar: 'https://cdn.quasar.dev/team/dan_popescu.jpg',
+        username: 'Dan Popescu',
+        avatarUrl: 'https://cdn.quasar.dev/team/dan_popescu.jpg',
         caption: "I'm working on Quasar!",
         time: '16:00',
         sent: true,
       },
     ],
-    chatListSelectedId: null,
+    chatActive: void 0,
     socket: null,
   }),
   getters: {
@@ -40,10 +44,10 @@ export const useChatStore = defineStore('chat', {
       if (chatList.length) return chatList;
       return sStorage.get('CHAT_LIST') as Chat[];
     },
-    getChatListSelectedId(state) {
-      const id = state.chatListSelectedId;
-      if (id) return id;
-      return sStorage.get('CHAT_LIST_SELECTED_ID') as number;
+    getChatActive(state) {
+      const active = state.chatActive;
+      if (active) return active;
+      return sStorage.get<ChatState['chatActive']>('CHAT_ACTIVE');
     },
     getSocket(state) {
       const socket = state.socket;
@@ -56,13 +60,13 @@ export const useChatStore = defineStore('chat', {
       this.chatList = chatList;
       sStorage.set('CHAT_LIST', chatList);
     },
-    setChatListSelectedId(id: number) {
-      if (!isNumber(id)) return;
-      this.chatListSelectedId = id;
-      sStorage.set('CHAT_LIST_SELECTED_ID', id);
+    setChatActive(active: ChatState['chatActive']) {
+      if (!isObject(active)) return;
+      this.chatActive = active;
+      sStorage.set('CHAT_ACTIVE', active);
     },
     connectionSocket(token: string, username: string) {
-      this.socket = io('http://localhost:9310', {
+      this.socket = io(VITE_GLOB_SOCKET_URL, {
         path: '/socket.io',
         extraHeaders: {
           token,

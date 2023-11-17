@@ -11,7 +11,6 @@ export declare namespace Params {
   interface Login {
     username: string;
     password: string;
-    date: Date | number;
     longitude: number;
     latitude: number;
   }
@@ -47,6 +46,7 @@ export declare namespace Params {
 
 export declare namespace Result {
   interface Login {
+    id: string;
     age: string;
     avatar_url: string;
     gender: Gender;

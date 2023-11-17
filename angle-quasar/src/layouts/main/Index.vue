@@ -34,9 +34,9 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-container>
+    <!-- <q-page-container>
       <router-view />
-    </q-page-container>
+    </q-page-container> -->
     <!-- dialog -->
     <XDialog
       v-model="mainStore.dialog.visible"

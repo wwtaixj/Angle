@@ -19,13 +19,12 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   timeout: 1000 * 60 * 5,
+  baseURL: import.meta.env.VITE_GLOB_API_URL,
 });
 api.interceptors.request.use(
   (config) => {
     // 添加请求前添加token
     const userStore = useUserStore();
-    console.log(config);
-
     if (config.url !== Url.login) {
       config.headers['token'] = userStore.getToken;
       config.headers['username'] = encrypt(userStore.getUserName);

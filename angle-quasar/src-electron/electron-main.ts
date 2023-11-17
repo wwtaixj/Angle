@@ -17,13 +17,18 @@ function createWindow() {
     height: 600,
     useContentSize: true,
     webPreferences: {
-      contextIsolation: true,
+      devTools: true,
+      contextIsolation: false,
+      nodeIntegration: true,
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+      preload: path.resolve(
+        __dirname,
+        process.env.QUASAR_ELECTRON_PRELOAD as string
+      ),
     },
   });
 
-  mainWindow.loadURL(process.env.APP_URL);
+  mainWindow.loadURL(process.env.APP_URL as string);
 
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
@@ -34,7 +39,6 @@ function createWindow() {
       mainWindow?.webContents.closeDevTools();
     });
   }
-
   mainWindow.on('closed', () => {
     mainWindow = undefined;
   });

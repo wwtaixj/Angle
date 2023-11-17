@@ -1,9 +1,17 @@
 export interface Chat {
   id: number;
-  name: string;
-  avatar: string;
+  username: string;
+  avatarUrl: string;
   caption: string;
   time: string;
   sent?: boolean;
   deleted?: boolean;
+}
+
+export interface Message {
+  id: number;
+  username: string;
+  avatarUrl: string;
+  time: string;
+  text: string;
 }

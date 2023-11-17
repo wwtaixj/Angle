@@ -23,6 +23,6 @@ import { useChatStore } from '@/stores/chat';
 const mainStore = useMainStore();
 const chatStore = useChatStore();
 const currentConversation = computed(() =>
-  chatStore.getChatList.find((i) => i.id === chatStore.getChatListSelectedId)
+  chatStore.getChatList.find((i) => i.id === chatStore.getChatActive)
 );
 </script>

@@ -47,6 +47,7 @@ import Side from './components/Side/Index.vue';
 // import { useMainStore } from '../../stores/main';
 import { useChatStore } from '@/stores/chat';
 import { useUserStore } from '@/stores/user';
+import { useDBStore } from '@/stores/database';
 
 const $q = useQuasar();
 const chatStore = useChatStore();
@@ -56,7 +57,7 @@ const message = ref('');
 const sending = ref(false);
 
 // 监听服务器发送的消息
-chatStore.getSocket?.on(userStore.getUserName, (data) => {
+chatStore.getSocket?.on(userStore.getUserId as string, (data) => {
   sending.value = false;
   console.log('Received message from server:', data);
 });
@@ -64,7 +65,7 @@ chatStore.getSocket?.on(userStore.getUserName, (data) => {
 const style = computed(() => ({
   height: $q.screen.height + 'px',
 }));
-function onSend() {
+async function onSend() {
   sending.value = true;
   // 发送消息到服务器
   chatStore.getSocket?.emit(userStore.getUserName, message.value);
