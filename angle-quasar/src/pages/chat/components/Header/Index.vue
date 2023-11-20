@@ -1,13 +1,13 @@
 <template>
-  <q-toolbar class="text-black bg-grey-3">
+  <q-toolbar class="text-black bg-white">
     <q-btn round flat>
       <q-avatar>
-        <img :src="currentConversation?.avatar" />
+        <img :src="currentConversation?.avatarUrl" />
       </q-avatar>
     </q-btn>
 
     <span class="q-subtitle-1 q-pl-md">
-      {{ currentConversation?.name }}
+      {{ currentConversation?.username }}
     </span>
 
     <q-space />
@@ -16,13 +16,13 @@
   </q-toolbar>
 </template>
 <script lang="ts" setup>
-import { ref, computed, reactive } from 'vue';
+import { computed } from 'vue';
 import { useMainStore } from '@/stores/main';
 import { useChatStore } from '@/stores/chat';
 
 const mainStore = useMainStore();
 const chatStore = useChatStore();
 const currentConversation = computed(() =>
-  chatStore.getChatList.find((i) => i.id === chatStore.getChatActive)
+  chatStore.getChatList.find((i) => i.id === chatStore.getChatActive?.id)
 );
 </script>

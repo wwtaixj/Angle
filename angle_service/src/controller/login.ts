@@ -38,7 +38,7 @@ export const login = async (
       status = '-3';
       throw new Error('密码错误,请再试一次!');
     }
-    const { id, phone, avatar_url, age, tag, gender, email } = user;
+    const { id, phone, avatarUrl, age, tag, gender, email } = user;
     // 登录添加权限列表到缓存
     const [userList] = await getUserPermissions(hashedUsername);
     //
@@ -50,7 +50,7 @@ export const login = async (
       data: {
         token: encrypt(`${hashedUsername},${Date.now()}`),
         phone: encrypt(phone),
-        avatar_url: avatar_url,
+        avatarUrl,
         age,
         tag,
         gender,

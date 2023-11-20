@@ -1,4 +1,4 @@
-export type Gender = '0' | '1' | null;
+export type Gender = 0 | 1 | null;
 
 export interface Response<T> {
   data: T;
@@ -8,6 +8,17 @@ export interface Response<T> {
 }
 
 export declare namespace Params {
+  interface User {
+    id: number;
+    username: string;
+    gender: string;
+    email: string;
+    phone: string;
+    avatarUrl: string;
+    role_id: string;
+    status: number;
+    tag: string;
+  }
   interface Login {
     username: string;
     password: string;
@@ -46,13 +57,27 @@ export declare namespace Params {
 
 export declare namespace Result {
   interface Login {
-    id: string;
-    age: string;
-    avatar_url: string;
+    id: number;
+    age: number;
+    avatarUrl: string;
     gender: Gender;
     tag: string;
     phone: string;
     token: string;
     email: string;
+  }
+  interface User {
+    id: number;
+    username: string;
+    password: string;
+    gender: string;
+    email: string;
+    phone: string;
+    avatarUrl: string;
+    role_id: string;
+    createTime: string;
+    updateTime: string;
+    status: number;
+    tag: string;
   }
 }

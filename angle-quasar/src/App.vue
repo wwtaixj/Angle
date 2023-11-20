@@ -4,17 +4,21 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
-import { useChatStore } from '@/stores/chat';
+import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '@/stores/database';
+import { useChatStore } from '@/stores/chat';
 
 const userStore = useUserStore();
 const token = userStore.getToken;
-const username = userStore.getUserName;
 userStore.initUserStore();
 // console.log(process.env.VUE_ROUTER_MODE);
 // console.log(import.meta.env.VITE_GLOB_SOCKET_URL);
 if (token) {
-  useChatStore().connectionSocket(token, username);
-  useDBStore().initDatabase();
+  useChatStore()
+    .setChatList()
+    .then(() => {
+      useDBStore().initDatabase();
+    });
+  useSocketStore().initSocket();
 }
 </script>

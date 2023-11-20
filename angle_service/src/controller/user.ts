@@ -22,7 +22,6 @@ export async function getAllUser(req: any, res: any) {
   let status: string;
   try {
     const initParams: any = tool.initParams(req.url);
-
     if (req.url.indexOf('?') === -1) {
       const [rows] = await selectUserInfoLikeAll();
       res.send({
@@ -97,7 +96,7 @@ export async function updateUser(req, res, next) {
   let status = '1';
   try {
     // 解析参数
-    let { avatar_url, gender, tag, phone, age, username, email } = req.body;
+    let { avatarUrl, gender, tag, phone, age, username, email } = req.body;
     username = decrypt(username);
     phone = decrypt(phone);
     if (!username) {
@@ -106,7 +105,7 @@ export async function updateUser(req, res, next) {
     }
 
     const [result] = await updateUserDB({
-      avatar_url,
+      avatarUrl,
       gender,
       tag,
       phone,
@@ -143,7 +142,7 @@ export async function addUser(req, res) {
   let status = '1';
   try {
     // 解析参数
-    const { avatar_url, gender, tag, phone, age, username, password, email } =
+    const { avatarUrl, gender, tag, phone, age, username, password, email } =
       req.body;
     if (!username || !password) {
       status = '-1';
@@ -151,7 +150,7 @@ export async function addUser(req, res) {
     }
 
     const [result] = await addUserDB({
-      avatar_url,
+      avatarUrl,
       gender,
       tag,
       phone,

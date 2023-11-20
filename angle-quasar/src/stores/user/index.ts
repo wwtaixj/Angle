@@ -10,8 +10,9 @@ import { useMainStore } from '../main';
 import { useI18n } from '@/boot/i18n';
 import { LoginDialogTypeEnum } from '@/enums/login';
 import { Params } from '@/axios/typings';
-import { useChatStore } from '@/stores/chat';
+import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '../database';
+import { useChatStore } from '@/stores/chat';
 import {
   getNavLanguage,
   lStorage,
@@ -25,7 +26,7 @@ import {
 } from '@/utils';
 
 interface UserState {
-  userId?: string;
+  userId: number;
   locale: LOCALE;
   theme: boolean;
   location: Location;
@@ -37,7 +38,7 @@ interface UserState {
   password: string;
   remember: boolean;
   phone: string;
-  age: string;
+  age?: number;
   gender: Gender;
   tag: string;
   newPassword: string;
@@ -59,7 +60,7 @@ export const useUserStore = defineStore('user', {
     username: '',
     phone: '',
     location: { longitude: 0, latitude: 0 },
-    age: '',
+    age: void 0,
     gender: null,
     tag: '',
     password: '',
@@ -70,7 +71,7 @@ export const useUserStore = defineStore('user', {
     againNewPassword: '',
     loginDialogType: LoginDialogTypeEnum.LOGIN,
     verCodeTimer: 0,
-    userId: void 0,
+    userId: 0,
   }),
   getters: {
     getUserId(state) {
@@ -157,12 +158,12 @@ export const useUserStore = defineStore('user', {
       lStorage.set('LOCALE', locale);
     },
     initUserStore() {
-      let locale = lStorage.get('LOCALE') as LOCALE;
+      let locale = lStorage.get<LOCALE>('LOCALE');
       if (!locale) locale = getNavLanguage() as LOCALE;
       this.setLocales(locale);
-      const theme = lStorage.get('THEME') as boolean;
+      const theme = lStorage.get<boolean>('THEME');
       this.setTheme(theme);
-      const avatarUrl = lStorage.get('AVATAR_URL') as string;
+      const avatarUrl = lStorage.get<string>('AVATAR_URL');
       this.setAvatarUrl(avatarUrl);
     },
     setTheme(theme: boolean) {
@@ -191,13 +192,13 @@ export const useUserStore = defineStore('user', {
       this.password = password;
       lStorage.set('PASSWORD', password);
     },
-    setAge(age: string) {
+    setAge(age: number) {
       if (!isString(age)) return;
       this.age = age;
       lStorage.set('AGE', age);
     },
     setGender(gender: Gender) {
-      if (!isString(gender) && gender !== null) return;
+      if (!isNumber(gender) && gender !== null) return;
       this.gender = gender;
       lStorage.set('GENDER', gender);
     },
@@ -221,7 +222,7 @@ export const useUserStore = defineStore('user', {
       this.email = email;
       lStorage.set('EMAIL', email);
     },
-    setUserId(userId?: string) {
+    setUserId(userId?: number) {
       if (!isNumber(userId)) return;
       this.userId = userId;
       return lStorage.set('USER_ID', userId);
@@ -243,19 +244,20 @@ export const useUserStore = defineStore('user', {
           latitude: 0,
         }),
         { message: '登录成功！' },
-        ({ data }) => {
-          // 连接Socket服务端
-          useChatStore().connectionSocket(data.token, hasUsername);
+        async ({ data }) => {
           this.setUserInfo({
             ...data,
             username,
             password,
             remember,
-            avatarUrl: data.avatar_url,
             userId: data.id,
           });
+          // 设置用户列表
+          useChatStore().setChatList();
           useMainStore().setDialog({ visible: false });
           useDBStore().initDatabase();
+          // 连接Socket服务端
+          useSocketStore().initSocket();
         }
       );
     },
@@ -279,7 +281,7 @@ export const useUserStore = defineStore('user', {
       this.setPassword(info.password);
       this.setAvatarUrl(info.avatarUrl);
       this.setToken(info.token);
-      this.setAge(info.age);
+      this.setAge(info.age as number);
       this.setGender(info.gender);
       this.setTag(info.tag);
       this.setPhone(decrypt(info.phone));
@@ -296,9 +298,10 @@ export const useUserStore = defineStore('user', {
         email: '',
         gender: null,
         remember: false,
-        age: '',
+        age: void 0,
         phone: '',
         tag: '',
+        userId: 0,
       });
     },
     /**

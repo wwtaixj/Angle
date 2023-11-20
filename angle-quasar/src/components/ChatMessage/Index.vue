@@ -1,13 +1,14 @@
 <template>
-  <q-chat-message v-bind="attrs">
-    <slot v-for="slot in slots" :name="slot" />
-  </q-chat-message>
+  <q-chat-message v-bind="attrs"> </q-chat-message>
 </template>
 
 <script lang="ts" setup>
-import { useSlots, useAttrs } from 'vue';
-import { XChatMessageProps, XChatMessageSlots } from './index';
+import { useAttrs } from 'vue';
+import { XChatMessageProps } from './index';
+
+defineOptions({
+  name: 'XChatMessage',
+});
 
 const attrs: XChatMessageProps = useAttrs();
-const slots: Partial<XChatMessageSlots> = useSlots();
 </script>

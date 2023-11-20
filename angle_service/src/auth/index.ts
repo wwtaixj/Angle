@@ -103,7 +103,7 @@ export const apiPermission = async (
     }
     const method = req.method.toLocaleLowerCase();
     const url = req.originalUrl.split('?')[0];
-    if (!permissions.some((i) => i.api_name === url && i.api_type === method)) {
+    if (!permissions.some((i) => i.apiName === url && i.apiType === method)) {
       status = '1004';
       throw new Error('账号权限不足');
     }

@@ -1,4 +1,5 @@
 import { Socket, Server } from 'socket.io';
+import { TransmissionBody } from '../types';
 
 /**
  * @description 连接到客户端回调
@@ -6,10 +7,10 @@ import { Socket, Server } from 'socket.io';
  * @param io
  */
 export function connection(socket: Socket, io: Server) {
-  const { token, username } = socket.handshake.headers;
-  console.log(username + '客户已连接');
+  const { token, username, userid } = socket.handshake.headers;
+  console.log(userid + '客户端已连接');
 
-  socket.on('admin', (msg) => receive(msg, io));
+  socket.on(userid as string, (msg) => receive(msg, io));
   socket.on('disconnect', disconnect);
 }
 /**
@@ -17,10 +18,17 @@ export function connection(socket: Socket, io: Server) {
  * @param msg
  * @param io
  */
-export function receive(msg: any, io: Server) {
-  const { username } = msg;
+export function receive(msg: TransmissionBody, io: Server) {
+  const { senderId, receiverId, message, type } = msg;
   console.log('收到来自客户端的消息: ' + msg);
-  io.emit(username, msg); // 将消息发送给所有客户端
+  // 将消息发送成功回调给发送者客户端
+  if (type !== 0) {
+    io.emit(senderId, {
+      type: '0',
+    });
+  }
+  // 将消息发送给接收者客户端
+  io.emit(receiverId, msg);
 }
 /**
  * @description 断开客户端连接

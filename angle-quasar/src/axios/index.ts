@@ -1,5 +1,5 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios';
-import { post, put } from './request';
+import { post, put, get } from './request';
 import { useChatGptStore } from '@/stores/chatGpt';
 import request_url from './url';
 import { Params, Result } from './typings';
@@ -85,6 +85,13 @@ export function register(data: Params.register) {
 export function sendVerCode(data: Params.verCode) {
   return post<undefined>({
     url: request_url.verCode,
+    data,
+  });
+}
+
+export function getUser(data?: Partial<Params.User>) {
+  return get<Result.User[]>({
+    url: request_url.getUser,
     data,
   });
 }

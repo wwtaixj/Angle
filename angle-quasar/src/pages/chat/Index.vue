@@ -1,5 +1,5 @@
 <template>
-  <div class="WAL position-relative bg-grey-4" :style="style">
+  <div class="WAL position-relative bg-white" :style="style">
     <q-layout view="lHh Lpr lFf" class="WAL__layout shadow-3" container>
       <q-header elevated>
         <Header />
@@ -20,56 +20,30 @@
         </router-view>
       </q-page-container>
 
-      <q-footer>
-        <q-toolbar class="bg-grey-3 text-black row">
-          <q-btn round flat icon="insert_emoticon" class="q-mr-sm" />
-          <q-input
-            rounded
-            outlined
-            dense
-            class="WAL__field col-grow q-mr-sm"
-            bg-color="white"
-            v-model="message"
-            placeholder="Type a message"
-          />
-          <q-btn round flat icon="send" @click="onSend" :loading="sending" />
-        </q-toolbar>
-      </q-footer>
+      <q-footer> <Footer /> </q-footer>
     </q-layout>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useQuasar } from 'quasar';
-import { ref, computed, unref } from 'vue';
+import { ref, computed } from 'vue';
 import Header from './components/Header/Index.vue';
 import Side from './components/Side/Index.vue';
+import Footer from './components/Footer/Index.vue';
 // import { useMainStore } from '../../stores/main';
-import { useChatStore } from '@/stores/chat';
+//import { useChatStore } from '@/stores/chat';
 import { useUserStore } from '@/stores/user';
-import { useDBStore } from '@/stores/database';
 
 const $q = useQuasar();
-const chatStore = useChatStore();
-const userStore = useUserStore();
-const leftDrawerOpen = ref(false);
-const message = ref('');
-const sending = ref(false);
 
-// 监听服务器发送的消息
-chatStore.getSocket?.on(userStore.getUserId as string, (data) => {
-  sending.value = false;
-  console.log('Received message from server:', data);
-});
+const userStore = useUserStore();
+//const socketStore = useSocketStore();
+const leftDrawerOpen = ref(false);
 
 const style = computed(() => ({
   height: $q.screen.height + 'px',
 }));
-async function onSend() {
-  sending.value = true;
-  // 发送消息到服务器
-  chatStore.getSocket?.emit(userStore.getUserName, message.value);
-}
 </script>
 
 <style lang="sass" scoped>

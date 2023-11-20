@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar class="bg-grey-3">
+  <q-toolbar class="bg-white">
     <q-avatar class="cursor-pointer">
       <img :src="userStore.getAvatarUrl" />
     </q-avatar>
@@ -57,7 +57,7 @@
         clickable
         v-ripple
         active-class="chat-list-selected"
-        :active="chatStore.getChatActive === conversation.id"
+        :active="chatStore.getChatActive?.id === conversation.id"
         @click="setCurrentConversation(index)"
       >
         <q-item-section avatar>
@@ -70,17 +70,17 @@
           <q-item-label lines="1">
             {{ conversation.username }}
           </q-item-label>
-          <q-item-label class="conversation__summary" caption>
+          <!-- <q-item-label class="conversation__summary" caption>
             <q-icon name="check" v-if="conversation.sent" />
             <q-icon name="not_interested" v-if="conversation.deleted" />
             {{ conversation.caption }}
-          </q-item-label>
+          </q-item-label> -->
         </q-item-section>
 
         <q-item-section side>
-          <q-item-label caption>
+          <!-- <q-item-label caption>
             {{ conversation.time }}
-          </q-item-label>
+          </q-item-label> -->
           <q-icon name="keyboard_arrow_down" />
         </q-item-section>
       </q-item>
@@ -88,8 +88,8 @@
   </q-scroll-area>
 </template>
 <script lang="ts" setup>
-import { useQuasar } from 'quasar';
-import { ref, computed, reactive } from 'vue';
+//import { useQuasar } from 'quasar';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { useChatStore } from '@/stores/chat';
@@ -99,10 +99,11 @@ const userStore = useUserStore();
 const chatStore = useChatStore();
 const search = ref('');
 
-function setCurrentConversation(id: number) {
-  const chat = chatStore.getChatList[id];
-  chatStore.setChatActive(chat.id);
-  router.replace({ name: 'Chat', params: { uuid: id } });
+function setCurrentConversation(index: number) {
+  const chat = chatStore.getChatList[index];
+  if (chatStore.getChatActive?.id === chat.id) return;
+  chatStore.setChatActive(chat);
+  router.replace({ name: 'Chat', params: { uuid: chat.id } });
 }
 </script>
 <style lang="sass" scoped>

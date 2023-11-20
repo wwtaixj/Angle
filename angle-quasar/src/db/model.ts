@@ -1,8 +1,11 @@
 import { DataTypes, Sequelize, Model } from 'sequelize';
-import { ChatHistoryTable } from './typings';
+import { ChatHistoryTable } from './types';
 import { isObject } from '@/utils';
 
-export async function createChatHistory(sequelize: Sequelize) {
+export async function createChatHistory(
+  sequelize: Sequelize,
+  id: string | number
+) {
   class ChatHistory extends Model {}
   ChatHistory.init(
     {
@@ -23,12 +26,12 @@ export async function createChatHistory(sequelize: Sequelize) {
       },
     },
     {
+      timestamps: true,
       sequelize, // 我们需要传递连接实例
       freezeTableName: true,
-      modelName: 'ChatHistory', // 我们需要选择模型名称
+      modelName: `ChatHistory${id}`, // 我们需要选择模型名称
     }
   );
-  await ChatHistory.sync();
 }
 
 /**
@@ -38,16 +41,44 @@ export async function createChatHistory(sequelize: Sequelize) {
  */
 export const insertChatHistory = (
   sequelize: Sequelize,
+  id: number,
   params: ChatHistoryTable | ChatHistoryTable[]
 ) => {
   if (!sequelize) return;
   if (!params) throw new Error('the chat history is empty');
   if (Array.isArray(params)) {
-    return sequelize.models.ChatHistory.bulkCreate<Model<ChatHistoryTable>>(
+    return sequelize.models[`ChatHistory${id}`].bulkCreate<
+      Model<ChatHistoryTable>
+    >(params);
+  }
+  if (isObject(params)) {
+    return sequelize.models[`ChatHistory${id}`].create<Model<ChatHistoryTable>>(
       params
     );
   }
-  if (isObject(params)) {
-    return sequelize.models.ChatHistory.create<Model<ChatHistoryTable>>(params);
+};
+
+/**
+ * 根据 senderId 或 receiverId 进行查询聊天历史记录
+ * @param sequelize 实例
+ * @param id 查询的 senderId 或 receiverId
+ */
+export const queryChatHistoryByAll = (
+  sequelize: Sequelize,
+  id: number,
+  params?: Partial<ChatHistoryTable> & {
+    [P in keyof ChatHistoryTable]?: ChatHistoryTable[P];
   }
+) => {
+  if (!sequelize) return;
+  if (params) {
+    return sequelize.models[`ChatHistory${id}`].findAll<
+      Model<ChatHistoryTable>
+    >({
+      where: params,
+    });
+  }
+  return sequelize.models[`ChatHistory${id}`].findAll<
+    Model<ChatHistoryTable>
+  >();
 };

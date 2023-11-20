@@ -37,7 +37,7 @@ export async function uploadPhoto(req, res) {
   try {
     const filename = `${req.file.filename}`;
     const url =
-      `http://${process.env.UPLOAD_IMAGES_RETURN_URL}:${process.env.LISTEN_PORT}/upload/images/` +
+      `http://${process.env.UPLOAD_URL}:${process.env.LISTEN_PORT}/upload/images/` +
       filename;
     console.log(url);
     res.send({

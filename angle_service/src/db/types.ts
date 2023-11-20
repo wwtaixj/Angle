@@ -7,12 +7,12 @@ export interface SelectUserInfoRespone extends RowDataPacket {
   gender: string;
   email: string;
   phone: string;
-  avatar_url: string;
+  avatarUrl: string;
   tag: string;
 }
 export interface SelectApiPermissionsRespone extends RowDataPacket {
-  api_name: string;
-  api_type: string;
+  apiName: string;
+  apiType: string;
 }
 
 export interface User extends RowDataPacket {
@@ -22,8 +22,8 @@ export interface User extends RowDataPacket {
   gender: string;
   email: string;
   phone: string;
-  avatar_url: string;
-  role_id: string;
+  avatarUrl: string;
+  roleId: string;
   createTime: string;
   updateTime: string;
   status: number;
@@ -40,8 +40,8 @@ export interface Roles extends RowDataPacket {
 
 export interface ApiPermissions extends RowDataPacket {
   id: number;
-  api_name: string;
-  api_type: string;
+  apiName: string;
+  apiType: string;
   code: string;
   remark: string;
   createTime: string;
@@ -49,15 +49,15 @@ export interface ApiPermissions extends RowDataPacket {
 }
 export interface RolesRelationApiPermissions extends RowDataPacket {
   id: number;
-  role_id: number;
-  api_permission_id: number;
+  roleId: number;
+  apiPermissionId: number;
 }
 
 export interface Location extends RowDataPacket {
   id: number;
   longitude: number;
   latitude: number;
-  login_time: string;
-  user_id: number;
+  loginTime: string;
+  userId: number;
   username: string;
 }

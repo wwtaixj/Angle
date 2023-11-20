@@ -5,12 +5,13 @@ const DB_PATH = join('C:AppData\\Angle');
 export async function initDatabase({
   username,
   password,
+  ids,
 }: {
   username: string;
   password: string;
+  ids: (string | number)[];
 }) {
-  const db = await connectDatabase(DB_PATH, username, password);
-  return db;
+  return await connectDatabase(DB_PATH, username, password, ids);
 }
 
 /**
@@ -19,7 +20,8 @@ export async function initDatabase({
 export async function connectDatabase(
   path: string,
   username: string,
-  password: string
+  password: string,
+  ids: (string | number)[]
 ) {
   const { Sequelize } = require('sequelize');
   const db = new Sequelize('database', username, password, {
@@ -33,8 +35,10 @@ export async function connectDatabase(
   //使用 .authenticate() 函数测试连接是否正常
   try {
     await db.authenticate();
-    await createChatHistory(db);
-    console.log('Connection has been established successfully.');
+    for (const id of ids) {
+      await createChatHistory(db, id);
+    }
+    await db.sync();
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
@@ -42,4 +46,4 @@ export async function connectDatabase(
 }
 
 export * from './model';
-export * from './typings';
+export * from './types';

@@ -29,7 +29,7 @@ export async function selectUserInfo(username: User['username']) {
   );
 }
 export async function selectUserInfoWhereAllDB(
-  params: Omit<User, 'role_id' | 'id'>
+  params: Omit<User, 'roleId' | 'id'>
 ) {
   let fieldsStr = ``,
     values = [];
@@ -49,21 +49,19 @@ export async function selectUserInfoWhereAllDB(
  * @returns {Promise<Array<Array<string|number>>} - 所有用户信息列表
  */
 export async function selectUserInfoLikeAll(
-  params?: Omit<User, 'role_id' | 'id'>
+  params?: Omit<User, 'roleId' | 'id'>
 ) {
-  const { username, avatarUrl, tag, phone, age, email } = params;
+  let fieldsStr = ``,
+    values = [];
+  for (let key in params) {
+    if (params[key]) {
+      fieldsStr += ` AND ${key}  LIKE ?`;
+      values.push(params[key]);
+    }
+  }
   return await db.query<User[]>(
-    `SELECT * FROM users
-    WHERE 1=1
-    ${username ? 'AND username LIKE ?' : ''}
-    ${avatarUrl ? 'AND avatar_url LIKE ?' : ''}
-    ${tag ? 'AND tag LIKE ?' : ''}
-    ${phone ? 'AND phone LIKE ?' : ''}
-    ${email ? 'AND email LIKE ?' : ''}
-    ${age ? 'AND age LIKE ?' : ''}`,
-    [username, avatarUrl, tag, phone, email, age]
-      .filter(Boolean)
-      .map((value) => `%${value}%`)
+    `SELECT * FROM users WHERE 1=1 ${fieldsStr}`,
+    values
   );
 }
 
@@ -74,12 +72,12 @@ export async function deleteUserDB({
   return await db.query(Sql.DELETE_USER_FROM_ID, [id, username]);
 }
 
-export async function updateUserDB(user: Omit<User, 'role_id' | 'id'>) {
-  const { avatar_url, gender, tag, phone, age, password, email, username } =
+export async function updateUserDB(user: Omit<User, 'roleId' | 'id'>) {
+  const { avatarUrl, gender, tag, phone, age, password, email, username } =
     user;
   return await db.query(
     `UPDATE users SET 
-    ${avatar_url ? 'avatar_url =?,' : ''}
+    ${avatarUrl ? 'avatarUrl =?,' : ''}
     ${gender ? 'gender =?,' : ''}
     ${tag ? 'tag =?,' : ''}
     ${phone ? 'phone =?,' : ''}
@@ -88,12 +86,12 @@ export async function updateUserDB(user: Omit<User, 'role_id' | 'id'>) {
     ${email ? 'email =?,' : ''}
      WHERE 
      username = ?`,
-    [avatar_url, gender, tag, phone, age, password, email, username].filter(
+    [avatarUrl, gender, tag, phone, age, password, email, username].filter(
       Boolean
     )
   );
 }
-export async function addUserDB(params: Omit<User, 'role_id' | 'id'> & Object) {
+export async function addUserDB(params: Omit<User, 'roleId' | 'id'> & Object) {
   let fieldsStr = ``,
     valuesStr = ``,
     values = [];
