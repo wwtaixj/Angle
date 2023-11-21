@@ -33,11 +33,11 @@ import Side from './components/Side/Index.vue';
 import Footer from './components/Footer/Index.vue';
 // import { useMainStore } from '../../stores/main';
 //import { useChatStore } from '@/stores/chat';
-import { useUserStore } from '@/stores/user';
+//import { useUserStore } from '@/stores/user';
 
 const $q = useQuasar();
 
-const userStore = useUserStore();
+//const userStore = useUserStore();
 //const socketStore = useSocketStore();
 const leftDrawerOpen = ref(false);
 

@@ -1,14 +1,7 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-13 16:53:51
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-13 17:01:09
- * @FilePath: \angle-quasar\src\utils\cryptoJs.ts
- */
 import CryptoJS from 'crypto-js';
 
 const key = 'C3F2D8228227742B18ACC8F883F67F11-xj';
-const iv: any = '97EF1845E6E1FC4CDDBB55B3DA89F80D-wwt';
+const iv = CryptoJS.enc.Utf8.parse('97EF1845E6E1FC4CDDBB55B3DA89F80D-wwt');
 
 export const encrypt = (data: string | CryptoJS.lib.WordArray) => {
   // 生成哈希值

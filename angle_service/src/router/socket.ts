@@ -16,6 +16,7 @@ export default (httpServer: http.Server) => {
   });
   // 在这里定义和处理 Socket.io 相关的路由逻辑
   io.on('connection', (socket) => connection(socket, io));
+
   updateApp(io);
   return router;
 };

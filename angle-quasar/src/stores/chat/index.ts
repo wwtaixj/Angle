@@ -29,7 +29,7 @@ export const useChatStore = defineStore('chat', {
     getChatList(state) {
       const chatList = state.chatList;
       if (chatList.length) return chatList;
-      return sStorage.get('CHAT_LIST') as Chat[];
+      return (sStorage.get('CHAT_LIST') as Chat[]) || [];
     },
     getChatActive(state) {
       const active = state.chatActive;

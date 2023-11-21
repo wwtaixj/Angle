@@ -30,6 +30,7 @@ export const useSocketStore = defineStore('socket', {
         console.log('Received message from server:');
         console.log(data);
       });
+      this.updateApp();
     },
     socketOn(userId: string, callback: (data: TransmissionBody) => void) {
       if (!this.socketIO) this.initSocket();
@@ -40,6 +41,14 @@ export const useSocketStore = defineStore('socket', {
     socketEmit(userId: string, data: TransmissionBody) {
       if (!this.socketIO) this.initSocket();
       this.socketIO?.emit(userId, data);
+    },
+    /**
+     * @description 监听更新
+     */
+    updateApp() {
+      this.socketOn('updateAvailable', (data) => {
+        console.log(data);
+      });
     },
   },
 });

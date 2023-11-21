@@ -1,6 +1,9 @@
-const { join } = require('path');
+const { join, resolve, dirname } = require('path');
 import { createChatHistory } from './model';
-const DB_PATH = join('C:AppData\\Angle');
+const DB_PATH =
+  process.env.NODE_ENV === 'development'
+    ? resolve()
+    : dirname(process.execPath);
 
 export async function initDatabase({
   username,

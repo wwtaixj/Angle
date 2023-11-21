@@ -253,11 +253,14 @@ export const useUserStore = defineStore('user', {
             userId: data.id,
           });
           // 设置用户列表
-          useChatStore().setChatList();
+          useChatStore()
+            .setChatList()
+            .then(() => {
+              useDBStore().initDatabase();
+              // 连接Socket服务端
+              useSocketStore().initSocket();
+            });
           useMainStore().setDialog({ visible: false });
-          useDBStore().initDatabase();
-          // 连接Socket服务端
-          useSocketStore().initSocket();
         }
       );
     },

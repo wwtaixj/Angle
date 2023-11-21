@@ -8,8 +8,10 @@ import { Response } from './typings';
 
 export interface HttpOption {
   url: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
   method?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headers?: any;
   onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
   signal?: GenericAbortSignal;

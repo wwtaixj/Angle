@@ -1,5 +1,10 @@
 import { Socket, Server } from 'socket.io';
 import { TransmissionBody } from '../types';
+import { getAllUserId } from '@/db';
+let userIds = [];
+getAllUserId().then((result) => {
+  userIds = result[0].map((i) => i.id);
+});
 
 /**
  * @description 连接到客户端回调
@@ -8,9 +13,14 @@ import { TransmissionBody } from '../types';
  */
 export function connection(socket: Socket, io: Server) {
   const { token, username, userid } = socket.handshake.headers;
-  console.log(userid + '客户端已连接');
+  if (!token || !username || !userid) {
+    socket.disconnect();
+    return;
+  }
+  for (let id of userIds) {
+    socket.on(id, (msg) => receive(msg, io));
+  }
 
-  socket.on(userid as string, (msg) => receive(msg, io));
   socket.on('disconnect', disconnect);
 }
 /**
@@ -20,7 +30,7 @@ export function connection(socket: Socket, io: Server) {
  */
 export function receive(msg: TransmissionBody, io: Server) {
   const { senderId, receiverId, message, type } = msg;
-  console.log('收到来自客户端的消息: ' + msg);
+  console.log(msg);
   // 将消息发送成功回调给发送者客户端
   if (type !== 0) {
     io.emit(senderId, {

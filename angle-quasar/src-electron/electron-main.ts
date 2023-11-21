@@ -31,7 +31,7 @@ function createWindow() {
   });
 
   mainWindow.loadURL(process.env.APP_URL as string);
-
+  // console.log('import', process.env);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();
@@ -86,9 +86,8 @@ app.on('activate', () => {
 
 // 配置自动更新的服务器地址和应用程序包的基本信息
 autoUpdater.setFeedURL({
-  provider: 'github',
-  owner: 'your-github-username',
-  repo: 'your-repository-name',
+  provider: 'generic',
+  url: 'http://localhost:9310',
 });
 
 // 监听自动更新事件，当有可用更新时触发
@@ -97,7 +96,7 @@ autoUpdater.on('update-available', () => {
 });
 
 // 监听自动更新下载进度
-autoUpdater.on('download-progress', (progress) => {
+autoUpdater.on('download-progress', () => {
   // 在这里可以显示下载进度给用户
 });
 

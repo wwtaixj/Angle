@@ -32,9 +32,8 @@ defineProps({
 });
 const $emits = defineEmits([...useDialogPluginComponent.emits]);
 
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-  useDialogPluginComponent();
-
+const { dialogRef, onDialogHide } = useDialogPluginComponent();
+// onDialogOK, onDialogCancel
 // function onOKClick() {
 //   onDialogOK();
 //   $emits('ok');

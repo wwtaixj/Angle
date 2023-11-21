@@ -1,14 +1,7 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 11:08:01
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-19 15:19:07
- * @FilePath: \angle-quasar\src\boot\i18n.ts
- */
 import { unref } from 'vue';
 import { boot } from 'quasar/wrappers';
 import { createI18n } from 'vue-i18n';
-import { useUserStore } from '../stores/user';
+//import { useUserStore } from '../stores/user';
 import messages, { LOCALE } from 'src/i18n';
 
 export type MessageLanguages = keyof typeof messages;

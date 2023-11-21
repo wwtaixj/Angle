@@ -4,6 +4,7 @@ import {
   SelectUserInfoRespone,
   SelectApiPermissionsRespone,
   User,
+  UserId,
 } from './types';
 
 /**
@@ -110,4 +111,11 @@ export async function addUserDB(params: Omit<User, 'roleId' | 'id'> & Object) {
 
     values.filter(Boolean)
   );
+}
+/**
+ * @description 获取所有用户id
+ * @returns
+ */
+export async function getAllUserId() {
+  return await db.query<UserId[]>(`SELECT id FROM users`);
 }

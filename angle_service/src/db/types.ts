@@ -1,5 +1,8 @@
 import { RowDataPacket } from 'mysql2';
 
+export interface UserId extends RowDataPacket {
+  id: number;
+}
 export interface SelectUserInfoRespone extends RowDataPacket {
   id: number;
   username: string;
@@ -14,6 +17,7 @@ export interface SelectApiPermissionsRespone extends RowDataPacket {
   apiName: string;
   apiType: string;
 }
+export interface d extends User {}
 
 export interface User extends RowDataPacket {
   id: number;

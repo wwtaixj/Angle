@@ -5,9 +5,11 @@ import { Response } from '@/axios/typings';
 
 declare type TargetContext = '_self' | '_blank';
 
-export const withInstall = <T = any>(component: T, alias?: string) => {
+export const withInstall = <T = unknown>(component: T, alias?: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const comp = component as any;
   comp.install = (app: App) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     app.component(comp.name || comp.displayName, component as any);
     if (alias) {
       app.config.globalProperties[alias] = component;
@@ -53,7 +55,6 @@ export function resultPrompt<T>(
 }
 
 export * from './cryptoJs';
-export * from './indexedDB';
 export * from './is';
 export * from './message';
 export * from './webStorage';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const getNavLanguage = (): string => {
   let locale = '';
   if (typeof navigator === 'undefined') {
