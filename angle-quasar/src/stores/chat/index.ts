@@ -43,6 +43,17 @@ export const useChatStore = defineStore('chat', {
   },
   actions: {
     /**
+     * @description 设置聊天记录
+     * @param message
+     */
+    setChatActiveMssage(message: ActiveMessage | ActiveMessage[]) {
+      if (isArray(message)) {
+        this.chatActiveMssage = message;
+        return;
+      }
+      this.chatActiveMssage.push(message);
+    },
+    /**
      * @description 设置聊天列表
      * @param chatList
      */
@@ -67,8 +78,6 @@ export const useChatStore = defineStore('chat', {
       useDBStore()
         .getChatHistory()
         .then((result) => {
-          console.log(result);
-
           const userStore = useUserStore();
           if (!isArray(result)) return;
           this.chatActiveMssage = result.map((i) => ({
@@ -101,7 +110,7 @@ export const useChatStore = defineStore('chat', {
       useSocketStore().socketEmit(String(receiverId), messageBody);
       // 存储消息到数据库
       useDBStore().addChatHistory(messageBody);
-      this.chatActiveMssage.push({
+      this.setChatActiveMssage({
         message: [message],
         avatarUrl: userStore.getAvatarUrl,
         satus: 1,

@@ -4,6 +4,7 @@ import { createSocket, TransmissionBody } from '@/socket';
 import { Socket } from 'socket.io-client';
 import { useUserStore } from '@/stores/user';
 import { useDBStore } from '@/stores/database';
+import { useChatStore } from '@/stores/chat';
 
 const { VITE_GLOB_SOCKET_URL } = import.meta.env;
 
@@ -25,11 +26,7 @@ export const useSocketStore = defineStore('socket', {
         token: userStore.getToken,
         userId: userId,
       });
-      this.socketOn(userId, (data) => {
-        useDBStore().addChatHistory(data, data.senderId);
-        console.log('Received message from server:');
-        console.log(data);
-      });
+      this.socketOnServer(userId);
       this.updateApp();
     },
     socketOn(userId: string, callback: (data: TransmissionBody) => void) {
@@ -41,6 +38,21 @@ export const useSocketStore = defineStore('socket', {
     socketEmit(userId: string, data: TransmissionBody) {
       if (!this.socketIO) this.initSocket();
       this.socketIO?.emit(userId, data);
+    },
+    socketOnServer(userId: string) {
+      this.socketOn(userId, (data) => {
+        const chatStore = useChatStore();
+        chatStore.setChatActiveMssage({
+          message: [data.message],
+          avatarUrl: chatStore.getChatActive?.avatarUrl as string,
+          satus: 1,
+          sent: false,
+        });
+        useDBStore().addChatHistory(data, data.senderId);
+
+        console.log('Received message from server:');
+        console.log(data);
+      });
     },
     /**
      * @description 监听更新
