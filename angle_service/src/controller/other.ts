@@ -29,6 +29,7 @@ export function updateApp(io: Server) {
           // 向所有已连接的客户端发送更新通知
           io.emit('updateAvailable', {
             url: `http://${process.env.UPLOAD_URL}:${process.env.LISTEN_PORT}${version}`,
+            version,
           });
         }
       }

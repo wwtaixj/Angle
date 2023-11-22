@@ -5,19 +5,6 @@
   "productName": "Angle",
   "author": "JX <761359511@qq.com>",
   "private": true,
-  "build": {
-    "productName": "Angle_v${version}.${ext}",
-    "appId": "com.app.angle-nsis",
-    "win": {
-      "icon": "/src-electron/icons/icon.png",
-      "artifactName": "Angle_v${version}.${ext}"
-    },
-    "publish": [
-      {
-        "provider": "generic"
-      }
-    ]
-  },
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
@@ -28,14 +15,11 @@
     "build:app": "quasar build -m electron"
   },
   "dependencies": {
-    "@electron-toolkit/utils": "^2.0.1",
     "@quasar/extras": "^1.16.4",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@types/crypto-js": "^4.1.2",
     "axios": "^1.2.1",
     "crypto-js": "^4.1.1",
-    "electron": "^27.0.4",
-    "electron-updater": "^6.1.4",
     "pg-hstore": "^2.3.4",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
@@ -55,7 +39,11 @@
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
     "autoprefixer": "^10.4.2",
+    "electron": "^27.0.4",
+    "electron-builder": "^24.3.0",
+    "electron-log": "^5.0.1",
     "electron-packager": "^17.1.1",
+    "electron-updater": "^6.1.4",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^9.0.0",

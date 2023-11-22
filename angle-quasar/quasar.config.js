@@ -9,7 +9,7 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 const { configure } = require('quasar/wrappers');
 const path = require('path');
-
+console.log();
 module.exports = configure(function (/* ctx */) {
   return {
     eslint: {
@@ -196,7 +196,7 @@ module.exports = configure(function (/* ctx */) {
 
       inspectPort: 5858,
 
-      bundler: 'packager', // 'packager' or 'builder'
+      bundler: 'builder', // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
@@ -212,7 +212,23 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'angle-quasar',
+        appId: 'com.angle.app',
+        productName: `Angle_v${process.env.npm_package_version}`,
+        artifactName: `Angle_v${process.env.npm_package_version}`,
+        win: {
+          icon: '/src-electron/icons/icon.png',
+          target: ['nsis'],
+        },
+        appImage: {
+          icon: '/src-electron/icons/icon.png',
+        },
+      },
+      // 可选; 添加/删除/更改生产版本
+      // 生成的package.json的属性
+      extendPackageJson(pkg) {
+        // 直接更改pkg的属性;
+        // 不需要返回任何东西
+        pkg.version = 'v' + pkg.version;
       },
     },
 

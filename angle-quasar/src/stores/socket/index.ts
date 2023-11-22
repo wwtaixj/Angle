@@ -5,6 +5,7 @@ import { Socket } from 'socket.io-client';
 import { useUserStore } from '@/stores/user';
 import { useDBStore } from '@/stores/database';
 import { useChatStore } from '@/stores/chat';
+import { MessageSendStatus, MessageSendType } from '@/enums/chat';
 
 const { VITE_GLOB_SOCKET_URL } = import.meta.env;
 
@@ -29,36 +30,42 @@ export const useSocketStore = defineStore('socket', {
       this.socketOnServer(userId);
       this.updateApp();
     },
-    socketOn(userId: string, callback: (data: TransmissionBody) => void) {
+    socketOn<T = TransmissionBody>(
+      userId: string,
+      callback: (data: T) => void
+    ) {
       if (!this.socketIO) this.initSocket();
-      this.socketIO?.on(userId, (data: TransmissionBody) => {
+      this.socketIO?.on(userId, (data: T) => {
         callback(data);
       });
     },
-    socketEmit(userId: string, data: TransmissionBody) {
+    socketEmit<T = TransmissionBody>(userId: string, data: T) {
       if (!this.socketIO) this.initSocket();
       this.socketIO?.emit(userId, data);
     },
+    /**
+     * @description 监听服务器消息
+     */
     socketOnServer(userId: string) {
       this.socketOn(userId, (data) => {
-        const chatStore = useChatStore();
-        chatStore.setChatActiveMssage({
-          message: [data.message],
-          avatarUrl: chatStore.getChatActive?.avatarUrl as string,
-          satus: 1,
-          sent: false,
-        });
-        useDBStore().addChatHistory(data, data.senderId);
-
-        console.log('Received message from server:');
-        console.log(data);
+        // 不是系统消息时, 接收消息并存储到数据库
+        if (data.type !== MessageSendType.SYSTEM_MESSAGE) {
+          const chatStore = useChatStore();
+          chatStore.setChatActiveMssage({
+            message: [data.message],
+            avatarUrl: chatStore.getChatActive?.avatarUrl as string,
+            status: MessageSendStatus.CLIENT_RECEIVED,
+            sent: false,
+          });
+          useDBStore().addChatHistory(data.senderId, data);
+        }
       });
     },
     /**
-     * @description 监听更新
+     * @description 监听应用更新推送
      */
     updateApp() {
-      this.socketOn('updateAvailable', (data) => {
+      this.socketOn<null>('updateAvailable', (data) => {
         console.log(data);
       });
     },

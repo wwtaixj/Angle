@@ -6,10 +6,12 @@ import { useDBStore } from '@/stores/database';
 import { useSocketStore } from '@/stores/socket';
 import { useUserStore } from '@/stores/user';
 import { TransmissionBody } from '@/socket/types';
+import { uid } from 'quasar';
+import { MessageSendStatus, MessageSendType } from '@/enums/chat';
 
 interface ActiveMessage {
   message: TransmissionBody['message'][];
-  satus: TransmissionBody['satus'];
+  status: TransmissionBody['status'];
   avatarUrl: Chat['avatarUrl'];
   sent: boolean;
 }
@@ -76,7 +78,7 @@ export const useChatStore = defineStore('chat', {
       sStorage.set('CHAT_ACTIVE', active);
       //获取选中用户历史消息
       useDBStore()
-        .getChatHistory()
+        .getChatHistory(this.getChatActive?.id as number)
         .then((result) => {
           const userStore = useUserStore();
           if (!isArray(result)) return;
@@ -85,7 +87,7 @@ export const useChatStore = defineStore('chat', {
             avatarUrl: (i.dataValues.senderId === userStore.getUserId
               ? userStore.getAvatarUrl
               : this.chatActive?.avatarUrl) as string,
-            satus: i.dataValues.satus,
+            status: i.dataValues.status,
             sent: i.dataValues.senderId === userStore.getUserId,
           }));
         });
@@ -98,22 +100,28 @@ export const useChatStore = defineStore('chat', {
       const userStore = useUserStore();
       const senderId = userStore.getUserId;
       const receiverId = this.getChatActive?.id as number;
+      const messageId = uid();
+      const status = MessageSendStatus.HAVE_SEND;
       const messageBody: TransmissionBody = {
         message,
-        type: 1,
+        type: MessageSendType.TEXT_MESSAGE,
         senderId,
         receiverId,
         timestamp: Date.now(),
-        satus: 1,
+        status,
+        messageId,
       };
       // 发送消息到服务器
       useSocketStore().socketEmit(String(receiverId), messageBody);
       // 存储消息到数据库
-      useDBStore().addChatHistory(messageBody);
+      useDBStore().addChatHistory(
+        this.getChatActive?.id as number,
+        messageBody
+      );
       this.setChatActiveMssage({
         message: [message],
         avatarUrl: userStore.getAvatarUrl,
-        satus: 1,
+        status,
         sent: true,
       });
     },

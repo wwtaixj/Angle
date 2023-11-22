@@ -20,7 +20,6 @@ export function connection(socket: Socket, io: Server) {
   for (let id of userIds) {
     socket.on(id, (msg) => receive(msg, io));
   }
-
   socket.on('disconnect', disconnect);
 }
 /**
@@ -30,11 +29,12 @@ export function connection(socket: Socket, io: Server) {
  */
 export function receive(msg: TransmissionBody, io: Server) {
   const { senderId, receiverId, message, type } = msg;
-  console.log(msg);
+  const messageMap = new Map();
   // 将消息发送成功回调给发送者客户端
   if (type !== 0) {
-    io.emit(senderId, {
-      type: '0',
+    io.emit<string>(senderId, {
+      type: 0,
+      status: 1,
     });
   }
   // 将消息发送给接收者客户端

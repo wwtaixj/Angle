@@ -1,6 +1,6 @@
 {
   "extends": "@quasar/app-vite/tsconfig-preset",
-  "include": ["./src/**/*"],
+  "include": ["./src/**/*", "./src-electron/**/*"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

@@ -27,17 +27,11 @@ export const useDBStore = defineStore('database', {
         ids: useChatStore().getChatList.map((i) => i.id),
       });
     },
-    async addChatHistory(
-      history: ChatHistoryTable,
-      id: number = useChatStore().getChatActive?.id as number
-    ) {
+    async addChatHistory(id: number, history: ChatHistoryTable) {
       if (!this.instance) await this.initDatabase();
       return insertChatHistory(this.instance as Sequelize, id, history);
     },
-    async getChatHistory(
-      chat?: Partial<ChatHistoryTable>,
-      id: number = useChatStore().getChatActive?.id as number
-    ) {
+    async getChatHistory(id: number, chat?: Partial<ChatHistoryTable>) {
       if (!this.instance) await this.initDatabase();
       return queryChatHistoryByAll(this.instance as Sequelize, id, chat);
     },

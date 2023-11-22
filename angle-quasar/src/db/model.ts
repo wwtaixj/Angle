@@ -24,6 +24,9 @@ export async function createChatHistory(
       timestamp: {
         type: DataTypes.DATE,
       },
+      messageId: {
+        type: DataTypes.STRING,
+      },
     },
     {
       timestamps: true,
@@ -70,6 +73,7 @@ export const queryChatHistoryByAll = (
     [P in keyof ChatHistoryTable]?: ChatHistoryTable[P];
   }
 ) => {
+  console.log(sequelize);
   if (!sequelize) return;
   if (params) {
     return sequelize.models[`ChatHistory${id}`].findAll<
@@ -78,6 +82,7 @@ export const queryChatHistoryByAll = (
       where: params,
     });
   }
+
   return sequelize.models[`ChatHistory${id}`].findAll<
     Model<ChatHistoryTable>
   >();

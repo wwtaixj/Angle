@@ -1,5 +1,6 @@
 import type { ChatMessage } from 'chatgpt';
 
+export type BodyStatus = 0 | 1 | 2 | 3; // 0: 已发送, 1: 服务器已经接收,  2：对方客户已经接收, 3: 已读
 export type BodyType = 0 | 1 | 2 | 3 | 4; // 0: 系统消息, 1: 文本消息, 2: 图片消息, 3: 语音消息, 4: 视频消息
 export interface TransmissionBody {
   senderId: string; // 发送者ID
@@ -7,7 +8,7 @@ export interface TransmissionBody {
   message: string; // 消息
   timestamp: number; // 发送时间
   type: BodyType; // 消息类型
-  satus: number; // 消息状态
+  status: BodyStatus; // 消息状态
 }
 
 export interface SendVerificationCodeParams {

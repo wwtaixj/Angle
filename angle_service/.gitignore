@@ -16,7 +16,7 @@ coverage
 
 /public/update
 
-/public/upload/images
+/public/upload
 
 /cypress/videos/
 /cypress/screenshots/

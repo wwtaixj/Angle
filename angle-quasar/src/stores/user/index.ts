@@ -53,7 +53,7 @@ export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     locale: LOCALE.ZH_CN, // default locale
     theme: false, // default theme
-    avatarUrl: 'public\\icons\\default_icon.png',
+    avatarUrl: 'public\\icons\\chatDefIcon.png',
     token: '',
     loginState: LoginStateEnum.LOGIN,
     verCode: '',

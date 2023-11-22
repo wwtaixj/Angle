@@ -1,15 +1,13 @@
 import { app, BrowserWindow, globalShortcut } from 'electron';
-import { electronApp, optimizer } from '@electron-toolkit/utils';
 import path from 'path';
 import os from 'os';
-import { autoUpdater } from 'electron-updater';
-
+import { updateHandle } from '@/utils/updater';
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
 let mainWindow: BrowserWindow | undefined;
 
-function createWindow() {
+function createWindow(key: number) {
   /**
    * Initial window options
    */
@@ -44,6 +42,9 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = undefined;
   });
+  if (key === 1) {
+    updateHandle({ mainWindow });
+  }
 }
 
 app.whenReady().then(() => {
@@ -59,17 +60,7 @@ app.whenReady().then(() => {
   if (!ret) {
     console.error('注册快捷键失败！');
   }
-  // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron');
-
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window);
-  });
-
-  createWindow();
+  createWindow(1);
 });
 
 app.on('window-all-closed', () => {
@@ -80,30 +71,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (mainWindow === undefined) {
-    createWindow();
+    createWindow(2);
   }
 });
-
-// 配置自动更新的服务器地址和应用程序包的基本信息
-autoUpdater.setFeedURL({
-  provider: 'generic',
-  url: 'http://localhost:9310',
-});
-
-// 监听自动更新事件，当有可用更新时触发
-autoUpdater.on('update-available', () => {
-  // 在这里可以提示用户有新的版本可用
-});
-
-// 监听自动更新下载进度
-autoUpdater.on('download-progress', () => {
-  // 在这里可以显示下载进度给用户
-});
-
-// 监听自动更新完成事件
-autoUpdater.on('update-downloaded', () => {
-  // 在这里可以提示用户下载完成，并要求重启应用程序以应用更新
-});
-
-// 检查更新
-autoUpdater.checkForUpdates();
