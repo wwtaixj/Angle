@@ -73,7 +73,6 @@ export const queryChatHistoryByAll = (
     [P in keyof ChatHistoryTable]?: ChatHistoryTable[P];
   }
 ) => {
-  console.log(sequelize);
   if (!sequelize) return;
   if (params) {
     return sequelize.models[`ChatHistory${id}`].findAll<

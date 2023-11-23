@@ -10,10 +10,11 @@ import { useChatStore } from '@/stores/chat';
 
 const userStore = useUserStore();
 const token = userStore.getToken;
-userStore.initUserStore();
+
 // console.log(process.env.VUE_ROUTER_MODE);
 // console.log(import.meta.env.VITE_GLOB_SOCKET_URL);
 if (token) {
+  userStore.initUserStore();
   useChatStore()
     .setChatList()
     .then(() => {

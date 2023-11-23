@@ -80,9 +80,6 @@ export const apiPermission = async (
 ) => {
   let status = '1';
   try {
-    const headerUserName = decrypt(
-      (req.headers.username as string) || req.body.username
-    );
     // 登录 退出登录 注册跳过
     if (
       req.url === Url.API + Url.LOGIN ||
@@ -93,6 +90,9 @@ export const apiPermission = async (
       next();
       return;
     }
+    const headerUserName = decrypt(
+      (req.headers.username as string) || req.body.username
+    );
     let permissions = Cache.get<SelectApiPermissionsRespone[]>(headerUserName);
     if (!permissions) {
       permissions = (await getUserPermissions(headerUserName))[0];

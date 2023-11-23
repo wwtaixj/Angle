@@ -36,7 +36,7 @@
           &nbsp;&nbsp;
           <XInputPopupEdit
             class="inline"
-            :model-value="userStore.getGender"
+            :model-value="String(userStore.getGender)"
             @update:model-value="userStore.setGender"
           />
         </div>
@@ -45,7 +45,7 @@
           &nbsp;&nbsp;
           <XInputPopupEdit
             class="inline"
-            :model-value="userStore.getAge"
+            :model-value="String(userStore.getAge)"
             @update:model-value="userStore.setAge"
           />
         </div>

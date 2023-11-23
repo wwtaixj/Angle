@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { isObject, sStorage, isArray } from '@/utils';
+import { isObject, lStorage, isArray } from '@/utils';
 import { Chat } from '../typings/chat';
 import { getUser } from '@/axios';
 import { useDBStore } from '@/stores/database';
@@ -31,12 +31,12 @@ export const useChatStore = defineStore('chat', {
     getChatList(state) {
       const chatList = state.chatList;
       if (chatList.length) return chatList;
-      return (sStorage.get('CHAT_LIST') as Chat[]) || [];
+      return (lStorage.get('CHAT_LIST') as Chat[]) || [];
     },
     getChatActive(state) {
       const active = state.chatActive;
       if (!active) return active;
-      return sStorage.get<Chat>('CHAT_ACTIVE');
+      return lStorage.get<Chat>('CHAT_ACTIVE');
     },
     getChatActiveMssage(state) {
       const activeMssage = state.chatActiveMssage;
@@ -65,7 +65,7 @@ export const useChatStore = defineStore('chat', {
       const userId = useUserStore().getUserId;
       const chatList = data.filter((i) => i.id !== userId);
       this.chatList = chatList;
-      sStorage.set('CHAT_LIST', chatList);
+      lStorage.set('CHAT_LIST', chatList);
     },
     /**
      * @description 设置选中的聊天用户
@@ -75,7 +75,7 @@ export const useChatStore = defineStore('chat', {
     setChatActive(active: Chat) {
       if (!isObject(active)) return;
       this.chatActive = active;
-      sStorage.set('CHAT_ACTIVE', active);
+      lStorage.set('CHAT_ACTIVE', active);
       //获取选中用户历史消息
       useDBStore()
         .getChatHistory(this.getChatActive?.id as number)

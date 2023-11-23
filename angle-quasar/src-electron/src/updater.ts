@@ -1,8 +1,7 @@
 import { BrowserWindow, ipcMain } from 'electron';
-import log from '@/utils/electronLog';
 import { autoUpdater } from 'electron-updater';
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'path';
 
 // 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
 export function updateHandle({ mainWindow }: { mainWindow: BrowserWindow }) {
@@ -16,7 +15,7 @@ export function updateHandle({ mainWindow }: { mainWindow: BrowserWindow }) {
     updaterCacheDirName,
     'pending'
   );
-  log.warn('updatePendingPath:' + updatePendingPath);
+
   fs.emptyDir(updatePendingPath);
   const message = {
     error: '检查更新出错',
@@ -24,14 +23,15 @@ export function updateHandle({ mainWindow }: { mainWindow: BrowserWindow }) {
     updateAva: '检测到新版本，正在下载……',
     updateNotAva: '现在使用的就是最新版本，不用更新',
   };
+
   // 也可以通过代码配置文件服务地址
   autoUpdater.setFeedURL({
     provider: 'generic',
-    url: 'http://localhost:9310/public/update',
+    url: 'http://localhost:9310/update',
   });
+
   // 设置是否自动下载，默认是true,当点击检测到新版本时，会自动下载安装包，所以设置为false
   autoUpdater.autoDownload = false;
-  autoUpdater.logger = log;
   // 正在检查更新
   autoUpdater.on('error', function () {
     sendUpdateMessage(message.error, mainWindow);
@@ -54,8 +54,9 @@ export function updateHandle({ mainWindow }: { mainWindow: BrowserWindow }) {
   });
   // 新安装包下载完成
   autoUpdater.on('update-downloaded', () => {
+    console.log('开始更新');
     ipcMain.on('isUpdateNow', () => {
-      log.warn('开始更新');
+      console.log('开始更新');
       autoUpdater.quitAndInstall();
     });
 
@@ -64,7 +65,7 @@ export function updateHandle({ mainWindow }: { mainWindow: BrowserWindow }) {
 
   ipcMain.on('checkForUpdate', () => {
     // 执行自动更新检查
-    log.warn('执行自动更新检查, isDestroyed:', mainWindow.isDestroyed());
+    console.log('执行自动更新检查, isDestroyed:', mainWindow.isDestroyed());
     // 解决mac重启App 报错 的问题: object has been destroyed
     if (mainWindow && !mainWindow.isDestroyed()) {
       autoUpdater.checkForUpdates();
@@ -73,12 +74,15 @@ export function updateHandle({ mainWindow }: { mainWindow: BrowserWindow }) {
 
   ipcMain.on('downloadUpdate', () => {
     // 下载
-    log.warn('执行下载');
+    console.log('执行下载');
     autoUpdater.downloadUpdate();
   });
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
 // 通过main进程发送事件给renderer进程，提示更新信息
 function sendUpdateMessage(text: string, mainWindow: BrowserWindow) {
+  console.log('message', text);
+
   mainWindow.webContents.send('message', text);
 }

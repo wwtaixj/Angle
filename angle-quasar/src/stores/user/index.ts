@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+const { ipcRenderer } = require('electron');
 import { LOCALE } from '@/i18n';
 import { setLocale } from '@/boot/i18n';
 import { LoginStateEnum } from '@/enums/main';
@@ -16,7 +17,6 @@ import { useChatStore } from '@/stores/chat';
 import {
   getNavLanguage,
   lStorage,
-  sStorage,
   isString,
   isBoolean,
   resultPrompt,
@@ -122,22 +122,22 @@ export const useUserStore = defineStore('user', {
     getGender(state) {
       const gender = state.gender;
       if (gender) return gender;
-      return sStorage.get<UserState['gender']>('GENDER');
+      return lStorage.get<UserState['gender']>('GENDER');
     },
     getTag(state) {
       const tag = state.tag;
       if (tag) return tag;
-      return sStorage.get<UserState['tag']>('TAG');
+      return lStorage.get<UserState['tag']>('TAG');
     },
     getPassword(state) {
       const password = state.password;
       if (password) return password;
-      return sStorage.get<UserState['password']>('PASSWORD');
+      return lStorage.get<UserState['password']>('PASSWORD');
     },
     getLocation(state) {
       const location = state.location;
       if (location.longitude !== 0) return location;
-      return sStorage.get<UserState['location']>('LOCATION');
+      return lStorage.get<UserState['location']>('LOCATION');
     },
     getRemember(state) {
       const remember = state.remember;
@@ -165,6 +165,8 @@ export const useUserStore = defineStore('user', {
       this.setTheme(theme);
       const avatarUrl = lStorage.get<string>('AVATAR_URL');
       this.setAvatarUrl(avatarUrl);
+      this.setToken(this.getToken);
+      this.setUsername(this.getUserName);
     },
     setTheme(theme: boolean) {
       if (!isBoolean(theme)) return;
@@ -180,11 +182,14 @@ export const useUserStore = defineStore('user', {
     setToken(token: string) {
       if (!isString(token)) return;
       this.token = token;
+      // 发送请求给主进程以设置数据
+      ipcRenderer.send('setLocalStorage', 'TOKEN', token);
       lStorage.set('TOKEN', token);
     },
     setUsername(name: string) {
       if (!isString(name)) return;
       this.username = name;
+      ipcRenderer.send('setLocalStorage', 'USERNAME', name);
       lStorage.set('USERNAME', name);
     },
     setPassword(password: string) {
@@ -306,6 +311,7 @@ export const useUserStore = defineStore('user', {
         tag: '',
         userId: 0,
       });
+      lStorage.clear();
     },
     /**
      * @description 退出登录

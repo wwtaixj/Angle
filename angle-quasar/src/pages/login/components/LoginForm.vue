@@ -67,6 +67,8 @@ async function submitLogin() {
   loginLoading.value = true;
   try {
     await userStore.login();
+  } catch (e) {
+    console.log(e);
   } finally {
     loginLoading.value = false;
   }

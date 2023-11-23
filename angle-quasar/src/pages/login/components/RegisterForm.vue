@@ -102,6 +102,8 @@ async function submitRegister() {
       email: registerForm.email,
       verCode: registerForm.verCode,
     });
+  } catch (e) {
+    console.log(e);
   } finally {
     registerLoading.value = false;
   }

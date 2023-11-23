@@ -1,7 +1,8 @@
 import { app, BrowserWindow, globalShortcut } from 'electron';
 import path from 'path';
 import os from 'os';
-import { updateHandle } from '@/utils/updater';
+import { updateHandle } from './src/updater';
+import { initStores } from './src/stores';
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
@@ -29,7 +30,7 @@ function createWindow(key: number) {
   });
 
   mainWindow.loadURL(process.env.APP_URL as string);
-  // console.log('import', process.env);
+  //console.log('import', process.env.DEBUGGING);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();
@@ -45,9 +46,10 @@ function createWindow(key: number) {
   if (key === 1) {
     updateHandle({ mainWindow });
   }
+  initStores();
 }
 
-app.whenReady().then(() => {
+app.on('ready', () => {
   // 注册全局快捷键
   const ret = globalShortcut.register('F1', () => {
     // 在这里执行你希望触发的操作

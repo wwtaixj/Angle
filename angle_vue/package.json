@@ -1,9 +1,9 @@
 {
-  "name": "angle",
-  "version": "1.0.0",
+  "name": "angle-chat",
+  "version": "1.0.3",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
-  "author": "JX",
+  "author": "JX 2022",
   "build": {
     "win": {
       "icon": "/resources/icon.png"

@@ -9,7 +9,6 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 const { configure } = require('quasar/wrappers');
 const path = require('path');
-console.log();
 module.exports = configure(function (/* ctx */) {
   return {
     eslint: {
@@ -213,14 +212,15 @@ module.exports = configure(function (/* ctx */) {
         // https://www.electron.build/configuration/configuration
 
         appId: 'com.angle.app',
-        productName: `Angle_v${process.env.npm_package_version}`,
-        artifactName: `Angle_v${process.env.npm_package_version}`,
+        productName: 'Angle',
+        artifactName: `Angle_v${process.env.npm_package_version}.exe`,
         win: {
           icon: '/src-electron/icons/icon.png',
           target: ['nsis'],
         },
-        appImage: {
-          icon: '/src-electron/icons/icon.png',
+        publish: {
+          provider: 'generic',
+          url: 'http://localhost:9310/update',
         },
       },
       // 可选; 添加/删除/更改生产版本
@@ -228,7 +228,6 @@ module.exports = configure(function (/* ctx */) {
       extendPackageJson(pkg) {
         // 直接更改pkg的属性;
         // 不需要返回任何东西
-        pkg.version = 'v' + pkg.version;
       },
     },
 

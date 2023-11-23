@@ -1,9 +1,16 @@
 import fs from 'fs';
 import { resolve, join } from 'path';
 import { Server } from 'socket.io';
+import multer from 'multer';
 export function updateApp(io: Server) {
   // 文件路径和信息
   const folderPath = resolve(__dirname, '../../public/update/');
+  multer.diskStorage({
+    destination(req, file, cb) {
+      //指定文件路径存储地
+      cb(null, 'public/update/');
+    },
+  });
   let lastModifiedTime = null;
   // 监听文件变化
   fs.watch(folderPath, (event, filename) => {

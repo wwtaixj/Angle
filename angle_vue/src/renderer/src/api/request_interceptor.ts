@@ -4,12 +4,11 @@ import { useUserStore, useAuthStore } from '@renderer/store';
 import { encrypt } from '@renderer/utils/cryptoJs';
 import request_url from './request_url';
 import { isObject } from '@renderer/utils/is';
-const { VITE_APP_API_BASE_URL } = import.meta.env;
 
 // 创建axios实例
 const instance = axios.create({
   timeout: 1000 * 60 * 5,
-  baseURL: VITE_APP_API_BASE_URL
+  baseURL: 'http://loose.net.cn:9310'
 });
 
 // 添加请求拦截器
