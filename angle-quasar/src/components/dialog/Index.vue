@@ -9,14 +9,19 @@
         <q-btn icon="cancel" flat round dense v-close-popup />
       </q-card-section>
       <slot />
+      <!-- 按钮的例子 -->
+      <q-card-actions align="right" v-if="buttonConfig?.show">
+        <q-btn v-bind="buttonConfig.ok" @click="onOKClick" />
+        <q-btn v-bind="buttonConfig.cancel" @click="onCancelClick" />
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, PropType, useAttrs } from 'vue';
+import { defineEmits, PropType, useAttrs, reactive } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
-import { DialogTypeEnum, XDialogProps } from './index';
+import { DialogTypeEnum, XDialogProps, XDialogButton } from './index';
 
 const attrs: XDialogProps = useAttrs();
 
@@ -24,25 +29,44 @@ defineOptions({
   name: 'XDialog',
 });
 
-defineProps({
+const props = defineProps({
   type: {
-    type: String as PropType<DialogTypeEnum>,
+    type: String as PropType<XDialogProps['type']>,
     default: () => DialogTypeEnum.CARD,
   },
+  button: {
+    type: Object as PropType<XDialogProps['button']>,
+  },
 });
-const $emits = defineEmits([...useDialogPluginComponent.emits]);
+const $emits = defineEmits([...useDialogPluginComponent.emits, 'cancel']);
+const buttonConfig = reactive<XDialogButton>({
+  show: false,
+  ok: {
+    label: '确定',
+  },
+  cancel: {
+    label: '取消',
+  },
+});
 
-const { dialogRef, onDialogHide } = useDialogPluginComponent();
-// onDialogOK, onDialogCancel
-// function onOKClick() {
-//   onDialogOK();
-//   $emits('ok');
-// }
-// function onCancelClick() {
-//   onDialogCancel();
-// }
+function initDialog() {
+  Object.assign(buttonConfig, props.button);
+}
+
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+  useDialogPluginComponent();
+
+function onOKClick() {
+  onDialogOK();
+  $emits('ok');
+}
+function onCancelClick() {
+  onDialogCancel();
+  $emits('cancel');
+}
 function onHide() {
   onDialogHide();
   $emits('hide');
 }
+initDialog();
 </script>
