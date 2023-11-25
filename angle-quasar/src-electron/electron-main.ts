@@ -43,10 +43,10 @@ function createWindow(key: number) {
   mainWindow.on('closed', () => {
     mainWindow = undefined;
   });
+  initStores();
   if (key === 1) {
     updateHandle({ mainWindow });
   }
-  initStores();
 }
 
 app.on('ready', () => {

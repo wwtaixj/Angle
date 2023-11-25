@@ -3,6 +3,7 @@ import { CSSProperties } from 'vue';
 import { DialogEventEnum } from '@/enums/main';
 import { useUserStore } from '../user';
 import { useI18n } from '@/boot/i18n';
+const { ipcRenderer, dialog } = require('electron');
 
 interface Dialog {
   visible: boolean;
@@ -28,7 +29,6 @@ export const useMainStore = defineStore('main', {
       style: {},
     },
   }),
-  getters: {},
   actions: {
     setLeftDrawerOpen() {
       this.leftDrawerOpen = !this.leftDrawerOpen;
@@ -56,6 +56,21 @@ export const useMainStore = defineStore('main', {
     },
     resetDialog() {
       this.setDialog({ title: '', style: {}, class: '' });
+    },
+    updateApp() {
+      // 接收主进程的消息，更新进度条
+      ipcRenderer.on('download-progress', (event, progressObj) => {
+        const progress = document.getElementById('progress');
+        const bar = document.getElementById('bar');
+        // 显示进度条
+        if (progress) {
+          progress.style.display = 'block';
+          // 设置进度条的值
+        }
+        if (bar) {
+          bar.value = progressObj.percent;
+        }
+      });
     },
   },
 });

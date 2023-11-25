@@ -1,16 +1,9 @@
 import fs from 'fs';
 import { resolve, join } from 'path';
 import { Server } from 'socket.io';
-import multer from 'multer';
 export function updateApp(io: Server) {
   // 文件路径和信息
   const folderPath = resolve(__dirname, '../../public/update/');
-  multer.diskStorage({
-    destination(req, file, cb) {
-      //指定文件路径存储地
-      cb(null, 'public/update/');
-    },
-  });
   let lastModifiedTime = null;
   // 监听文件变化
   fs.watch(folderPath, (event, filename) => {
@@ -19,7 +12,7 @@ export function updateApp(io: Server) {
         console.log('读取文件夹时出错：', err);
         return;
       }
-      const regex = /Angle/; // 设置匹配的字符或模式
+      const regex = /Angle_v(\d+\.\d+\.\d+)\.exe$/; // 设置匹配的字符或模式
       const fileNames = files.filter((file) => regex.test(file));
       const filePath = join(folderPath, fileNames.toString());
       if (event === 'change') {
@@ -30,9 +23,8 @@ export function updateApp(io: Server) {
         if (modifiedTime !== lastModifiedTime) {
           lastModifiedTime = modifiedTime;
           const version = filePath
-            .substring(filePath.indexOf('public') + 6)
+            .substring(filePath.length - 9, filePath.length - 4)
             .replace(/\\/g, '/');
-
           // 向所有已连接的客户端发送更新通知
           io.emit('updateAvailable', {
             url: `http://${process.env.UPLOAD_URL}:${process.env.LISTEN_PORT}${version}`,

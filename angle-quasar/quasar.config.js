@@ -89,9 +89,13 @@ module.exports = configure(function (/* ctx */) {
         [require('unplugin-vue-define-options')],
         [require('@rollup/plugin-commonjs')],
       ],
-
       alias: {
         '@': path.join(__dirname, './src/'),
+      },
+      reportCompressedSize: false,
+      sourcemap: false,
+      commonjsOptions: {
+        ignoreTryCatch: false,
       },
     },
 
@@ -221,14 +225,24 @@ module.exports = configure(function (/* ctx */) {
         publish: {
           provider: 'generic',
           url: 'http://localhost:9310/update',
+          updaterCacheDirName: 'update',
         },
       },
       // 可选; 添加/删除/更改生产版本
       // 生成的package.json的属性
-      extendPackageJson(pkg) {
-        // 直接更改pkg的属性;
-        // 不需要返回任何东西
-      },
+      // extendPackageJson(pkg) {
+      //   // 直接更改pkg的属性;
+      //   // 不需要返回任何东西
+      // },
+      // extendElectronMainConf(cfg) {
+      //   // do something with Esbuild config
+      //   // for the Electron Main thread
+      // },
+
+      // extendElectronPreloadConf(cfg) {
+      //   // do something with Esbuild config
+      //   // for the Electron Preload thread
+      // },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
