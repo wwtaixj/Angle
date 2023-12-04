@@ -42,6 +42,9 @@ import { PropType, defineEmits, useAttrs } from 'vue';
 import { XPopupEdit } from '../PopupEdit';
 import { XInputPopupEditProps } from './index';
 
+defineOptions({
+  name: 'XInputPopupEdit',
+});
 const attrs: Omit<XInputPopupEditProps, 'modelValue'> = useAttrs();
 
 const $emits = defineEmits(['update:modelValue']);

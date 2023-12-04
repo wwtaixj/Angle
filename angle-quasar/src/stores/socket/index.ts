@@ -6,6 +6,7 @@ import { useUserStore } from '@/stores/user';
 import { useDBStore } from '@/stores/database';
 import { useChatStore } from '@/stores/chat';
 import { MessageSendStatus, MessageSendType } from '@/enums/chat';
+import { $Window } from '@/types/env';
 
 const { VITE_GLOB_SOCKET_URL } = import.meta.env;
 
@@ -65,8 +66,10 @@ export const useSocketStore = defineStore('socket', {
      * @description 监听应用更新推送
      */
     updateApp() {
-      this.socketOn<null>('updateAvailable', (data) => {
-        console.log(data);
+      this.socketOn<null>('updateAvailable', () => {
+        const { electron } = window as unknown as $Window;
+        if (!electron) return;
+        electron.ipcRenderer.send('update-available');
       });
     },
   },

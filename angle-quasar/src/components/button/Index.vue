@@ -12,10 +12,9 @@
 <script lang="ts" setup>
 import { useSlots, useAttrs } from 'vue';
 import { QBtnSlots } from 'quasar';
-
-const slots: Partial<QBtnSlots> = useSlots();
-
 defineOptions({
   name: 'XButton',
 });
+
+const slots: Partial<QBtnSlots> = useSlots();
 </script>

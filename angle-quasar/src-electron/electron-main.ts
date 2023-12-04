@@ -1,55 +1,56 @@
 import { app, BrowserWindow, globalShortcut } from 'electron';
-import path from 'path';
+import { resolve } from 'path';
 import os from 'os';
 import { updateHandle } from './src/updater';
-import { initStores } from './src/stores';
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
 let mainWindow: BrowserWindow | undefined;
 
-function createWindow(key: number) {
+function createWindow(key?: number) {
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    icon: resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1000,
     height: 600,
     useContentSize: true,
+    autoHideMenuBar: false,
     webPreferences: {
       devTools: true,
       contextIsolation: false,
       nodeIntegration: true,
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-      preload: path.resolve(
-        __dirname,
-        process.env.QUASAR_ELECTRON_PRELOAD as string
-      ),
+      preload: resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
     },
   });
 
-  mainWindow.loadURL(process.env.APP_URL as string);
-  //console.log('import', process.env.DEBUGGING);
+  mainWindow.loadURL(process.env.APP_URL);
+
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();
   } else {
     // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow?.webContents.closeDevTools();
-    });
+    // mainWindow.webContents.on('devtools-opened', () => {
+    //   mainWindow?.webContents.closeDevTools();
+    // });
   }
   mainWindow.on('closed', () => {
     mainWindow = undefined;
   });
-  initStores();
-  if (key === 1) {
-    updateHandle({ mainWindow });
-  }
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow?.show();
+    if (key === 1 && mainWindow) {
+      updateHandle({ mainWindow });
+    }
+  });
 }
 
 app.on('ready', () => {
+  createWindow(1);
   // 注册全局快捷键
   const ret = globalShortcut.register('F1', () => {
     // 在这里执行你希望触发的操作
@@ -62,7 +63,6 @@ app.on('ready', () => {
   if (!ret) {
     console.error('注册快捷键失败！');
   }
-  createWindow(1);
 });
 
 app.on('window-all-closed', () => {

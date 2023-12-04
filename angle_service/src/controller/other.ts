@@ -15,21 +15,15 @@ export function updateApp(io: Server) {
       const regex = /Angle_v(\d+\.\d+\.\d+)\.exe$/; // 设置匹配的字符或模式
       const fileNames = files.filter((file) => regex.test(file));
       const filePath = join(folderPath, fileNames.toString());
-      if (event === 'change') {
+      if (event === 'change' && filePath.includes('Angle')) {
         const stats = fs.statSync(filePath);
         const modifiedTime = stats.mtime.toISOString();
 
         // 检查文件是否有变化
         if (modifiedTime !== lastModifiedTime) {
           lastModifiedTime = modifiedTime;
-          const version = filePath
-            .substring(filePath.length - 9, filePath.length - 4)
-            .replace(/\\/g, '/');
           // 向所有已连接的客户端发送更新通知
-          io.emit('updateAvailable', {
-            url: `http://${process.env.UPLOAD_URL}:${process.env.LISTEN_PORT}${version}`,
-            version,
-          });
+          io.emit('updateAvailable');
         }
       }
     });

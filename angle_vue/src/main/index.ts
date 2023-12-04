@@ -37,6 +37,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
+  console.log('join', join(__dirname, '../renderer/index.html'));
 }
 
 // This method will be called when Electron has finished

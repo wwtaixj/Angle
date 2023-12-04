@@ -6,20 +6,27 @@
       <q-card-section class="items-center row q-pb-none">
         <div class="text-h6">{{ attrs.title }}</div>
         <q-space />
-        <q-btn icon="cancel" flat round dense v-close-popup />
+        <q-btn
+          v-show="isShowClose"
+          icon="cancel"
+          flat
+          round
+          dense
+          v-close-popup
+        />
       </q-card-section>
       <slot />
       <!-- 按钮的例子 -->
-      <q-card-actions align="right" v-if="buttonConfig?.show">
-        <q-btn v-bind="buttonConfig.ok" @click="onOKClick" />
-        <q-btn v-bind="buttonConfig.cancel" @click="onCancelClick" />
+      <q-card-actions align="right" v-if="propsConfig?.show">
+        <q-btn v-bind="propsConfig.ok" @click="onOKClick" />
+        <q-btn v-bind="propsConfig.cancel" @click="onCancelClick" />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, PropType, useAttrs, reactive } from 'vue';
+import { defineEmits, PropType, useAttrs, ref } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
 import { DialogTypeEnum, XDialogProps, XDialogButton } from './index';
 
@@ -37,9 +44,14 @@ const props = defineProps({
   button: {
     type: Object as PropType<XDialogProps['button']>,
   },
+  isShowClose: {
+    type: Boolean as PropType<XDialogProps['isShowClose']>,
+    default: true,
+  },
 });
+
 const $emits = defineEmits([...useDialogPluginComponent.emits, 'cancel']);
-const buttonConfig = reactive<XDialogButton>({
+const propsConfig = ref<XDialogButton>({
   show: false,
   ok: {
     label: '确定',
@@ -50,7 +62,7 @@ const buttonConfig = reactive<XDialogButton>({
 });
 
 function initDialog() {
-  Object.assign(buttonConfig, props.button);
+  propsConfig.value = Object.assign(propsConfig, props.button);
 }
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =

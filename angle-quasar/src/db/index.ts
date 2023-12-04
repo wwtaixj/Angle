@@ -1,5 +1,7 @@
-const { join, resolve, dirname } = require('path');
+import { join, resolve, dirname } from 'path';
 import { createChatHistory } from './model';
+import { $Window } from '@/types/env';
+
 const DB_PATH =
   process.env.NODE_ENV === 'development'
     ? resolve()
@@ -26,7 +28,10 @@ export async function connectDatabase(
   password: string,
   ids: (string | number)[]
 ) {
-  const { Sequelize } = require('sequelize');
+  const { api } = window as unknown as $Window;
+  if (!api) return;
+  const { Sequelize } = api;
+  if (!Sequelize) return;
   const db = new Sequelize('database', username, password, {
     host: 'localhost',
     dialect: 'sqlite',

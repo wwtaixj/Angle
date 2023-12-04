@@ -16,6 +16,10 @@
 import { PropType, defineEmits, useAttrs } from 'vue';
 import { XPopupEditProps } from './index';
 
+defineOptions({
+  name: 'XPopupEdit',
+});
+
 const $emits = defineEmits(['update:modelValue']);
 defineProps({
   modelValue: {

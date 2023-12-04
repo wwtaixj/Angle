@@ -1,10 +1,3 @@
-/*
- * @Author: JX 761359511@qq.com
- * @Date: 2023-10-12 16:26:06
- * @LastEditors: JX 761359511@qq.com
- * @LastEditTime: 2023-10-26 10:49:47
- * @FilePath: \angle-quasar\src\i18n\en-US\index.ts
- */
 export default {
   Chat: '对话',
   Picture: '相册',

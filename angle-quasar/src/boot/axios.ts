@@ -19,7 +19,7 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   timeout: 1000 * 60 * 5,
-  baseURL: import.meta.env.VITE_GLOB_API_URL,
+  baseURL: 'http://localhost:9310',
 });
 api.interceptors.request.use(
   (config) => {

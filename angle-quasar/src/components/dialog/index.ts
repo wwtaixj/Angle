@@ -21,4 +21,5 @@ export interface XDialogProps extends QCardProps {
   class?: string;
   button?: XDialogButton;
   type?: DialogTypeEnum;
+  isShowClose?: boolean;
 }

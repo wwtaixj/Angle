@@ -8,7 +8,9 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 const { configure } = require('quasar/wrappers');
+
 const path = require('path');
+
 module.exports = configure(function (/* ctx */) {
   return {
     eslint: {
@@ -51,7 +53,6 @@ module.exports = configure(function (/* ctx */) {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         node: 'node16',
       },
-
       vueRouterMode: 'hash', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
@@ -68,7 +69,16 @@ module.exports = configure(function (/* ctx */) {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      // extendViteConf(viteConf) {
+      //   viteConf.optimizeDeps.exclude = ['vue-demi'];
+      //   viteConf.build.rollupOptions = {
+      //     plugins: [
+      //       nodeResolve({ preferBuiltins: true, browser: true }), // 消除碰到 node.js 模块时⚠警告
+      //       commonjs(),
+      //     ],
+      //     external: ['crypto', 'fs', 'os', 'events', 'electron'],
+      //   };
+      // },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
@@ -86,17 +96,11 @@ module.exports = configure(function (/* ctx */) {
             include: path.resolve(__dirname, './src/i18n/**'),
           },
         ],
-        [require('unplugin-vue-define-options')],
-        [require('@rollup/plugin-commonjs')],
       ],
       alias: {
         '@': path.join(__dirname, './src/'),
       },
-      reportCompressedSize: false,
-      sourcemap: false,
-      commonjsOptions: {
-        ignoreTryCatch: false,
-      },
+      sourcemap: true,
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
@@ -128,17 +132,16 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['LocalStorage', 'SessionStorage', 'Notify'],
+      plugins: ['LocalStorage', 'SessionStorage', 'Notify', 'Dialog'],
     },
-
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
     animations: [],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
     sourceFiles: {
-      //   rootComponent: 'src/App.vue',
-      //   router: 'src/router/index',
+      rootComponent: 'src/App.vue',
+      router: 'src/router/index',
       //   store: 'src/store/index',
       //   registerServiceWorker: 'src-pwa/register-service-worker',
       //   serviceWorker: 'src-pwa/custom-service-worker',
@@ -154,7 +157,6 @@ module.exports = configure(function (/* ctx */) {
 
       // extendSSRWebserverConf (esbuildConf) {},
       // extendPackageJson (json) {},
-
       pwa: false,
 
       // manualStoreHydration: true,
@@ -196,7 +198,6 @@ module.exports = configure(function (/* ctx */) {
     electron: {
       // extendElectronMainConf (esbuildConf)
       // extendElectronPreloadConf (esbuildConf)
-
       inspectPort: 5858,
 
       bundler: 'builder', // 'packager' or 'builder'
@@ -228,6 +229,7 @@ module.exports = configure(function (/* ctx */) {
           updaterCacheDirName: 'update',
         },
       },
+
       // 可选; 添加/删除/更改生产版本
       // 生成的package.json的属性
       // extendPackageJson(pkg) {

@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/user';
 import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '@/stores/database';
 import { useChatStore } from '@/stores/chat';
+import { useMainStore } from '@/stores/main';
 
 const userStore = useUserStore();
 const token = userStore.getToken;
@@ -22,4 +23,5 @@ if (token) {
     });
   useSocketStore().initSocket();
 }
+useMainStore().initMain();
 </script>

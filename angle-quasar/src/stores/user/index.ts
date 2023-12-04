@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-const { ipcRenderer } = require('electron');
 import { LOCALE } from '@/i18n';
 import { setLocale } from '@/boot/i18n';
 import { LoginStateEnum } from '@/enums/main';
@@ -182,14 +181,11 @@ export const useUserStore = defineStore('user', {
     setToken(token: string) {
       if (!isString(token)) return;
       this.token = token;
-      // 发送请求给主进程以设置数据
-      ipcRenderer.send('setLocalStorage', 'TOKEN', token);
       lStorage.set('TOKEN', token);
     },
     setUsername(name: string) {
       if (!isString(name)) return;
       this.username = name;
-      ipcRenderer.send('setLocalStorage', 'USERNAME', name);
       lStorage.set('USERNAME', name);
     },
     setPassword(password: string) {

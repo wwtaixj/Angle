@@ -24,6 +24,9 @@ import { PropType, defineEmits, useSlots, useAttrs, computed } from 'vue';
 import { QInputSlots } from 'quasar';
 import { XInputProps } from './index';
 
+defineOptions({
+  name: 'XInput',
+});
 const attrs = useAttrs();
 
 const slots = computed(
@@ -35,9 +38,6 @@ const slots = computed(
 
 const $emits = defineEmits(['update:modelValue']);
 
-defineOptions({
-  name: 'XInput',
-});
 defineProps({
   modelValue: {
     type: String as PropType<XInputProps['modelValue']>,
