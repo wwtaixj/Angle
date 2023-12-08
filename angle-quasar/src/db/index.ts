@@ -1,4 +1,4 @@
-import { join, resolve, dirname } from 'path';
+const { join, resolve, dirname } = require('path');
 import { createChatHistory } from './model';
 import { $Window } from '@/types/env';
 
@@ -36,6 +36,7 @@ export async function connectDatabase(
     host: 'localhost',
     dialect: 'sqlite',
     storage: join(path + '\\' + username + '.db'),
+    logging: false,
     define: {
       freezeTableName: true,
     },

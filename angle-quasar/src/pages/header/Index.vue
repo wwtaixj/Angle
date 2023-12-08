@@ -1,15 +1,5 @@
 <template>
-  <q-toolbar>
-    <q-btn
-      flat
-      dense
-      round
-      @click="mainStore.setLeftDrawerMini"
-      aria-label="Menu"
-      icon="menu"
-      class="q-mr-sm"
-    />
-
+  <q-toolbar class="no-shadow">
     <q-toolbar-title shrink class="items-center row no-wrap">
       <span class="q-ml-sm">Angle</span>
     </q-toolbar-title>

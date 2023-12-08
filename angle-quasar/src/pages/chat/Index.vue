@@ -1,87 +1,103 @@
 <template>
-  <div class="WAL position-relative bg-white" :style="style">
-    <q-layout view="lHh Lpr lFf" class="WAL__layout shadow-3" container>
-      <q-header elevated>
-        <Header />
-      </q-header>
-
-      <q-drawer
-        v-model="leftDrawerOpen"
-        show-if-above
-        bordered
-        :breakpoint="690"
-      >
+  <div class="position-relative" :style="style">
+    <q-splitter
+      v-model="splitterModel"
+      :limits="[30, 50]"
+      class="window-height"
+    >
+      <template v-slot:before>
         <Side />
-      </q-drawer>
+      </template>
+      <template v-slot:after>
+        <div class="fit bg-grey-2" v-show="!chatStore.getChatActive">
+          <XWinBar />
+          <q-icon
+            class="absolute-center"
+            size="5em"
+            color="grey-5"
+            name="fa-regular fa-comments"
+          />
+        </div>
+        <q-layout v-show="chatStore.getChatActive" view="hHh lpR fFf" container>
+          <q-header class="text-black bg-grey-2" bordered>
+            <XWinBar />
+            <Header />
+          </q-header>
 
-      <q-page-container>
-        <router-view v-slot="{ Component, route }">
-          <component :is="Component" :key="route.fullPath" />
-        </router-view>
-      </q-page-container>
+          <q-page-container>
+            <q-page class="q-mx-xs" ref="messagePageRef">
+              <q-infinite-scroll
+                id="chat-message-scroll-id"
+                :style="{ height: scrollAreaHeight }"
+                reverse
+              >
+                <router-view v-slot="{ Component, route }">
+                  <component :is="Component" :key="route.fullPath" />
+                </router-view>
+              </q-infinite-scroll>
+              <!-- <q-scroll-area
+                :delay="1200"
+                :style="{ height: scrollAreaHeight }"
+                id="chat-message-scroll-id"
+                ref="scrollAreaRef"
+              > -->
 
-      <q-footer> <Footer /> </q-footer>
-    </q-layout>
+              <!-- </q-scroll-area> -->
+            </q-page>
+          </q-page-container>
+
+          <q-footer class="bg-grey-2" bordered>
+            <Footer @send="setScrollPositionBottom" />
+          </q-footer>
+        </q-layout>
+      </template>
+    </q-splitter>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useQuasar } from 'quasar';
-import { ref, computed } from 'vue';
+import { useQuasar, QPage, QScrollArea, debounce } from 'quasar';
+import { ref, computed, nextTick, onMounted } from 'vue';
 import Header from './components/Header/Index.vue';
 import Side from './components/Side/Index.vue';
 import Footer from './components/Footer/Index.vue';
 // import { useMainStore } from '../../stores/main';
-//import { useChatStore } from '@/stores/chat';
+import { useChatStore } from '@/stores/chat';
 //import { useUserStore } from '@/stores/user';
+import { XWinBar } from '@/components';
 
 const $q = useQuasar();
-
+const chatStore = useChatStore();
 //const userStore = useUserStore();
 //const socketStore = useSocketStore();
-const leftDrawerOpen = ref(false);
+const splitterModel = ref(30);
+const messagePageRef = ref<QPage>();
+const scrollAreaRef = ref<QScrollArea>();
+const scrollAreaHeight = ref('0');
 
-const style = computed(() => ({
-  height: $q.screen.height + 'px',
-}));
+const style = computed(() => {
+  return {
+    height: $q.screen.height + 'px',
+  };
+});
+
+function setScrollAreaHeight() {
+  const pageContainer = messagePageRef.value?.$el;
+  if (pageContainer) {
+    scrollAreaHeight.value = pageContainer.style.minHeight;
+  }
+}
+function setScrollPositionBottom() {
+  const scroll = scrollAreaRef.value?.getScroll();
+
+  if (!scroll) return;
+  scrollAreaRef.value?.setScrollPosition('vertical', scroll.verticalSize);
+}
+// 监听窗口变化时重新计算高度
+window.addEventListener('resize', debounce(setScrollAreaHeight, 100));
+onMounted(() => {
+  nextTick(() => {
+    setScrollAreaHeight();
+  });
+});
 </script>
-
-<style lang="sass" scoped>
-.WAL
-  width: 100%
-  height: 100%
-  max-width: 1200px
-  &__layout
-    margin: 0 auto
-    z-index: 4000
-    height: 100%
-    width: 100%
-    max-width: 1200px
-    border-radius: 5px
-
-  &__field.q-field--outlined .q-field__control:before
-    border: none
-
-  .q-drawer--standard
-    .WAL__drawer-close
-      display: none
-
-@media (max-width: 850px)
-  .WAL
-    padding: 0
-    &__layout
-      width: 100%
-      border-radius: 0
-
-@media (min-width: 691px)
-  .WAL
-    &__drawer-open
-      display: none
-
-.conversation__summary
-  margin-top: 4px
-
-.conversation__more
-  margin-top: 0!important
-  font-size: 1.4rem
-</style>

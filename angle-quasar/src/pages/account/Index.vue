@@ -3,10 +3,10 @@
     <q-card-section horizontal>
       <q-card-section class="col-8">
         <div>
-          <span class="text-overline text-primary"
+          <span class="text-overline text-primary q-mr-xs"
             >{{ $t('login.Username') }}:</span
           >
-          &nbsp;&nbsp;
+
           <XInputPopupEdit
             class="inline"
             :model-value="userStore.getUserName"
@@ -14,8 +14,10 @@
           />
         </div>
         <div>
-          <span class="text-overline text-primary">{{ $t('Phone') }}:</span>
-          &nbsp;&nbsp;
+          <span class="text-overline text-primary q-mr-xs"
+            >{{ $t('Phone') }}:</span
+          >
+
           <XInputPopupEdit
             class="inline"
             :model-value="userStore.getPhone"
@@ -23,8 +25,10 @@
           />
         </div>
         <div>
-          <span class="text-overline text-primary">{{ $t('Email') }}:</span>
-          &nbsp;&nbsp;
+          <span class="text-overline text-primary q-mr-xs"
+            >{{ $t('Email') }}:</span
+          >
+
           <XInputPopupEdit
             class="inline"
             :model-value="userStore.getEmail"
@@ -32,17 +36,18 @@
           />
         </div>
         <div>
-          <span class="text-overline text-primary">{{ $t('Gender') }}:</span>
-          &nbsp;&nbsp;
-          <XInputPopupEdit
-            class="inline"
-            :model-value="String(userStore.getGender)"
-            @update:model-value="userStore.setGender"
-          />
+          <span class="text-overline text-primary q-mr-xs"
+            >{{ $t('Gender') }}:</span
+          >
+          {{
+            userStore.getGender === GenderEnum.FEMALE ? $t('Woman') : $t('Man')
+          }}
         </div>
         <div>
-          <span class="text-overline text-primary">{{ $t('Age') }}:</span>
-          &nbsp;&nbsp;
+          <span class="text-overline text-primary q-mr-xs"
+            >{{ $t('Age') }}:</span
+          >
+
           <XInputPopupEdit
             class="inline"
             :model-value="String(userStore.getAge)"
@@ -67,6 +72,7 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/user';
 import { XInputPopupEdit } from '@/components';
+import { GenderEnum } from '@/enums/user';
 
 const userStore = useUserStore();
 </script>

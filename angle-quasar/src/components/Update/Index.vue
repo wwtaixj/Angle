@@ -31,6 +31,5 @@ const config = reactive<XDialogProps>({
     width: '50%',
   },
   title: '下载中...',
-  persistent: true,
 });
 </script>

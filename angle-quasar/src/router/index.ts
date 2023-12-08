@@ -1,5 +1,6 @@
 import { route } from 'quasar/wrappers';
 import {
+  Router,
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
@@ -17,7 +18,7 @@ import { setupPageGuard } from './permission';
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
-
+let Router: Router | Promise<Router>;
 export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
@@ -25,7 +26,7 @@ export default route(function (/* { store, ssrContext } */) {
     ? createWebHistory
     : createWebHashHistory;
 
-  const Router = createRouter({
+  Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
 
@@ -38,3 +39,7 @@ export default route(function (/* { store, ssrContext } */) {
 
   return Router;
 });
+
+export function useRoute() {
+  return Router as Router;
+}

@@ -2,14 +2,38 @@ import { useI18n } from '@/boot/i18n';
 import { SideListKeyEnum } from '@/enums/main';
 
 const { t } = useI18n();
+interface SideList {
+  key: SideListKeyEnum;
+  icon: string;
+  label: string;
+  class?: string;
+}
 
-export function getSideList() {
+export function getSideList(): SideList[] {
   return [
-    { key: SideListKeyEnum.CHAT, icon: 'question_answer', text: t('Chat') },
+    {
+      key: SideListKeyEnum.CHAT,
+      icon: 'fa-regular fa-comment',
+      label: t('Chat'),
+      class: 'col-2',
+    },
+    {
+      key: SideListKeyEnum.ADDRESS_BOOK,
+      icon: 'fa-regular fa-user',
+      label: '通讯录',
+      class: 'col-2',
+    },
+    {
+      key: SideListKeyEnum.CHAT_ROBOT,
+      icon: 'fa-brands fa-bots',
+      label: 'AI聊天',
+      class: 'col-2',
+    },
     {
       key: SideListKeyEnum.PHOTO,
-      icon: 'photo_library',
-      text: t('photo.PhotoAlbum'),
+      icon: 'fa-regular fa-image',
+      label: t('photo.PhotoAlbum'),
+      class: 'col-2',
     },
   ];
 }

@@ -1,4 +1,4 @@
-export type Gender = 0 | 1 | null;
+export type Gender = '0' | '1' | null; // 0: 女 1: 男
 
 export interface Response<T> {
   data: T;

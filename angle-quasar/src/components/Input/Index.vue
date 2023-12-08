@@ -5,15 +5,6 @@
     :model-value="modelValue"
     @update:model-value="updateModelValue"
   >
-    <template v-slot:append>
-      <q-icon
-        v-if="modelValue !== ''"
-        name="close"
-        @click="updateModelValue('')"
-        class="cursor-pointer"
-      />
-      <slot name="append" />
-    </template>
     <template v-for="key in slots">
       <slot :name="key" />
     </template>

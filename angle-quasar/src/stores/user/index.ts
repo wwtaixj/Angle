@@ -13,6 +13,8 @@ import { Params } from '@/axios/typings';
 import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '../database';
 import { useChatStore } from '@/stores/chat';
+import type { UserParticles } from '@/assets/particles';
+import { useRoute } from '@/router';
 import {
   getNavLanguage,
   lStorage,
@@ -46,6 +48,7 @@ interface UserState {
   email: string;
   loginDialogType: LoginDialogTypeEnum;
   verCodeTimer: number;
+  particles: UserParticles;
 }
 
 export const useUserStore = defineStore('user', {
@@ -71,6 +74,7 @@ export const useUserStore = defineStore('user', {
     loginDialogType: LoginDialogTypeEnum.LOGIN,
     verCodeTimer: 0,
     userId: 0,
+    particles: 'fireworks',
   }),
   getters: {
     getUserId(state) {
@@ -120,7 +124,7 @@ export const useUserStore = defineStore('user', {
     },
     getGender(state) {
       const gender = state.gender;
-      if (gender) return gender;
+      if (gender !== null) return gender;
       return lStorage.get<UserState['gender']>('GENDER');
     },
     getTag(state) {
@@ -199,7 +203,7 @@ export const useUserStore = defineStore('user', {
       lStorage.set('AGE', age);
     },
     setGender(gender: Gender) {
-      if (!isNumber(gender) && gender !== null) return;
+      if (gender === null) return;
       this.gender = gender;
       lStorage.set('GENDER', gender);
     },
@@ -254,14 +258,11 @@ export const useUserStore = defineStore('user', {
             userId: data.id,
           });
           // 设置用户列表
-          useChatStore()
-            .setChatList()
-            .then(() => {
-              useDBStore().initDatabase();
-              // 连接Socket服务端
-              useSocketStore().initSocket();
-            });
-          useMainStore().setDialog({ visible: false });
+          await useChatStore().setChatList();
+          useDBStore().initDatabase();
+          // 连接Socket服务端
+          useSocketStore().initSocket();
+          useRoute().push('/home');
         }
       );
     },
@@ -281,6 +282,8 @@ export const useUserStore = defineStore('user', {
         | 'userId'
       >
     ) {
+      console.log(info);
+
       this.setUsername(info.username);
       this.setPassword(info.password);
       this.setAvatarUrl(info.avatarUrl);
@@ -321,6 +324,7 @@ export const useUserStore = defineStore('user', {
       resultPrompt(result, { message: t('SignOutSuccessfully') }, () => {
         this.resetUserInfo();
         useMainStore().closeDialog();
+        useRoute().push('/login');
       });
     },
     /**

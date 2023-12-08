@@ -1,6 +1,6 @@
 {
   "name": "angle-quasar",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Angle App",
   "productName": "Angle",
   "author": "JX <761359511@qq.com>",
@@ -19,16 +19,18 @@
     "axios": "^1.2.1",
     "crypto-js": "^4.1.1",
     "electron-updater": "^6.1.4",
-    "path": "^0.12.7",
-    "pg-hstore": "^2.3.4",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
     "sequelize": "^6.35.0",
     "socket.io-client": "^4.7.2",
     "sqlite3": "^5.1.6",
+    "util": "^0.12.5",
     "vue": "^3.0.0",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "tsparticles": "^2.9.3",
+    "tsparticles-engine": "^2.9.3",
+    "vue3-particles": "^2.9.3"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
@@ -44,6 +46,7 @@
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^9.0.0",
+    "pg-hstore": "^2.3.4",
     "prettier": "^2.5.1",
     "typescript": "^4.5.4"
   },

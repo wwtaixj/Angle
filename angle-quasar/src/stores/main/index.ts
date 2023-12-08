@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { CSSProperties, reactive } from 'vue';
 import { DialogEventEnum } from '@/enums/main';
-import { useUserStore } from '../user';
 import { useI18n } from '@/boot/i18n';
 import { XUpdate } from '@/components';
 import { useQuasar } from 'quasar';
@@ -15,15 +14,11 @@ interface Dialog {
   class: string;
 }
 interface MainState {
-  leftDrawerOpen: boolean;
-  leftDrawerMini: boolean;
   dialog: Partial<Dialog>;
 }
 
 export const useMainStore = defineStore('main', {
   state: (): MainState => ({
-    leftDrawerOpen: true,
-    leftDrawerMini: false,
     dialog: {
       visible: false,
       event: DialogEventEnum.LOGIN,
@@ -38,25 +33,16 @@ export const useMainStore = defineStore('main', {
     initMain() {
       this.updateApp();
     },
-    setLeftDrawerOpen() {
-      this.leftDrawerOpen = !this.leftDrawerOpen;
-    },
-    setLeftDrawerMini() {
-      this.leftDrawerMini = !this.leftDrawerMini;
+    openAccount() {
+      const { t } = useI18n();
+      this.setDialog({ title: t('AccountInfo'), style: { minWidth: '400px' } });
+      this.openDialog(DialogEventEnum.ACCOUNT);
     },
     setDialog(config: Partial<Dialog>) {
       Object.assign(this.dialog, config);
     },
     openDialog(dialogEvent: DialogEventEnum) {
       if (dialogEvent) this.setDialog({ event: dialogEvent });
-      if (!useUserStore().getToken) {
-        const { t } = useI18n();
-        this.setDialog({
-          event: DialogEventEnum.LOGIN,
-          title: t('login.Login'),
-          class: 'q-dialog-plugin',
-        });
-      }
       this.setDialog({ visible: true });
     },
     closeDialog() {

@@ -1,113 +1,122 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-grey-1">
-    <q-header class="bg-white text-grey-8" height-hint="64">
-      <Header />
-    </q-header>
+  <q-layout view="lHh Lpr lff" class="bg-grey-2">
     <q-drawer
-      v-model="mainStore.leftDrawerOpen"
-      :mini="mainStore.leftDrawerMini"
-      mini-to-overlay
+      :mini="true"
       show-if-above
       bordered
       :breakpoint="500"
-      class="bg-white"
-      :width="280"
+      class="bg-grey-3"
+      :width="200"
     >
-      <q-scroll-area class="fit">
-        <q-list padding class="text-grey-8">
-          <q-item
-            class="GNL__drawer-item"
-            v-ripple
-            v-for="link in getSideList()"
-            :key="link.text"
-            clickable
-            @click="listClick($event, link.key)"
-          >
-            <q-item-section avatar>
-              <q-icon :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-scroll-area>
+      <div class="fit text-grey-6 bg-grey-10 column">
+        <div class="col-6">
+          <q-list class="fit column justify-start">
+            <q-item class="col-2">
+              <q-item-section avatar>
+                <q-avatar
+                  class="cursor-pointer"
+                  size="md"
+                  @click="mainStore.openAccount"
+                >
+                  <XImg :src="userStore.getAvatarUrl" />
+                </q-avatar>
+              </q-item-section>
+            </q-item>
+            <q-item
+              :class="`${tool?.class}`"
+              v-ripple
+              v-for="tool in getSideList()"
+              :key="tool.key"
+              clickable
+              :active="toolActive === tool.key"
+              active-class="tool-active"
+              @click="listClick(tool.key)"
+            >
+              <q-item-section avatar>
+                <q-icon :name="tool.icon" />
+                <q-tooltip
+                  transition-show="scale"
+                  transition-hide="scale"
+                  :delay="800"
+                  anchor="bottom right"
+                  >{{ tool.label }}</q-tooltip
+                >
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+        <div class="col-6">
+          <q-list class="fit column justify-end">
+            <q-item
+              class="col-2"
+              v-ripple
+              clickable
+              @click="listClick(SideListKeyEnum.MENU)"
+            >
+              <q-item-section avatar>
+                <q-icon name="menu" />
+                <q-tooltip
+                  transition-show="scale"
+                  transition-hide="scale"
+                  :delay="800"
+                  anchor="bottom right"
+                  >{{ '设置及其他' }}</q-tooltip
+                >
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </div>
     </q-drawer>
 
-    <!-- <q-page-container>
-      <router-view />
-    </q-page-container> -->
+    <q-page-container>
+      <router-view v-slot="{ Component, route }">
+        <component :is="Component" :key="route.fullPath" />
+      </router-view>
+    </q-page-container>
     <!-- dialog -->
     <XDialog
       v-model="mainStore.dialog.visible"
-      :type="dialogType"
       v-bind="mainStore.dialog"
       @hide="mainStore.resetDialog"
       persistent
     >
-      <Chat v-if="mainStore.dialog.event === DialogEventEnum.CHAT" />
-      <Login v-show="mainStore.dialog.event === DialogEventEnum.LOGIN" />
       <Account v-show="mainStore.dialog.event === DialogEventEnum.ACCOUNT" />
     </XDialog>
   </q-layout>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-// import { useRouter } from 'vue-router';
-import Header from '@/pages/header/Index.vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+// import Header from '@/pages/header/Index.vue';
 import { DialogEventEnum } from '@/enums/main';
 import { getSideList } from './constant';
 import { useMainStore } from '@/stores/main';
-import Chat from '@/pages/chat/Index.vue';
-import Login from '@/pages/login/Index.vue';
-import { XDialog, DialogTypeEnum } from '@/components';
+import { useUserStore } from '@/stores/user';
+//import Login from '@/pages/login/Index.vue';
+import { XDialog, XImg } from '@/components';
 import Account from '@/pages/account/Index.vue';
+import { SideListKeyEnum } from '@/enums/main';
 
 const mainStore = useMainStore();
+const router = useRouter();
+const userStore = useUserStore();
+const toolActive = ref<SideListKeyEnum>(SideListKeyEnum.CHAT);
 
-const dialogType = computed(() => {
-  if (mainStore.dialog.event === DialogEventEnum.CHAT)
-    return DialogTypeEnum.NATIVE;
-  if (mainStore.dialog.event === DialogEventEnum.LOGIN)
-    return DialogTypeEnum.CARD;
-  return DialogTypeEnum.CARD;
-});
-
-function listClick(e: Event, key: string) {
-  switch (key) {
-    case DialogEventEnum.CHAT:
-      mainStore.openDialog(key);
-      break;
+function listClick(key: SideListKeyEnum) {
+  toolActive.value = key;
+  if (SideListKeyEnum.CHAT === key) {
+    router.push('/chat');
   }
 }
+onMounted(() => {
+  listClick(toolActive.value);
+});
 </script>
 
-<style lang="sass" scoped>
-.GNL
-
-  &__drawer-item
-    line-height: 24px
-    border-radius: 0 24px 24px 0
-    margin-right: 12px
-
-    .q-item__section--avatar
-      .q-icon
-        color: #5f6368
-
-    .q-item__label
-      color: #3c4043
-      letter-spacing: .01785714em
-      font-size: .875rem
-      font-weight: 500
-      line-height: 1.25rem
-
-  &__drawer-footer-link
-    color: inherit
-    text-decoration: none
-    font-weight: 500
-    font-size: .75rem
-
-    &:hover
-      color: #000
+<style lang="scss" scoped>
+.tool-active {
+  color: $green-6;
+}
 </style>

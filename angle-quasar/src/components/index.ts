@@ -5,3 +5,5 @@ export * from './InputPopupEdit';
 export * from './Input';
 export * from './ChatMessage';
 export * from './Update';
+export * from './Img';
+export * from './WinBar';

@@ -35,12 +35,13 @@ export const useChatStore = defineStore('chat', {
     },
     getChatActive(state) {
       const active = state.chatActive;
-      if (!active) return active;
+      if (active) return active;
       return lStorage.get<Chat>('CHAT_ACTIVE');
     },
     getChatActiveMssage(state) {
       const activeMssage = state.chatActiveMssage;
       if (activeMssage.length) return activeMssage;
+      return [];
     },
   },
   actions: {
