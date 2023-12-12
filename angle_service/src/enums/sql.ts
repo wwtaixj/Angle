@@ -9,6 +9,7 @@ export enum Sql {
   SELECT_USER_FROM_USERNAME = 'SELECT id, password, phone, avatarUrl, age, tag, gender, email FROM users WHERE username = ?',
   DELETE_USER_FROM_ID = 'delete from users where id = ? , username = ? ',
   INSERT_USER = 'INSERT INTO users (username, password, avatarUrl, gender, tag, phone, age, email) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  EXCLUDE_NAME = 'SELECT * FROM users WHERE username <> ?',
 }
 
 export default Sql;

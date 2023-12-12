@@ -12,6 +12,7 @@ import {
   changePassword,
   register,
   sendVerificationCode,
+  getFriends,
 } from '../controller/user';
 
 import { limiter } from '../auth/limiter';
@@ -33,6 +34,7 @@ router.delete(Url.USER, deleteUser);
 router.post(Url.REGISTER, register);
 router.post(Url.VERIFICATION_CODE, sendVerificationCode);
 router.put(Url.CHANGE_PASSWORD, changePassword);
+router.get(Url.FRIENDS, getFriends);
 // photo
 router.post(Url.UPLOAD_PHOTO, upload.single('images'), uploadPhoto);
 // chatGPT

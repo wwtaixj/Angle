@@ -1,2 +1,2 @@
 import { Result } from '@/axios/typings';
-export type Chat = Result.User;
+export type Friend = Result.User;

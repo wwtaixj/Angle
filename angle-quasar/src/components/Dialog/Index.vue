@@ -1,6 +1,6 @@
 <template>
   <!-- notice dialogRef here -->
-  <q-dialog ref="dialogRef" @hide="onHide">
+  <q-dialog ref="dialogRef" @hide="onHide" style="-webkit-app-region: none">
     <slot v-if="type === DialogTypeEnum.NATIVE" />
     <q-card v-bind="attrs" v-if="type === DialogTypeEnum.CARD">
       <q-card-section class="items-center row q-pb-none">

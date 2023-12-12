@@ -89,9 +89,9 @@ export function sendVerCode(data: Params.verCode) {
   });
 }
 
-export function getUser(data?: Partial<Params.User>) {
+export function getFriends(data?: Partial<Params.User>) {
   return get<Result.User[]>({
-    url: request_url.getUser,
+    url: request_url.getFriends,
     data,
   });
 }

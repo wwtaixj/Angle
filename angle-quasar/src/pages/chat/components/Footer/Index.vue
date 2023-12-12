@@ -1,32 +1,29 @@
 <template>
-  <div class="bg-grey-2 column fit q-px-md q-pb-md">
-    <q-toolbar class="col-2 text-black q-px-none">
+  <div class="column fit bg-grey-2 q-px-md q-pb-xl">
+    <q-toolbar class="col-2 text-black q-px-none send-toolbar">
       <q-btn round flat icon="insert_emoticon" />
     </q-toolbar>
-    <XInput
-      :clearable="false"
-      class="col-8 send-message-field"
+    <textarea
+      class="col send-message-field"
       v-model="message"
       type="textarea"
       @keyup.ctrl.enter="send"
+      rows="2"
     />
-    <div class="row justify-end">
-      <q-btn
-        unelevated
-        padding="xs lg"
-        color="grey-3"
-        text-color="positive"
-        label="发送"
-        @click="send"
-      >
-      </q-btn>
-    </div>
+    <q-btn
+      class="send-button"
+      unelevated
+      padding="xs lg"
+      color="grey-3"
+      text-color="positive"
+      label="发送"
+      @click="send"
+    />
   </div>
 </template>
 <script lang="ts" setup>
 import { ref, defineEmits } from 'vue';
 import { useChatStore } from '@/stores/chat';
-import { XInput } from '@/components';
 
 const $emits = defineEmits(['send']);
 const chatStore = useChatStore();
@@ -43,17 +40,21 @@ function send() {
   message.value = '';
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.send-toolbar {
+  height: 35px;
+}
 .send-message-field {
-  .q-field__control:after {
-    display: none;
+  border: none;
+  background-color: transparent;
+  resize: none;
+  &:focus-visible {
+    outline: none;
   }
-  .q-field__control:before {
-    display: none;
-  }
-  .q-field__native {
-    padding: 0;
-    resize: none;
-  }
+}
+.send-button {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
 }
 </style>

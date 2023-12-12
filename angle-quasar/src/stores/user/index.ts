@@ -12,9 +12,11 @@ import { LoginDialogTypeEnum } from '@/enums/login';
 import { Params } from '@/axios/typings';
 import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '../database';
-import { useChatStore } from '@/stores/chat';
+//import { useChatStore } from '@/stores/chat';
+import { getFriends } from '@/axios';
 import type { UserParticles } from '@/assets/particles';
 import { useRoute } from '@/router';
+import { Friend } from '../typings/user';
 import {
   getNavLanguage,
   lStorage,
@@ -24,6 +26,7 @@ import {
   encrypt,
   decrypt,
   isNumber,
+  isObject,
 } from '@/utils';
 
 interface UserState {
@@ -49,6 +52,8 @@ interface UserState {
   loginDialogType: LoginDialogTypeEnum;
   verCodeTimer: number;
   particles: UserParticles;
+  friends: Friend[];
+  friendActive?: Friend;
 }
 
 export const useUserStore = defineStore('user', {
@@ -75,6 +80,8 @@ export const useUserStore = defineStore('user', {
     verCodeTimer: 0,
     userId: 0,
     particles: 'fireworks',
+    friends: [],
+    friendActive: void 0,
   }),
   getters: {
     getUserId(state) {
@@ -151,6 +158,16 @@ export const useUserStore = defineStore('user', {
       const email = state.email;
       if (email) return email;
       return lStorage.get<UserState['email']>('EMAIL');
+    },
+    getFriends(state) {
+      const friends = state.friends;
+      if (friends.length) return friends;
+      return lStorage.get<UserState['friends']>('FRIENDS');
+    },
+    getFriendActive(state) {
+      const active = state.friendActive;
+      if (active) return active;
+      return lStorage.get<Friend>('FRIEND_ACTIVE');
     },
   },
   actions: {
@@ -232,6 +249,22 @@ export const useUserStore = defineStore('user', {
       this.userId = userId;
       return lStorage.set('USER_ID', userId);
     },
+    async setFriends() {
+      const { data } = await getFriends();
+      if (!data.length) return;
+      this.friends = data;
+      return lStorage.set('FRIENDS', data);
+    },
+    /**
+     * @description 设置选中的好友
+     * @param active
+     * @returns
+     */
+    setFriendActive(active: Friend) {
+      if (!isObject(active)) return;
+      this.friendActive = active;
+      lStorage.set('FRIEND_ACTIVE', active);
+    },
     setLoginDialogType(type: LoginDialogTypeEnum) {
       this.loginDialogType = type;
     },
@@ -258,7 +291,7 @@ export const useUserStore = defineStore('user', {
             userId: data.id,
           });
           // 设置用户列表
-          await useChatStore().setChatList();
+          await this.setFriends();
           useDBStore().initDatabase();
           // 连接Socket服务端
           useSocketStore().initSocket();
@@ -282,8 +315,6 @@ export const useUserStore = defineStore('user', {
         | 'userId'
       >
     ) {
-      console.log(info);
-
       this.setUsername(info.username);
       this.setPassword(info.password);
       this.setAvatarUrl(info.avatarUrl);

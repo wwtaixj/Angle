@@ -11,4 +11,5 @@ export default {
   chatProcess: '/api/chat-process',
   chatVerify: '/api/verify',
   getUser: '/api/v1/user',
+  getFriends: '/api/v1/friends',
 };

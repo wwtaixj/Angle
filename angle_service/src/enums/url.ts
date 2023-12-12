@@ -3,6 +3,7 @@ export enum Url {
   LOGIN = '/v1/login',
   LOGOUT = '/v1/logout',
   USER = '/v1/user',
+  FRIENDS = '/v1/friends',
   REGISTER = '/v1/user/register',
   VERIFICATION_CODE = '/v1/user/verificationCode',
   CHANGE_PASSWORD = '/v1/user/changePassword',

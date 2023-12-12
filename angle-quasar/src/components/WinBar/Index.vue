@@ -41,6 +41,10 @@
 import { ref, onMounted } from 'vue';
 import { $Window } from '@/types/env';
 
+defineOptions({
+  name: 'XWinBar',
+});
+
 const isMaximized = ref(false);
 const { electron } = window as unknown as $Window;
 

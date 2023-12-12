@@ -5,14 +5,13 @@
     :model-value="modelValue"
     @update:model-value="updateModelValue"
   >
-    <template v-for="key in slots">
+    <template v-for="key in slots" v-slot:[key]>
       <slot :name="key" />
     </template>
   </q-input>
 </template>
 <script lang="ts" setup>
 import { PropType, defineEmits, useSlots, useAttrs, computed } from 'vue';
-import { QInputSlots } from 'quasar';
 import { XInputProps } from './index';
 
 defineOptions({
@@ -20,12 +19,7 @@ defineOptions({
 });
 const attrs = useAttrs();
 
-const slots = computed(
-  () =>
-    Object.keys(useSlots()).filter(
-      (i) => i !== 'append'
-    ) as Partial<QInputSlots>
-);
+const slots = computed(() => Object.keys(useSlots())) as unknown;
 
 const $emits = defineEmits(['update:modelValue']);
 

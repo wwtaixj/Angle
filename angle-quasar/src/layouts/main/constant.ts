@@ -7,6 +7,7 @@ interface SideList {
   icon: string;
   label: string;
   class?: string;
+  router?: boolean;
 }
 
 export function getSideList(): SideList[] {
@@ -16,12 +17,14 @@ export function getSideList(): SideList[] {
       icon: 'fa-regular fa-comment',
       label: t('Chat'),
       class: 'col-2',
+      router: true,
     },
     {
-      key: SideListKeyEnum.ADDRESS_BOOK,
+      key: SideListKeyEnum.FRIENDS,
       icon: 'fa-regular fa-user',
       label: '通讯录',
       class: 'col-2',
+      router: true,
     },
     {
       key: SideListKeyEnum.CHAT_ROBOT,

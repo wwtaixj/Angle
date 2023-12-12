@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { isObject, lStorage, isArray } from '@/utils';
 import { Chat } from '../typings/chat';
-import { getUser } from '@/axios';
+
 import { useDBStore } from '@/stores/database';
 import { useSocketStore } from '@/stores/socket';
 import { useUserStore } from '@/stores/user';
@@ -60,11 +60,8 @@ export const useChatStore = defineStore('chat', {
      * @description 设置聊天列表
      * @param chatList
      */
-    async setChatList() {
-      const { data } = await getUser();
-      if (!data.length) return;
-      const userId = useUserStore().getUserId;
-      const chatList = data.filter((i) => i.id !== userId);
+    async setChatList(chatList: Chat[]) {
+      if (!chatList.length) return;
       this.chatList = chatList;
       lStorage.set('CHAT_LIST', chatList);
     },

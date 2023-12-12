@@ -4,6 +4,7 @@ import {
   updateUserDB,
   addUserDB,
   selectUserInfoWhereAllDB,
+  selectUserInfoExcludeName,
 } from '../db';
 import tool from '../utils/tool';
 import nodeMailer from 'nodemailer';
@@ -12,6 +13,35 @@ import { GlobalResponse, GlobalRequest } from '@/types';
 import { RegisterParams, SendVerificationCodeParams } from './types';
 import verCodeCache from '@/stores/VerificationCode';
 
+/**
+ * /api/user 获取登录用户好友列表
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
+export async function getFriends(req: any, res: any) {
+  let status: string;
+  try {
+    const { username } = req.headers;
+    const [rows] = await selectUserInfoExcludeName(decrypt(username));
+    res.send({
+      status: '0',
+      message: '获取好友列表数据成功！',
+      data: rows,
+    });
+  } catch (e) {
+    console.log(e);
+    let { message, code } = e;
+    if (code) {
+      status = code;
+      message = '系统内部异常！';
+    }
+    return res.json({
+      status,
+      message,
+    });
+  }
+}
 /**
  * /api/user 获取所有用户
  * @param {*} req

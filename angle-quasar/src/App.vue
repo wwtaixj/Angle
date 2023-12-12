@@ -6,7 +6,6 @@
 import { useUserStore } from '@/stores/user';
 import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '@/stores/database';
-import { useChatStore } from '@/stores/chat';
 import { useMainStore } from '@/stores/main';
 
 const userStore = useUserStore();
@@ -16,8 +15,8 @@ const token = userStore.getToken;
 // console.log(import.meta.env.VITE_GLOB_SOCKET_URL);
 if (token) {
   userStore.initUserStore();
-  useChatStore()
-    .setChatList()
+  useUserStore()
+    .setFriends()
     .then(() => {
       useDBStore().initDatabase();
     });

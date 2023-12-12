@@ -8,6 +8,15 @@ import {
 } from './types';
 
 /**
+ * 获取除指定用户外得所有用户信息
+ * @param username
+ * @returns
+ */
+export async function selectUserInfoExcludeName(username: string) {
+  return await db.query<UserId[]>(Sql.EXCLUDE_NAME, [username]);
+}
+
+/**
  * 用于获取指定用户名的用户权限
  * @param {string} username - 用户名
  * @returns {Promise<Array<Array<string|number>>} - 包含api名称和api类型的权限列表

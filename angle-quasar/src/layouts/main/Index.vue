@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lff" class="bg-grey-2">
+  <q-layout view="hHh lpR fFf" class="bg-grey-2">
     <q-drawer
       :mini="true"
       show-if-above
@@ -51,7 +51,7 @@
               class="col-2"
               v-ripple
               clickable
-              @click="listClick(SideListKeyEnum.MENU)"
+              @click="openSettingAndOther"
             >
               <q-item-section avatar>
                 <q-icon name="menu" />
@@ -102,16 +102,20 @@ import { SideListKeyEnum } from '@/enums/main';
 const mainStore = useMainStore();
 const router = useRouter();
 const userStore = useUserStore();
-const toolActive = ref<SideListKeyEnum>(SideListKeyEnum.CHAT);
+const toolActive = ref<SideListKeyEnum>();
 
 function listClick(key: SideListKeyEnum) {
+  if (toolActive.value === key) return;
   toolActive.value = key;
-  if (SideListKeyEnum.CHAT === key) {
-    router.push('/chat');
-  }
+  const tool = getSideList().find((i) => i.key === key);
+
+  if (tool?.router) router.push(`/${key}`);
+}
+function openSettingAndOther() {
+  //
 }
 onMounted(() => {
-  listClick(toolActive.value);
+  listClick(SideListKeyEnum.CHAT);
 });
 </script>
 

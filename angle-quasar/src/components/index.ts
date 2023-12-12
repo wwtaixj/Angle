@@ -7,3 +7,5 @@ export * from './ChatMessage';
 export * from './Update';
 export * from './Img';
 export * from './WinBar';
+export * from './NullPage';
+export * from './Header';
