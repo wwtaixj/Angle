@@ -28,7 +28,7 @@
               v-for="tool in getSideList()"
               :key="tool.key"
               clickable
-              :active="toolActive === tool.key"
+              :active="mainStore.getToolActive === tool.key"
               active-class="tool-active"
               @click="listClick(tool.key)"
             >
@@ -47,21 +47,20 @@
         </div>
         <div class="col-6">
           <q-list class="fit column justify-end">
-            <q-item
-              class="col-2"
-              v-ripple
-              clickable
-              @click="openSettingAndOther"
-            >
+            <q-item class="col-2" v-ripple @click="openSettingAndOther">
               <q-item-section avatar>
-                <q-icon name="menu" />
-                <q-tooltip
-                  transition-show="scale"
-                  transition-hide="scale"
-                  :delay="800"
-                  anchor="bottom right"
-                  >{{ '设置及其他' }}</q-tooltip
-                >
+                <q-btn flat icon="menu">
+                  <q-menu anchor="top right" self="top left" class="bg-grey-10">
+                    <q-list>
+                      <q-item clickable v-close-popup>
+                        <q-item-section>anchor="top right"</q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup>
+                        <q-item-section>self="top left"</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
               </q-item-section>
             </q-item>
           </q-list>
@@ -87,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 // import Header from '@/pages/header/Index.vue';
 import { DialogEventEnum } from '@/enums/main';
@@ -102,20 +101,18 @@ import { SideListKeyEnum } from '@/enums/main';
 const mainStore = useMainStore();
 const router = useRouter();
 const userStore = useUserStore();
-const toolActive = ref<SideListKeyEnum>();
 
-function listClick(key: SideListKeyEnum) {
-  if (toolActive.value === key) return;
-  toolActive.value = key;
+function listClick(key: SideListKeyEnum, isClick = true) {
+  if (mainStore.getToolActive === key && isClick) return;
+  mainStore.setToolActive(key);
   const tool = getSideList().find((i) => i.key === key);
-
   if (tool?.router) router.push(`/${key}`);
 }
 function openSettingAndOther() {
   //
 }
 onMounted(() => {
-  listClick(SideListKeyEnum.CHAT);
+  listClick(mainStore.getToolActive, false);
 });
 </script>
 

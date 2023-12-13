@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia';
 import { isObject, lStorage, isArray } from '@/utils';
 import { Chat } from '../typings/chat';
-
+import { useRoute } from '@/router';
 import { useDBStore } from '@/stores/database';
 import { useSocketStore } from '@/stores/socket';
 import { useUserStore } from '@/stores/user';
+import { useMainStore } from '@/stores/main';
+import { SideListKeyEnum } from '@/enums/main';
 import { TransmissionBody } from '@/socket/types';
 import { uid } from 'quasar';
 import { MessageSendStatus, MessageSendType } from '@/enums/chat';
@@ -34,9 +36,10 @@ export const useChatStore = defineStore('chat', {
       return (lStorage.get('CHAT_LIST') as Chat[]) || [];
     },
     getChatActive(state) {
-      const active = state.chatActive;
-      if (active) return active;
-      return lStorage.get<Chat>('CHAT_ACTIVE');
+      let active = state.chatActive;
+      if (isObject(active)) return active;
+      active = lStorage.get<Chat>('CHAT_ACTIVE');
+      return isObject(active) ? active : void 0;
     },
     getChatActiveMssage(state) {
       const activeMssage = state.chatActiveMssage;
@@ -60,23 +63,33 @@ export const useChatStore = defineStore('chat', {
      * @description 设置聊天列表
      * @param chatList
      */
-    async setChatList(chatList: Chat[]) {
-      if (!chatList.length) return;
-      this.chatList = chatList;
-      lStorage.set('CHAT_LIST', chatList);
+    async setChatList(chatList: Chat[], isSplice = false) {
+      if (isArray(chatList)) {
+        if (isSplice) {
+          const list = this.chatList.length ? this.chatList : this.getChatList;
+          const newList = chatList.filter((i) => {
+            return list.findIndex((j) => j.id === i.id) === -1;
+          });
+          if (!newList.length) return;
+          chatList = list.concat(newList);
+        }
+        this.chatList = chatList;
+        lStorage.set('CHAT_LIST', chatList);
+      }
     },
     /**
      * @description 设置选中的聊天用户
      * @param active
      * @returns
      */
-    setChatActive(active: Chat) {
-      if (!isObject(active)) return;
+    setChatActive(active?: Chat) {
       this.chatActive = active;
       lStorage.set('CHAT_ACTIVE', active);
+      const chatActive = this.getChatActive;
+      if (!isObject(chatActive)) return;
       //获取选中用户历史消息
       useDBStore()
-        .getChatHistory(this.getChatActive?.id as number)
+        .getChatHistory(chatActive?.id as number)
         .then((result) => {
           const userStore = useUserStore();
           if (!isArray(result)) return;
@@ -122,6 +135,24 @@ export const useChatStore = defineStore('chat', {
         status,
         sent: true,
       });
+    },
+    /**
+     * @description 打开聊天
+     * @param chat
+     */
+    openChat(chat: Chat) {
+      this.setChatList([chat], true);
+      useDBStore()
+        .initDatabase()
+        .then(() => {
+          this.setChatActive(chat);
+          useMainStore().setToolActive(SideListKeyEnum.CHAT);
+          const route = useRoute();
+          route.replace({
+            name: 'chatBox',
+            params: { uuid: chat.id },
+          });
+        });
     },
   },
 });

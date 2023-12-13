@@ -1,2 +1,5 @@
 import { Result } from '@/axios/typings';
-export type Chat = Result.User;
+export type Chat = Omit<
+  Result.User,
+  'password' | 'roleId' | 'createTime' | 'updateTime'
+>;

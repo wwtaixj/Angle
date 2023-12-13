@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
 import { CSSProperties, reactive } from 'vue';
-import { DialogEventEnum } from '@/enums/main';
+import { DialogEventEnum, SideListKeyEnum } from '@/enums/main';
 import { useI18n } from '@/boot/i18n';
 import { XUpdate } from '@/components';
 import { useQuasar } from 'quasar';
 import { $Window } from '@/types/env';
+import { lStorage } from '@/utils';
 
 interface Dialog {
   visible: boolean;
@@ -15,6 +16,7 @@ interface Dialog {
 }
 interface MainState {
   dialog: Partial<Dialog>;
+  toolActive?: SideListKeyEnum;
 }
 
 export const useMainStore = defineStore('main', {
@@ -25,7 +27,15 @@ export const useMainStore = defineStore('main', {
       title: '',
       style: {},
     },
+    toolActive: void 0,
   }),
+  getters: {
+    getToolActive(state) {
+      const active = state.toolActive;
+      if (active) return active;
+      return lStorage.get<SideListKeyEnum>('TOOL_ACTIVE');
+    },
+  },
   actions: {
     /**
      * @description 初始化
@@ -50,6 +60,11 @@ export const useMainStore = defineStore('main', {
     },
     resetDialog() {
       this.setDialog({ title: '', style: {}, class: '' });
+    },
+    setToolActive(active: SideListKeyEnum) {
+      if (!active) return;
+      this.toolActive = active;
+      return lStorage.set('TOOL_ACTIVE', active);
     },
     async updateApp() {
       try {

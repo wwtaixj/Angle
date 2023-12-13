@@ -16,38 +16,54 @@
             <XHeader :title="userStore.getFriendActive?.username" />
           </q-header>
           <q-page-container>
-            <q-card flat class="q-mt-xl bg-grey-2 q-px-md">
+            <q-card flat class="q-mt-xl bg-grey-2 q-px-lg">
               <q-item>
-                <q-item-section class="q-px-md" avatar>
+                <q-item-section class="q-pr-md" avatar>
                   <q-avatar>
                     <img :src="userStore.getFriendActive.avatarUrl" />
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{
+                  <q-item-label class="text-subtitle2">{{
                     userStore.getFriendActive?.username
                   }}</q-item-label>
                   <q-item-label caption>
-                    {{
+                    <span class="q-mr-md">{{
                       userStore.getFriendActive.gender === GenderEnum.MALE
-                        ? '男'
-                        : '女'
-                    }}
+                        ? $t('Man')
+                        : $t('Woman')
+                    }}</span>
+                    <span> {{ userStore.getFriendActive.age }}</span>
                   </q-item-label>
                 </q-item-section>
               </q-item>
-
+              <q-separator inset />
               <q-card-section>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                <span class="q-mr-md text-body2 text-grey-7"> 标签 </span>
+                <span class="text-subtitle2">
+                  {{ userStore.getFriendActive.tag }}</span
+                >
               </q-card-section>
 
               <q-separator inset />
 
               <q-card-section>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                <span class="q-mr-md text-body2 text-grey-7">手机号</span>
+                <span class="text-subtitle2">
+                  {{ userStore.getFriendActive.phone }}
+                </span>
               </q-card-section>
+              <q-separator inset />
+              <q-card-actions vertical align="center" class="q-mt-md">
+                <q-btn
+                  flat
+                  stack
+                  icon="fa-regular fa-comment"
+                  label="发消息"
+                  color="primary"
+                  @click="chatStore.openChat(userStore.getFriendActive)"
+                />
+              </q-card-actions>
             </q-card>
           </q-page-container>
         </q-layout>
@@ -60,16 +76,14 @@
 import { useQuasar } from 'quasar';
 import { ref, computed } from 'vue';
 import Side from './components/Side.vue';
-// import { useMainStore } from '../../stores/main';
-//import { useChatStore } from '@/stores/chat';
+import { useChatStore } from '@/stores/chat';
 import { useUserStore } from '@/stores/user';
 import { XNullPage, XHeader } from '@/components';
 import { GenderEnum } from '@/enums/user';
 
 const $q = useQuasar();
-//const chatStore = useChatStore();
+const chatStore = useChatStore();
 const userStore = useUserStore();
-//const socketStore = useSocketStore();
 const splitter = ref(30);
 
 const style = computed(() => {

@@ -64,6 +64,17 @@
           :active="chatStore.getChatActive?.id === conversation.id"
           @click="setCurrentConversation(conversation)"
         >
+          <q-menu class="chat-list-menu text-body2" touch-position context-menu>
+            <q-list>
+              <q-item clickable v-close-popup>
+                <q-item-section>置顶</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable v-close-popup @click="deleteChat(conversation)">
+                <q-item-section>删除聊天</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
           <q-item-section avatar>
             <q-avatar>
               <img :src="conversation.avatarUrl" />
@@ -97,14 +108,31 @@ const router = useRouter();
 //const userStore = useUserStore();
 const chatStore = useChatStore();
 const search = ref('');
-
+/**
+ * 设置当前会话
+ * @param chat
+ */
 function setCurrentConversation(chat: Chat) {
   if (chatStore.getChatActive?.id === chat.id) return;
   chatStore.setChatActive(chat);
   router.replace({ name: 'chatBox', params: { uuid: chat.id } });
 }
+/**
+ * 删除聊天
+ * @param chat
+ */
+function deleteChat(chat: Chat) {
+  const chatList = chatStore.getChatList;
+  const findIndex = chatList.findIndex((item) => item.id === chat.id);
+  chatList.splice(findIndex, 1);
+  chatStore.setChatList(chatList);
+  if (chatStore.getChatActive?.id === chat.id) {
+    chatStore.setChatActive(void 0);
+  }
+}
 onMounted(() => {
   const chat = chatStore.getChatActive;
+
   if (chat) {
     chatStore.setChatActive(chat);
     router.replace({
@@ -122,5 +150,10 @@ onMounted(() => {
 .chat-list {
   height: calc(100vh - 74px);
   margin-top: 74px;
+}
+.chat-list-menu .q-list {
+  .q-item {
+    min-height: 35px;
+  }
 }
 </style>

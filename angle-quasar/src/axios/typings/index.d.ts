@@ -73,8 +73,9 @@ export declare namespace Result {
     gender: string;
     email: string;
     phone: string;
+    age: string;
     avatarUrl: string;
-    role_id: string;
+    roleId: string;
     createTime: string;
     updateTime: string;
     status: number;
