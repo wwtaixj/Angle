@@ -25,8 +25,12 @@ defineProps({
   },
 });
 </script>
-<style lang="scss" scoped>
+<style lang="scss" setup>
+@import '@/css/quasar.variables.scss';
+@import '@/css/app.scss';
+
 .x-header {
-  min-height: 42px;
+  min-height: $right-header-max-height;
+  max-height: $right-header-max-height;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <q-layout class="chat-layout fit bg-grey-3" view="hHh lpR fFf" container>
     <q-header class="text-black bg-grey-2" bordered>
-      <q-toolbar class="q-py-md">
+      <q-toolbar class="q-py-md chat-side-header">
         <XInput
           outlined
           dense
@@ -103,6 +103,7 @@ import { useRouter } from 'vue-router';
 import { useChatStore } from '@/stores/chat';
 import { Chat } from '@/stores/typings/chat';
 import { XInput } from '@/components';
+import { useDBStore } from '@/stores/database';
 
 const router = useRouter();
 //const userStore = useUserStore();
@@ -127,13 +128,13 @@ function deleteChat(chat: Chat) {
   chatList.splice(findIndex, 1);
   chatStore.setChatList(chatList);
   if (chatStore.getChatActive?.id === chat.id) {
-    chatStore.setChatActive(void 0);
+    chatStore.setChatActive(null);
   }
 }
-onMounted(() => {
+onMounted(async () => {
   const chat = chatStore.getChatActive;
-
   if (chat) {
+    await useDBStore().initDatabase();
     chatStore.setChatActive(chat);
     router.replace({
       name: 'chatBox',
@@ -143,6 +144,11 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
+@import '@/css/quasar.variables.scss';
+@import '@/css/app.scss';
+.chat-side-header {
+  max-height: $left-header-max-height;
+}
 .chat-active {
   color: black;
   background: $grey-5;

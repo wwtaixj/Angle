@@ -33,6 +33,19 @@ const routes: RouteRecordRaw[] = [
         name: 'friends',
         component: () => import('@/pages/friends/Index.vue'),
       },
+      {
+        path: '/chatRobot',
+        name: 'chatRobot',
+        component: () => import('@/pages/chatRobot/Index.vue'),
+        children: [
+          {
+            path: 'chatRobotBox/:uuid?',
+            name: 'chatRobotBox',
+            component: () =>
+              import('@/pages/chatRobot/components/Message/Index.vue'),
+          },
+        ],
+      },
     ],
   },
 

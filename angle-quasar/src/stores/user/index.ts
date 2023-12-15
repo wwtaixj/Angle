@@ -12,7 +12,7 @@ import { LoginDialogTypeEnum } from '@/enums/login';
 import { Params } from '@/axios/typings';
 import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '../database';
-//import { useChatStore } from '@/stores/chat';
+import { useChatStore } from '@/stores/chat';
 import { getFriends } from '@/axios';
 import type { UserParticles } from '@/assets/particles';
 import { useRoute } from '@/router';
@@ -30,7 +30,7 @@ import {
 } from '@/utils';
 
 interface UserState {
-  userId: number;
+  userId: string;
   locale: LOCALE;
   theme: boolean;
   location: Location;
@@ -78,7 +78,7 @@ export const useUserStore = defineStore('user', {
     againNewPassword: '',
     loginDialogType: LoginDialogTypeEnum.LOGIN,
     verCodeTimer: 0,
-    userId: 0,
+    userId: '',
     particles: 'fireworks',
     friends: [],
     friendActive: void 0,
@@ -244,7 +244,7 @@ export const useUserStore = defineStore('user', {
       this.email = email;
       lStorage.set('EMAIL', email);
     },
-    setUserId(userId?: number) {
+    setUserId(userId?: string) {
       if (!isNumber(userId)) return;
       this.userId = userId;
       return lStorage.set('USER_ID', userId);
@@ -339,7 +339,7 @@ export const useUserStore = defineStore('user', {
         age: void 0,
         phone: '',
         tag: '',
-        userId: 0,
+        userId: '',
       });
       lStorage.clear();
     },

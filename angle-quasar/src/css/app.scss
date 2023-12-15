@@ -1,9 +1,11 @@
 // app global css in SCSS form
 
-$header-hight: 50px !important;
+$notify-margin-top: 70px; //notify距离顶部高度
+$left-header-max-height: 68px;
+$right-header-max-height: 36px;
 
 .q-notifications__list.q-notifications__list--top {
-  margin-top: $header-hight;
+  margin-top: $notify-margin-top;
 }
 
 .inline {

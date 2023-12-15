@@ -13,7 +13,7 @@ function createWindow(key?: number) {
     frame: false,
     icon: resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1000,
-    height: 600,
+    height: 650,
     useContentSize: true,
     autoHideMenuBar: true,
     webPreferences: {

@@ -31,6 +31,7 @@ export function getSideList(): SideList[] {
       icon: 'fa-brands fa-bots',
       label: 'AI聊天',
       class: 'col-2',
+      router: true,
     },
     {
       key: SideListKeyEnum.PHOTO,

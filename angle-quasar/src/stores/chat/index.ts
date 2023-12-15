@@ -19,27 +19,27 @@ interface ActiveMessage {
 }
 interface ChatState {
   chatList: Chat[];
-  chatActive?: Chat;
+  chatActive: Chat | null;
   chatActiveMssage: ActiveMessage[];
 }
 
 export const useChatStore = defineStore('chat', {
   state: (): ChatState => ({
     chatList: [],
-    chatActive: void 0,
+    chatActive: null,
     chatActiveMssage: [],
   }),
   getters: {
     getChatList(state) {
       const chatList = state.chatList;
       if (chatList.length) return chatList;
-      return (lStorage.get('CHAT_LIST') as Chat[]) || [];
+      return lStorage.get<Chat[]>('CHAT_LIST') || [];
     },
     getChatActive(state) {
       let active = state.chatActive;
       if (isObject(active)) return active;
       active = lStorage.get<Chat>('CHAT_ACTIVE');
-      return isObject(active) ? active : void 0;
+      return isObject(active) ? active : null;
     },
     getChatActiveMssage(state) {
       const activeMssage = state.chatActiveMssage;
@@ -82,14 +82,14 @@ export const useChatStore = defineStore('chat', {
      * @param active
      * @returns
      */
-    setChatActive(active?: Chat) {
+    setChatActive(active: Chat | null) {
       this.chatActive = active;
       lStorage.set('CHAT_ACTIVE', active);
       const chatActive = this.getChatActive;
       if (!isObject(chatActive)) return;
       //获取选中用户历史消息
       useDBStore()
-        .getChatHistory(chatActive?.id as number)
+        .getChatHistory(chatActive?.id)
         .then((result) => {
           const userStore = useUserStore();
           if (!isArray(result)) return;
@@ -110,7 +110,7 @@ export const useChatStore = defineStore('chat', {
     sendMessage(message: string) {
       const userStore = useUserStore();
       const senderId = userStore.getUserId;
-      const receiverId = this.getChatActive?.id as number;
+      const receiverId = this.getChatActive?.id as string;
       const messageId = uid();
       const status = MessageSendStatus.HAVE_SEND;
       const messageBody: TransmissionBody = {
@@ -123,10 +123,10 @@ export const useChatStore = defineStore('chat', {
         messageId,
       };
       // 发送消息到服务器
-      useSocketStore().socketEmit(String(receiverId), messageBody);
+      useSocketStore().socketEmit(receiverId, messageBody);
       // 存储消息到数据库
       useDBStore().addChatHistory(
-        this.getChatActive?.id as number,
+        this.getChatActive?.id as string,
         messageBody
       );
       this.setChatActiveMssage({

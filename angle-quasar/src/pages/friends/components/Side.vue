@@ -1,7 +1,7 @@
 <template>
   <q-layout class="chat-layout fit bg-grey-3" view="hHh lpR fFf" container>
     <q-header class="text-black bg-grey-2" bordered>
-      <q-toolbar class="q-py-md">
+      <q-toolbar class="q-py-md friends-side-header">
         <XInput
           outlined
           dense
@@ -61,6 +61,11 @@ const userStore = useUserStore();
 const search = ref('');
 </script>
 <style lang="scss" scoped>
+@import '@/css/quasar.variables.scss';
+@import '@/css/app.scss';
+.friends-side-header {
+  max-height: $left-header-max-height;
+}
 .chat-active {
   color: black;
   background: $grey-5;

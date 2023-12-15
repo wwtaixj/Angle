@@ -57,7 +57,7 @@ export declare namespace Params {
 
 export declare namespace Result {
   interface Login {
-    id: number;
+    id: string;
     age: number;
     avatarUrl: string;
     gender: Gender;
@@ -67,7 +67,7 @@ export declare namespace Result {
     email: string;
   }
   interface User {
-    id: number;
+    id: string;
     username: string;
     password: string;
     gender: string;
