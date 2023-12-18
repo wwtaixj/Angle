@@ -3,6 +3,12 @@ declare namespace ChatRobot {
     title: string;
     id: string;
     model: string;
+    timestamp: number;
+  }
+  interface ChatRobotModel {
+    label: string;
+    value: string;
+    description?: string;
   }
   export interface ChatRobotHistoryTable {
     message: string;
@@ -12,11 +18,17 @@ declare namespace ChatRobot {
     timestamp: number;
     error?: boolean;
   }
-
+  export interface Message {
+    sent: boolean;
+    avatar: string;
+    text: any[];
+    status?: string;
+  }
   interface ChatState {
     active: Chat | null;
-    activeMssage: ChatRobotHistoryTable[];
+    activeMssage: Message[];
     chatList: Chat[];
+    model: Chat['model'];
   }
 
   interface ConversationRequest {

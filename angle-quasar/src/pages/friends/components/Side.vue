@@ -1,7 +1,7 @@
 <template>
   <q-layout class="chat-layout fit bg-grey-3" view="hHh lpR fFf" container>
     <q-header class="text-black bg-grey-2" bordered>
-      <q-toolbar class="q-py-md friends-side-header">
+      <q-toolbar class="q-py-md chat-list-header">
         <XInput
           outlined
           dense
@@ -20,14 +20,14 @@
       </q-toolbar>
     </q-header>
 
-    <q-scroll-area class="chat-list">
+    <q-scroll-area class="chat-list-scroll">
       <q-list>
         <q-item
           v-for="(friend, index) in userStore.getFriends"
           :key="index"
           clickable
           v-ripple
-          active-class="chat-active"
+          active-class="chat-list-active"
           :active="userStore.getFriendActive?.id === friend.id"
           @click="userStore.setFriendActive(friend)"
         >
@@ -60,18 +60,3 @@ const userStore = useUserStore();
 
 const search = ref('');
 </script>
-<style lang="scss" scoped>
-@import '@/css/quasar.variables.scss';
-@import '@/css/app.scss';
-.friends-side-header {
-  max-height: $left-header-max-height;
-}
-.chat-active {
-  color: black;
-  background: $grey-5;
-}
-.chat-list {
-  height: calc(100vh - 74px);
-  margin-top: 74px;
-}
-</style>

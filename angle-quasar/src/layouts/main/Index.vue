@@ -90,7 +90,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 // import Header from '@/pages/header/Index.vue';
 import { DialogEventEnum } from '@/enums/main';
-import { getSideList } from './constant';
+import { getSideList } from '@/assets/constant';
 import { useMainStore } from '@/stores/main';
 import { useUserStore } from '@/stores/user';
 //import Login from '@/pages/login/Index.vue';

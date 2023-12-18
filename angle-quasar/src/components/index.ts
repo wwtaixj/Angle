@@ -9,3 +9,4 @@ export * from './Img';
 export * from './WinBar';
 export * from './NullPage';
 export * from './Header';
+export * from './MessagePage';

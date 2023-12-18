@@ -14,6 +14,9 @@ const attrs: XChatMessageProps = useAttrs();
 </script>
 <style lang="scss">
 .x-chat-message {
+  &:first-child {
+    margin-top: 8px;
+  }
   .q-message-container {
     align-items: center;
   }

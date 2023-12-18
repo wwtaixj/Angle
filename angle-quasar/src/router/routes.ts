@@ -41,8 +41,7 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'chatRobotBox/:uuid?',
             name: 'chatRobotBox',
-            component: () =>
-              import('@/pages/chatRobot/components/Message/Index.vue'),
+            component: () => import('@/pages/chatRobot/components/Message.vue'),
           },
         ],
       },

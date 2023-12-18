@@ -60,3 +60,4 @@ export * from './message';
 export * from './webStorage';
 export * from './timer';
 export * from './navigator';
+export * from './date';

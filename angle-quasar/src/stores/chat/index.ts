@@ -12,9 +12,9 @@ import { uid } from 'quasar';
 import { MessageSendStatus, MessageSendType } from '@/enums/chat';
 
 interface ActiveMessage {
-  message: TransmissionBody['message'][];
-  status: TransmissionBody['status'];
-  avatarUrl: Chat['avatarUrl'];
+  text: TransmissionBody['message'][];
+  status?: TransmissionBody['status'];
+  avatar: Chat['avatarUrl'];
   sent: boolean;
 }
 interface ChatState {
@@ -94,8 +94,8 @@ export const useChatStore = defineStore('chat', {
           const userStore = useUserStore();
           if (!isArray(result)) return;
           this.chatActiveMssage = result.map((i) => ({
-            message: [i.dataValues.message],
-            avatarUrl: (i.dataValues.senderId === userStore.getUserId
+            text: [i.dataValues.message],
+            avatar: (i.dataValues.senderId === userStore.getUserId
               ? userStore.getAvatarUrl
               : this.chatActive?.avatarUrl) as string,
             status: i.dataValues.status,
@@ -130,8 +130,8 @@ export const useChatStore = defineStore('chat', {
         messageBody
       );
       this.setChatActiveMssage({
-        message: [message],
-        avatarUrl: userStore.getAvatarUrl,
+        text: [message],
+        avatar: userStore.getAvatarUrl,
         status,
         sent: true,
       });

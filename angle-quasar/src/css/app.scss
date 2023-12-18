@@ -11,4 +11,41 @@ $right-header-max-height: 36px;
 .inline {
   display: inline;
 }
-
+/**
+ * 聊天列表滚动栏
+ */
+.chat-list-scroll {
+  height: calc(100vh - $left-header-max-height);
+  margin-top: $left-header-max-height;
+  .q-scrollarea__content {
+    width: inherit;
+  }
+  .q-item__section--avatar {
+    min-width: auto;
+  }
+  .q-item__section--main ~ .q-item__section--side {
+    padding-left: 0;
+  }
+ 
+}
+/**
+ * 聊天列表menu 菜单
+ */
+.chat-list-menu .q-list {
+  .q-item {
+    min-height: 35px;
+  }
+}
+/**
+ * 聊天列表选中
+ */
+.chat-list-active {
+  color: black;
+  background: $grey-5;
+}
+/**
+ * 聊天列表header
+ */
+.chat-list-header {
+  max-height: $left-header-max-height;
+}

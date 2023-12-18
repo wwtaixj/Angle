@@ -5,6 +5,12 @@ export function updateApp(io: Server) {
   // 文件路径和信息
   const folderPath = resolve(__dirname, '../../public/update/');
   let lastModifiedTime = null;
+  // 检查文件夹是否存在
+  if (!fs.existsSync(folderPath)) {
+    // 如果文件夹不存在，就新建文件夹
+    fs.mkdirSync(folderPath, { recursive: true });
+    console.log(folderPath + ' created successfully.');
+  }
   // 监听文件变化
   fs.watch(folderPath, (event, filename) => {
     fs.readdir(folderPath, (err, files) => {

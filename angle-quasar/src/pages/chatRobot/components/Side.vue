@@ -2,19 +2,38 @@
   <q-layout class="chat-layout fit bg-grey-3" view="hHh lpR fFf" container>
     <q-header class="text-black bg-grey-2" bordered>
       <q-toolbar class="q-py-md q-pt-md">
-        <XButton
+        <q-btn-dropdown
           outline
-          text-color="primary"
-          label="新增聊天"
-          align="between"
-          icon-right="add_circle_outline"
+          split
+          align="center"
+          color="primary"
           class="full-width"
+          label="新增聊天"
           @click="chatRobotStore.addChat"
-        />
+        >
+          <q-list>
+            <q-item
+              clickable
+              v-close-popup
+              v-for="(item, index) in getModelList()"
+              :key="index"
+              :active="chatRobotStore.getChatModel === item.value"
+              @click="chatRobotStore.setChatModel(item.value)"
+            >
+              <q-item-section avatar>
+                <q-icon name="api" color="grey-8" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ item.label }}</q-item-label>
+                <q-item-label caption>{{ item.description }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
-    <q-scroll-area class="chat-list">
+    <q-scroll-area class="chat-list-scroll full-width">
       <q-list>
         <q-item class="q-mt-md" v-if="!chatRobotStore.getChatList.length">
           <q-item-section class="absolute-center">
@@ -31,7 +50,7 @@
           :key="index"
           clickable
           v-ripple
-          active-class="chat-active"
+          active-class="chat-list-active"
           :active="chatRobotStore.getActive?.id === item.id"
           @click="setCurrentConversation(item)"
         >
@@ -46,14 +65,31 @@
               </q-item>
             </q-list>
           </q-menu>
+          <q-item-section avatar>
+            <q-icon
+              size="24px"
+              color="primary"
+              name="fa-regular fa-comment-dots"
+            />
+          </q-item-section>
+
           <q-item-section>
             <q-item-label lines="1">
               {{ item.title }}
             </q-item-label>
           </q-item-section>
 
-          <q-item-section side>
-            <q-badge outline color="primary" :label="item.model" />
+          <q-item-section side top>
+            <q-badge
+              class="no-border q-pr-none"
+              outline
+              align="middle"
+              color="primary"
+              :label="item.model"
+            />
+            <q-item-label caption>{{
+              formatTimestamp(item.timestamp)
+            }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -62,12 +98,12 @@
 </template>
 <script lang="ts" setup>
 //import { useQuasar } from 'quasar';
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 //import { useUserStore } from '@/stores/user';
 import { useChatRobotStore } from '@/stores/chatRobot';
-import { Chat } from '@/stores/typings/chat';
-import { XButton } from '@/components';
+import { formatTimestamp } from '@/utils';
+import { getModelList } from '@/assets/constant';
 import { useDBStore } from '@/stores/database';
 
 const router = useRouter();
@@ -79,22 +115,22 @@ const chatRobotStore = useChatRobotStore();
  * @param chat
  */
 function setCurrentConversation(chat: ChatRobot.Chat) {
-  // if (chatStore.getChatActive?.id === chat.id) return;
-  // chatStore.setChatActive(chat);
-  // router.replace({ name: 'chatBox', params: { uuid: chat.id } });
+  if (chatRobotStore.getActive?.id === chat.id) return;
+  chatRobotStore.setActive(chat);
+  router.replace({ name: 'chatRobotBox', params: { uuid: chat.id } });
 }
 /**
  * 删除聊天
  * @param chat
  */
 function deleteChat(chat: ChatRobot.Chat) {
-  // const chatList = chatStore.getChatList;
-  // const findIndex = chatList.findIndex((item) => item.id === chat.id);
-  // chatList.splice(findIndex, 1);
-  // chatStore.setChatList(chatList);
-  // if (chatStore.getChatActive?.id === chat.id) {
-  //   chatStore.setChatActive(void 0);
-  // }
+  const chatList = chatRobotStore.getChatList;
+  const findIndex = chatList.findIndex((item) => item.id === chat.id);
+  chatList.splice(findIndex, 1);
+  chatRobotStore.setChatList(chatList);
+  if (chatRobotStore.getActive?.id === chat.id) {
+    chatRobotStore.setActive(null);
+  }
 }
 onMounted(async () => {
   const chat = chatRobotStore.getActive;
@@ -108,18 +144,3 @@ onMounted(async () => {
   }
 });
 </script>
-<style lang="scss" scoped>
-.chat-active {
-  color: black;
-  background: $grey-5;
-}
-.chat-list {
-  height: calc(100vh - 74px);
-  margin-top: 74px;
-}
-.chat-list-menu .q-list {
-  .q-item {
-    min-height: 35px;
-  }
-}
-</style>

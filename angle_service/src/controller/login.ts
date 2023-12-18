@@ -25,12 +25,14 @@ export const login = async (
     }
     // 解密
     const hashedPassword = decrypt(password);
+
     // 在用户数据中查找是否存在与请求提供的用户名及密码匹配的用户记录
     const result = await selectUserInfo(hashedUsername);
     const user = result[0][0];
     // 用户不存在或密码错误
     if (!user) {
       status = '-2';
+      0;
       throw new Error('用户不存在或密码错误!');
     }
     // 密码错误
@@ -41,6 +43,7 @@ export const login = async (
     const { id, phone, avatarUrl, age, tag, gender, email } = user;
     // 登录添加权限列表到缓存
     const [userList] = await getUserPermissions(hashedUsername);
+    console.log(userList);
     //
     Cache.set(hashedUsername, userList, 3600 * 8);
     // 返回包含 token、status 和 message 的 JSON 响应

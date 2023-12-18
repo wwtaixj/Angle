@@ -1,7 +1,7 @@
 <template>
   <q-layout class="chat-layout fit bg-grey-3" view="hHh lpR fFf" container>
     <q-header class="text-black bg-grey-2" bordered>
-      <q-toolbar class="q-py-md chat-side-header">
+      <q-toolbar class="q-py-md chat-list-header">
         <XInput
           outlined
           dense
@@ -43,7 +43,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-scroll-area class="chat-list">
+    <q-scroll-area class="chat-list-scroll">
       <q-list>
         <q-item class="q-mt-md" v-if="!chatStore.getChatList.length">
           <q-item-section class="absolute-center">
@@ -60,7 +60,7 @@
           :key="index"
           clickable
           v-ripple
-          active-class="chat-active"
+          active-class="chat-list-active"
           :active="chatStore.getChatActive?.id === conversation.id"
           @click="setCurrentConversation(conversation)"
         >
@@ -143,23 +143,3 @@ onMounted(async () => {
   }
 });
 </script>
-<style lang="scss" scoped>
-@import '@/css/quasar.variables.scss';
-@import '@/css/app.scss';
-.chat-side-header {
-  max-height: $left-header-max-height;
-}
-.chat-active {
-  color: black;
-  background: $grey-5;
-}
-.chat-list {
-  height: calc(100vh - 74px);
-  margin-top: 74px;
-}
-.chat-list-menu .q-list {
-  .q-item {
-    min-height: 35px;
-  }
-}
-</style>
