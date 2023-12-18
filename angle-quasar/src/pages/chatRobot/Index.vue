@@ -5,10 +5,10 @@
         <Side />
       </template>
       <template v-slot:after>
-        <XNullPage v-if="!chatStore.getChatActive" />
+        <XNullPage v-if="!chatRobotStore.getActive" />
         <q-layout class="chat-layout" v-else view="hHh lpR fFf" container>
           <q-header class="text-black bg-grey-2" bordered>
-            <XHeader :title="chatStore.getChatActive?.username" />
+            <XHeader :title="chatRobotStore.getActive?.title" />
           </q-header>
 
           <q-page-container>
@@ -26,14 +26,13 @@
 import { useQuasar } from 'quasar';
 import { ref, computed } from 'vue';
 import Side from './components/Side.vue';
-
 // import { useMainStore } from '../../stores/main';
-import { useChatStore } from '@/stores/chat';
+import { useChatRobotStore } from '@/stores/chatRobot';
 //import { useUserStore } from '@/stores/user';
 import { XHeader, XNullPage } from '@/components';
 
 const $q = useQuasar();
-const chatStore = useChatStore();
+const chatRobotStore = useChatRobotStore();
 //const userStore = useUserStore();
 //const socketStore = useSocketStore();
 const splitter = ref(30);

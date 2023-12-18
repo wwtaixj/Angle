@@ -4,31 +4,39 @@ declare namespace ChatRobot {
     id: string;
     model: string;
     timestamp: number;
+    avatar: string;
   }
   interface ChatRobotModel {
     label: string;
     value: string;
     description?: string;
+    avatar: string;
   }
   export interface ChatRobotHistoryTable {
     message: string;
     sent: boolean;
-    conversationOptions?: ConversationRequest;
-    requestOptions?: { prompt: string; options?: ConversationRequest | null };
+    conversationOptions: string | null;
+    requestOptions: string | null;
     timestamp: number;
-    error?: boolean;
+    error: boolean;
   }
   export interface Message {
     sent: boolean;
     avatar: string;
     text: any[];
     status?: string;
+    loading?: boolean;
+    error?: boolean;
+    timestamp: number;
+    conversationOptions?: ConversationRequest | null;
+    requestOptions?: { prompt: string; options?: ConversationRequest | null };
   }
   interface ChatState {
     active: Chat | null;
     activeMssage: Message[];
     chatList: Chat[];
     model: Chat['model'];
+    usingContext: boolean;
   }
 
   interface ConversationRequest {

@@ -17,7 +17,7 @@
               v-close-popup
               v-for="(item, index) in getModelList()"
               :key="index"
-              :active="chatRobotStore.getChatModel === item.value"
+              :active="chatRobotStore.getChatModel?.value === item.value"
               @click="chatRobotStore.setChatModel(item.value)"
             >
               <q-item-section avatar>
@@ -100,14 +100,13 @@
 //import { useQuasar } from 'quasar';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-//import { useUserStore } from '@/stores/user';
 import { useChatRobotStore } from '@/stores/chatRobot';
 import { formatTimestamp } from '@/utils';
 import { getModelList } from '@/assets/constant';
 import { useDBStore } from '@/stores/database';
 
 const router = useRouter();
-//const userStore = useUserStore();
+const dbStore = useDBStore();
 const chatRobotStore = useChatRobotStore();
 
 /**
@@ -123,19 +122,23 @@ function setCurrentConversation(chat: ChatRobot.Chat) {
  * 删除聊天
  * @param chat
  */
-function deleteChat(chat: ChatRobot.Chat) {
-  const chatList = chatRobotStore.getChatList;
-  const findIndex = chatList.findIndex((item) => item.id === chat.id);
-  chatList.splice(findIndex, 1);
-  chatRobotStore.setChatList(chatList);
-  if (chatRobotStore.getActive?.id === chat.id) {
-    chatRobotStore.setActive(null);
+async function deleteChat(chat: ChatRobot.Chat) {
+  try {
+    await dbStore.deleteChatRobotHistory(chat.id);
+    const chatList = chatRobotStore.getChatList;
+    const findIndex = chatList.findIndex((item) => item.id === chat.id);
+    chatList.splice(findIndex, 1);
+    chatRobotStore.setChatList(chatList);
+  } finally {
+    if (chatRobotStore.getActive?.id === chat.id) {
+      chatRobotStore.setActive(null);
+    }
   }
 }
 onMounted(async () => {
   const chat = chatRobotStore.getActive;
   if (chat) {
-    await useDBStore().initDatabase();
+    await dbStore.initDatabase();
     chatRobotStore.setActive(chat);
     router.replace({
       name: 'chatRobotBox',

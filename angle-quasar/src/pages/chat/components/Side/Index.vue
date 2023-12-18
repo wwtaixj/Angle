@@ -77,7 +77,10 @@
           </q-menu>
           <q-item-section avatar>
             <q-avatar>
-              <img :src="conversation.avatarUrl" />
+              <img
+                :src="conversation.avatarUrl"
+                style="width: 32px; height: 32px"
+              />
             </q-avatar>
           </q-item-section>
 

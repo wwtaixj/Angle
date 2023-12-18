@@ -110,8 +110,8 @@ module.exports = configure(function (/* ctx */) {
       port: 9999,
       proxy: {
         '/api': {
-          //target: 'http://loose.net.cn:9310',
-          target: 'http://localhost:9310',
+          target: 'http://loose.net.cn:9310',
+          //target: 'http://localhost:9310',
           changeOrigin: true,
           ws: true,
         },

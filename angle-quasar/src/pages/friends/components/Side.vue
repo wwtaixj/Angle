@@ -33,7 +33,7 @@
         >
           <q-item-section avatar>
             <q-avatar>
-              <img :src="friend.avatarUrl" />
+              <img :src="friend.avatarUrl" style="width: 32px; height: 32px" />
             </q-avatar>
           </q-item-section>
 

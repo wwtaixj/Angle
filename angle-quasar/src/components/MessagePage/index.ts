@@ -12,6 +12,8 @@ export interface MessageItem {
   avatar: string;
   text: any[];
   status?: string;
+  loading?: boolean;
+  timestamp?: number;
 }
 export interface XMessagePageProps {
   Tools?: MessageTool[];

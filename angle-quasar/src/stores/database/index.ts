@@ -13,6 +13,7 @@ import {
   queryChatRobotHistoryByAll,
   createChatHistoryTable,
   createChatRobotHistoryTable,
+  deleteChatRobotHistory,
 } from '@/db';
 
 interface DBState {
@@ -45,12 +46,12 @@ export const useDBStore = defineStore('database', {
     // 添加聊天记录
     async addChatHistory(id: string, history: ChatHistoryTable) {
       if (!this.instance) await this.initDatabase();
-      return insertChatHistory(this.instance as Sequelize, id, history);
+      return await insertChatHistory(this.instance as Sequelize, id, history);
     },
     // 获取聊天记录
     async getChatHistory(id: string, chat?: Partial<ChatHistoryTable>) {
       if (!this.instance) await this.initDatabase();
-      return queryChatHistoryByAll(this.instance as Sequelize, id, chat);
+      return await queryChatHistoryByAll(this.instance as Sequelize, id, chat);
     },
     // 添加机器人聊天记录
     async addChatRobotHistory(
@@ -58,7 +59,11 @@ export const useDBStore = defineStore('database', {
       history: ChatRobot.ChatRobotHistoryTable
     ) {
       if (!this.instance) await this.initDatabase();
-      return insertChatRobotHistory(this.instance as Sequelize, id, history);
+      return await insertChatRobotHistory(
+        this.instance as Sequelize,
+        id,
+        history
+      );
     },
     // 获取机器人聊天记录
     async getChatRobotHistory(
@@ -66,7 +71,15 @@ export const useDBStore = defineStore('database', {
       chat?: Partial<ChatRobot.ChatRobotHistoryTable>
     ) {
       if (!this.instance) await this.initDatabase();
-      return queryChatRobotHistoryByAll(this.instance as Sequelize, id, chat);
+      return await queryChatRobotHistoryByAll(
+        this.instance as Sequelize,
+        id,
+        chat
+      );
+    },
+    async deleteChatRobotHistory(id: string) {
+      if (!this.instance) await this.initDatabase();
+      return await deleteChatRobotHistory(this.instance as Sequelize, id);
     },
   },
 });

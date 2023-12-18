@@ -1,9 +1,13 @@
 <template>
-  <q-chat-message class="x-chat-message" v-bind="attrs"> </q-chat-message>
+  <q-chat-message class="x-chat-message" v-bind="attrs">
+    <template v-for="key in slots" v-slot:[key]>
+      <slot :name="key" />
+    </template>
+  </q-chat-message>
 </template>
 
 <script lang="ts" setup>
-import { useAttrs } from 'vue';
+import { useAttrs, useSlots } from 'vue';
 import { XChatMessageProps } from './index';
 
 defineOptions({
@@ -11,6 +15,7 @@ defineOptions({
 });
 
 const attrs: XChatMessageProps = useAttrs();
+const slots = Object.keys(useSlots()) as unknown;
 </script>
 <style lang="scss">
 .x-chat-message {
@@ -21,9 +26,9 @@ const attrs: XChatMessageProps = useAttrs();
     align-items: center;
   }
   .q-message-avatar {
-    width: 35px;
-    height: 35px;
-    min-width: 35px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
     .q-message-avatar--sent {
       margin-right: 4px;
     }

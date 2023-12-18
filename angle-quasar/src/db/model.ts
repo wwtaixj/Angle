@@ -86,7 +86,7 @@ export async function initChatRobotHistory(
  * @param sequelize 实例
  * @param ChatRobotHistory 列表或单个对象
  */
-export const insertChatRobotHistory = (
+export const insertChatRobotHistory = async (
   sequelize: Sequelize,
   id: string,
   params: ChatRobot.ChatRobotHistoryTable | ChatRobot.ChatRobotHistoryTable[]
@@ -94,12 +94,12 @@ export const insertChatRobotHistory = (
   if (!sequelize) return;
   if (!params) throw new Error('the ChatRobot history is empty');
   if (Array.isArray(params)) {
-    return sequelize.models[`ChatRobotHistory${id}`].bulkCreate<
+    return await sequelize.models[`ChatRobotHistory${id}`].bulkCreate<
       Model<ChatRobot.ChatRobotHistoryTable>
     >(params);
   }
   if (isObject(params)) {
-    return sequelize.models[`ChatRobotHistory${id}`].create<
+    return await sequelize.models[`ChatRobotHistory${id}`].create<
       Model<ChatRobot.ChatRobotHistoryTable>
     >(params);
   }
@@ -110,7 +110,7 @@ export const insertChatRobotHistory = (
  * @param sequelize 实例
  * @param  ChatHistory 列表或单个对象
  */
-export const insertChatHistory = (
+export const insertChatHistory = async (
   sequelize: Sequelize,
   id: string,
   params: ChatHistoryTable | ChatHistoryTable[]
@@ -118,14 +118,14 @@ export const insertChatHistory = (
   if (!sequelize) return;
   if (!params) throw new Error('the chat history is empty');
   if (Array.isArray(params)) {
-    return sequelize.models[`ChatHistory${id}`].bulkCreate<
+    return await sequelize.models[`ChatHistory${id}`].bulkCreate<
       Model<ChatHistoryTable>
     >(params);
   }
   if (isObject(params)) {
-    return sequelize.models[`ChatHistory${id}`].create<Model<ChatHistoryTable>>(
-      params
-    );
+    return await sequelize.models[`ChatHistory${id}`].create<
+      Model<ChatHistoryTable>
+    >(params);
   }
 };
 
@@ -134,7 +134,7 @@ export const insertChatHistory = (
  * @param sequelize 实例
  * @param id 查询的 senderId 或 receiverId
  */
-export const queryChatHistoryByAll = (
+export const queryChatHistoryByAll = async (
   sequelize: Sequelize,
   id: string,
   params?: Partial<ChatHistoryTable> & {
@@ -143,14 +143,14 @@ export const queryChatHistoryByAll = (
 ) => {
   if (!sequelize) return;
   if (params) {
-    return sequelize.models[`ChatHistory${id}`].findAll<
+    return await sequelize.models[`ChatHistory${id}`].findAll<
       Model<ChatHistoryTable>
     >({
       where: params,
     });
   }
 
-  return sequelize.models[`ChatHistory${id}`].findAll<
+  return await sequelize.models[`ChatHistory${id}`].findAll<
     Model<ChatHistoryTable>
   >();
 };
@@ -160,7 +160,7 @@ export const queryChatHistoryByAll = (
  * @param sequelize 实例
  * @param id
  */
-export const queryChatRobotHistoryByAll = (
+export const queryChatRobotHistoryByAll = async (
   sequelize: Sequelize,
   id: string,
   params?: Partial<ChatRobot.ChatRobotHistoryTable> & {
@@ -169,13 +169,25 @@ export const queryChatRobotHistoryByAll = (
 ) => {
   if (!sequelize) return;
   if (params) {
-    return sequelize.models[`ChatRobotHistory${id}`].findAll<
+    return await sequelize.models[`ChatRobotHistory${id}`].findAll<
       Model<ChatRobot.ChatRobotHistoryTable>
     >({
       where: params,
     });
   }
-  return sequelize.models[`ChatRobotHistory${id}`].findAll<
+  return await sequelize.models[`ChatRobotHistory${id}`].findAll<
     Model<ChatRobot.ChatRobotHistoryTable>
   >();
+};
+/**
+ * 根据 聊天机器人对话 uuid  进行查询聊天历史记录
+ * @param sequelize 实例
+ * @param id
+ */
+export const deleteChatRobotHistory = async (
+  sequelize: Sequelize,
+  id: string
+) => {
+  if (!sequelize) return;
+  await sequelize.models[`ChatRobotHistory${id}`].drop();
 };

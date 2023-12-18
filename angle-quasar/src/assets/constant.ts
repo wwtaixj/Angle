@@ -48,22 +48,26 @@ export function getModelList(): ChatRobot.ChatRobotModel[] {
       label: 'gpt-3.5-turbo',
       value: 'gpt-3.5-turbo',
       description: 'Currently points to gpt-3.5-turbo-0613.',
+      avatar: '/public/icons/chatGpt-logo.jpg',
     },
     {
       label: 'gpt-3.5-turbo-16k',
       value: 'gpt-3.5-turbo-16k',
       description: '更长令牌的gpt-3.5-turbo.',
+      avatar: '/public/icons/chatGpt-logo.jpg',
     },
     {
       label: 'gpt-4',
       value: 'gpt-4',
       description:
         'Currently points to gpt-4-0613. See continuous model upgrades.',
+      avatar: '/public/icons/chatGpt-logo.jpg',
     },
     {
       label: 'gpt-4-32k',
       value: 'gpt-4-32k',
       description: '更长令牌的gpt-4.',
+      avatar: '/public/icons/chatGpt-logo.jpg',
     },
   ];
 }

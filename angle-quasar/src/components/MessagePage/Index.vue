@@ -24,12 +24,15 @@
             component="q-chat-message"
             v-slot="{ item, index }"
           >
-            <XChatMessage
-              :sent="item.sent"
-              :avatar="item.avatar"
-              :text="item.text"
-              :key="index"
-            />
+            <div>
+              <XChatMessage
+                :sent="item.sent"
+                :avatar="item.avatar"
+                :text="item.text"
+                :key="index"
+              />
+              <slot name="messageLoading" :item="item" />
+            </div>
           </q-virtual-scroll>
         </q-scroll-area>
       </template>
@@ -87,7 +90,6 @@ const horizontalSplitter = ref(80);
 const messagePageRef = ref<QPage>();
 const scrollAreaRef = ref<QScrollArea>();
 const scrollAreaHeight = ref('0');
-const showTip = ref(false);
 const message = ref('');
 
 function setScrollAreaHeight() {
@@ -103,13 +105,11 @@ function setScrollAreaHeight() {
 }
 function setScrollPositionBottom() {
   const scroll = scrollAreaRef.value?.getScroll();
-
   if (!scroll) return;
   scrollAreaRef.value?.setScrollPosition('vertical', scroll.verticalSize);
 }
 function send() {
   if (!message.value) {
-    showTip.value = true;
     return;
   }
   $emits('send', message.value);
@@ -121,6 +121,7 @@ function clearMessage() {
 // 暴露给父组件的数据和方法
 defineExpose({
   clearMessage,
+  setScrollPositionBottom,
 });
 
 // 监听窗口变化时重新计算高度
