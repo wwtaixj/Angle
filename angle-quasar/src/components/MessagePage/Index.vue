@@ -30,6 +30,7 @@
                 :avatar="item.avatar"
                 :text="item.text"
                 :key="index"
+                text-html
               />
               <slot name="messageLoading" :item="item" />
             </div>

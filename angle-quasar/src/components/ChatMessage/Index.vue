@@ -1,5 +1,5 @@
 <template>
-  <q-chat-message class="x-chat-message" v-bind="attrs">
+  <q-chat-message class="x-chat-message" v-bind="attrsComputed">
     <template v-for="key in slots" v-slot:[key]>
       <slot :name="key" />
     </template>
@@ -7,15 +7,56 @@
 </template>
 
 <script lang="ts" setup>
-import { useAttrs, useSlots } from 'vue';
+import { useAttrs, useSlots, computed } from 'vue';
 import { XChatMessageProps } from './index';
+import MarkdownIt from 'markdown-it';
+import mdKatex from '@traptitech/markdown-it-katex';
+import mila from 'markdown-it-link-attributes';
+import hljs from 'highlight.js';
+import { useQuasar } from 'quasar';
+import { useI18n } from '@/boot/i18n';
 
 defineOptions({
   name: 'XChatMessage',
 });
-
-const attrs: XChatMessageProps = useAttrs();
+const { t } = useI18n();
 const slots = Object.keys(useSlots()) as unknown;
+
+const attrsComputed = computed(() => {
+  const attrs: XChatMessageProps = useAttrs();
+
+  return {
+    ...attrs,
+    text: [mdi.render(attrs?.text[0])],
+  };
+});
+
+const mdi = new MarkdownIt({
+  linkify: true,
+  highlight(code: any, language: string) {
+    const validLang = !!(language && hljs.getLanguage(language));
+    if (validLang) {
+      const lang = language ?? '';
+      return highlightBlock(
+        hljs.highlight(code, { language: lang }).value,
+        lang
+      );
+    }
+    return highlightBlock(hljs.highlightAuto(code).value, '');
+  },
+});
+
+mdi.use(mila, { attrs: { target: '_blank', rel: 'noopener' } });
+mdi.use(mdKatex, {
+  blockClass: 'katexmath-block rounded-md p-[10px]',
+  errorColor: ' #cc0000',
+});
+
+function highlightBlock(str: string, lang?: string) {
+  return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">${t(
+    'chat.copyCode'
+  )}</span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`;
+}
 </script>
 <style lang="scss">
 .x-chat-message {

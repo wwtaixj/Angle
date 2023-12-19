@@ -55,7 +55,7 @@ function loadingStop() {
 }
 let controller: AbortController;
 async function send(message: string) {
-  if (currentChat.value.loading) return;
+  if (currentChat.value && currentChat.value.loading) return;
   const active = chatRobotStore.getActive;
   controller = new AbortController();
   const messageBody: ChatRobot.ChatRobotHistoryTable = {
