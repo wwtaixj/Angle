@@ -38,7 +38,7 @@
       </template>
       <template v-slot:after>
         <div class="column fit bg-grey-2 q-px-md q-pb-xl">
-          <q-toolbar class="col-2 text-black q-px-none send-toolbar">
+          <q-toolbar class="text-black col-2 q-px-none send-toolbar">
             <XButton
               round
               flat
