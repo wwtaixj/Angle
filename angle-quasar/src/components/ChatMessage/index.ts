@@ -4,5 +4,8 @@ import ChatMessage from './Index.vue';
 
 export const XChatMessage = withInstall(ChatMessage);
 
-export type XChatMessageProps = QChatMessageProps;
+export interface XChatMessageProps extends QChatMessageProps {
+  error?: boolean;
+  loading?: boolean;
+}
 export type XChatMessageSlots = QChatMessageSlots;

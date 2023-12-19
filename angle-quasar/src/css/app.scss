@@ -1,4 +1,6 @@
 // app global css in SCSS form
+@import './lib/highlight';
+@import './lib/github-markdown';
 
 $notify-margin-top: 70px; //notify距离顶部高度
 $left-header-max-height: 68px;
@@ -26,7 +28,7 @@ $right-header-max-height: 36px;
   .q-item__section--main ~ .q-item__section--side {
     padding-left: 0;
   }
- 
+
 }
 /**
  * 聊天列表menu 菜单

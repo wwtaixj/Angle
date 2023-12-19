@@ -1,5 +1,6 @@
 <template>
   <XPopupEdit
+    ref="inputPopupEditRef"
     v-bind="attrs"
     v-slot="scope"
     :model-value="modelValue"
@@ -38,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, defineEmits, useAttrs } from 'vue';
+import { PropType, defineEmits, useAttrs, ref } from 'vue';
 import { XPopupEdit } from '../PopupEdit';
 import { XInputPopupEditProps } from './index';
 
@@ -53,7 +54,9 @@ defineProps({
     type: String as PropType<XInputPopupEditProps['modelValue']>,
   },
 });
+const inputPopupEditRef = ref<HTMLElement>();
 function updateModelValue(value: XInputPopupEditProps['modelValue']) {
   $emits('update:modelValue', value);
 }
+defineExpose({ inputPopupEditRef });
 </script>

@@ -14,6 +14,7 @@ export interface MessageItem {
   status?: string;
   loading?: boolean;
   timestamp?: number;
+  textHtml?: boolean;
 }
 export interface XMessagePageProps {
   Tools?: MessageTool[];

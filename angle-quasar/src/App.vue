@@ -19,3 +19,6 @@ if (token) {
 }
 useMainStore().initMain();
 </script>
+<style lang="scss">
+@import './css/app.scss';
+</style>

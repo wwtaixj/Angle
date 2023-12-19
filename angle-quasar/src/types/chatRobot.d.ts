@@ -28,6 +28,7 @@ declare namespace ChatRobot {
     loading?: boolean;
     error?: boolean;
     timestamp: number;
+    textHtml?: boolean;
     conversationOptions?: ConversationRequest | null;
     requestOptions?: { prompt: string; options?: ConversationRequest | null };
   }

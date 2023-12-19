@@ -66,6 +66,7 @@ export const useChatRobotStore = defineStore('chatRobot', {
               ? userStore.getAvatarUrl
               : modelObj?.avatar) as string,
             sent: i.dataValues.sent,
+            textHtml: !i.dataValues.sent,
             ...i,
             conversationOptions: i.dataValues.conversationOptions
               ? JSON.parse(i.dataValues.conversationOptions)
@@ -102,19 +103,23 @@ export const useChatRobotStore = defineStore('chatRobot', {
       }
       this.activeMssage.push(message as ChatRobot.Message);
     },
-    setChatList(chatList: ChatRobot.ChatState['chatList'], isSplice = false) {
+    setChatList(
+      chatList: ChatRobot.ChatState['chatList'] | Partial<ChatRobot.Chat>,
+      index?: number
+    ) {
       if (isArray(chatList)) {
-        if (isSplice) {
-          const list = this.chatList.length ? this.chatList : this.getChatList;
-          const newList = chatList.filter((i) => {
-            return list.findIndex((j) => j.id === i.id) === -1;
-          });
-          if (!newList.length) return;
-          chatList = list.concat(newList);
-        }
         this.chatList = chatList;
-        lStorage.set('CHAT_ROBOT_LIST', chatList);
       }
+      if (isObject(chatList)) {
+        const list = this.chatList.length ? this.chatList : this.getChatList;
+        if (isNumber(index) && isObject(chatList)) {
+          list[index] = Object.assign({ ...list[index] }, chatList);
+        } else {
+          list.push(chatList as ChatRobot.Chat);
+        }
+        this.chatList = list;
+      }
+      lStorage.set('CHAT_ROBOT_LIST', this.chatList);
     },
     addChat() {
       const uuid = uid();
@@ -126,7 +131,7 @@ export const useChatRobotStore = defineStore('chatRobot', {
         timestamp: Date.now(),
         avatar: model?.avatar as string,
       };
-      this.setChatList([chat], true);
+      this.setChatList(chat);
       useDBStore()
         .initDatabase()
         .then(() => {

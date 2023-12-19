@@ -24,16 +24,16 @@
             component="q-chat-message"
             v-slot="{ item, index }"
           >
-            <div>
-              <XChatMessage
-                :sent="item.sent"
-                :avatar="item.avatar"
-                :text="item.text"
-                :key="index"
-              />
-              <slot name="messageLoading" :item="item" />
-            </div>
+            <XChatMessage
+              :sent="item.sent"
+              :avatar="item.avatar"
+              :text="item.text"
+              :key="index"
+              :textHtml="item.textHtml"
+              :loading="item.loading"
+            />
           </q-virtual-scroll>
+          <slot name="loading" />
         </q-scroll-area>
       </template>
       <template v-slot:after>
@@ -59,7 +59,7 @@
             unelevated
             padding="xs lg"
             color="grey-3"
-            text-color="positive"
+            text-color="primary"
             label="发送"
             @click="send"
           />

@@ -25,8 +25,7 @@ defineProps({
   },
 });
 </script>
-<style lang="scss" setup>
-@import '@/css/quasar.variables.scss';
+<style lang="scss">
 @import '@/css/app.scss';
 
 .x-header {

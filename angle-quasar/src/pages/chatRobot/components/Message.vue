@@ -4,9 +4,9 @@
     :items="chatRobotStore.getActiveMssage"
     @send="send"
   >
-    <template #messageLoading="{ item }">
+    <template #loading>
       <q-chip
-        v-show="item.loading"
+        v-show="loading"
         clickable
         transition-show="scale"
         transition-hide="slide-down"
@@ -29,12 +29,15 @@ import { useDBStore } from '@/stores/database';
 import { XMessagePage } from '@/components';
 import { fetchChatAPIProcess } from '@/axios';
 import { useI18n } from '@/boot/i18n';
+import { useCopyCode } from '../hooks';
 
+useCopyCode();
 const { t } = useI18n();
 const chatRobotStore = useChatRobotStore();
 const userStore = useUserStore();
 const dbStore = useDBStore();
 const XMessagePageRef = ref();
+const loading = ref(false);
 const currentChat = computed(
   () =>
     chatRobotStore.getActiveMssage[chatRobotStore.getActiveMssage.length - 1]
@@ -55,7 +58,7 @@ function loadingStop() {
 }
 let controller: AbortController;
 async function send(message: string) {
-  if (currentChat.value.loading) return;
+  if (currentChat.value && currentChat.value.loading) return;
   const active = chatRobotStore.getActive;
   controller = new AbortController();
   const messageBody: ChatRobot.ChatRobotHistoryTable = {
@@ -66,12 +69,16 @@ async function send(message: string) {
     conversationOptions: null,
     requestOptions: null,
   };
-  XMessagePageRef.value.clearMessage();
   dbStore.addChatRobotHistory(active?.id as string, messageBody);
   chatRobotStore.setChatActiveMssage({
     text: [message],
     avatar: userStore.getAvatarUrl,
     sent: true,
+  });
+  loading.value = true;
+  XMessagePageRef.value.clearMessage();
+  nextTick(() => {
+    XMessagePageRef.value.setScrollPositionBottom();
   });
   let options: ChatRobot.ConversationRequest = {};
   const lastContext =
@@ -116,7 +123,8 @@ async function send(message: string) {
                 text: [lastText + data.text ?? ''],
                 avatar: active?.avatar as string,
                 sent: false,
-                loading: true,
+                loading: false,
+                textHtml: true,
                 conversationOptions: {
                   conversationId: data.conversationId,
                   parentMessageId: data.id,
@@ -190,6 +198,8 @@ async function send(message: string) {
       chatRobotStore.getActiveMssage.length - 1
     );
     XMessagePageRef.value.setScrollPositionBottom();
+  } finally {
+    loading.value = false;
   }
 }
 function handleStop() {

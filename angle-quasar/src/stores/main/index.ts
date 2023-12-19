@@ -31,9 +31,11 @@ export const useMainStore = defineStore('main', {
   }),
   getters: {
     getToolActive(state) {
-      const active = state.toolActive;
+      let active = state.toolActive;
       if (active) return active;
-      return lStorage.get<SideListKeyEnum>('TOOL_ACTIVE');
+      active = lStorage.get<SideListKeyEnum>('TOOL_ACTIVE');
+      if (active) return active;
+      return SideListKeyEnum.CHAT;
     },
   },
   actions: {

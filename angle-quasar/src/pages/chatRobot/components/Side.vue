@@ -54,10 +54,19 @@
           :active="chatRobotStore.getActive?.id === item.id"
           @click="setCurrentConversation(item)"
         >
-          <q-menu class="chat-list-menu text-body2" touch-position context-menu>
+          <q-menu
+            class="chat-list-menu text-body2"
+            transition-show="scale"
+            transition-hide="scale"
+            touch-position
+            context-menu
+          >
             <q-list>
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup @click="toTop(index)">
                 <q-item-section>置顶</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="editTitle(index)">
+                <q-item-section>修改标题</q-item-section>
               </q-item>
               <q-separator />
               <q-item clickable v-close-popup @click="deleteChat(item)">
@@ -75,7 +84,12 @@
 
           <q-item-section>
             <q-item-label lines="1">
-              {{ item.title }}
+              <XInputPopupEdit
+                ref="editTitleRef"
+                class="inline"
+                :model-value="item.title"
+                @update:model-value="setChatRobotTitle($event, index)"
+              />
             </q-item-label>
           </q-item-section>
 
@@ -98,17 +112,18 @@
 </template>
 <script lang="ts" setup>
 //import { useQuasar } from 'quasar';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useChatRobotStore } from '@/stores/chatRobot';
-import { formatTimestamp } from '@/utils';
+import { formatTimestamp, moveToTop } from '@/utils';
 import { getModelList } from '@/assets/constant';
 import { useDBStore } from '@/stores/database';
+import { XInputPopupEdit } from '@/components';
 
 const router = useRouter();
 const dbStore = useDBStore();
 const chatRobotStore = useChatRobotStore();
-
+const editTitleRef = ref();
 /**
  * 设置当前会话
  * @param chat
@@ -134,6 +149,24 @@ async function deleteChat(chat: ChatRobot.Chat) {
       chatRobotStore.setActive(null);
     }
   }
+}
+/**
+ * @description 置顶聊天
+ * @param index
+ */
+function toTop(index: number) {
+  chatRobotStore.setChatList(moveToTop(chatRobotStore.getChatList, index));
+}
+function setChatRobotTitle(title: string, index: number) {
+  chatRobotStore.setChatList(
+    {
+      title,
+    },
+    index
+  );
+}
+function editTitle(index: number) {
+  editTitleRef.value[index].inputPopupEditRef.popupEditRef.show();
 }
 onMounted(async () => {
   const chat = chatRobotStore.getActive;

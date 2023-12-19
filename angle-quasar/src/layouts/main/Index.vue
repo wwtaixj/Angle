@@ -118,6 +118,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .tool-active {
-  color: $green-6;
+  color: $primary;
 }
 </style>
