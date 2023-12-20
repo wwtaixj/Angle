@@ -100,7 +100,11 @@ mdi.use(mdKatex, {
 function menuClick(key: string) {
   switch (key) {
     case 'copyText':
-      copyText({ text: attrs.text?.toString() || '' });
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(attrs.text?.toString() ?? '');
+      } else {
+        copyText({ text: attrs.text?.toString() ?? '', origin: true });
+      }
       return;
   }
 }
