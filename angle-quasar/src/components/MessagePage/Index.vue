@@ -1,12 +1,12 @@
 <template>
-  <q-page class="q-mx-xs" ref="messagePageRef">
+  <q-page ref="messagePageRef">
     <q-splitter
       v-model="horizontalSplitter"
       :limits="[60, 80]"
       horizontal
       style="height: calc(100vh - 69px)"
       @update:model-value="setScrollAreaHeight"
-      before-class="hide-scrollbar"
+      before-class="overflow-hidden"
     >
       <template v-slot:before>
         <q-scroll-area
@@ -16,12 +16,10 @@
           :style="{ height: scrollAreaHeight }"
         >
           <q-virtual-scroll
-            class="q-mx-md"
+            class="q-px-sm"
             scroll-target="#chat-message-scroll-id > .scroll"
             :items="items"
-            separator
             ref="virtualScrollRef"
-            component="q-chat-message"
             v-slot="{ item, index }"
           >
             <XChatMessage
@@ -31,24 +29,28 @@
               :key="index"
               :textHtml="item.textHtml"
               :loading="item.loading"
+              :name="formatTimestamp(item.timestamp)"
+              :contextMenu="contextMenu"
+              :messageId="item.messageId"
             />
           </q-virtual-scroll>
           <slot name="loading" />
         </q-scroll-area>
       </template>
       <template v-slot:after>
-        <div class="column fit bg-grey-2 q-px-md q-pb-xl">
+        <div class="column fit bg-grey-2 q-pb-xl">
           <q-toolbar class="text-black col-2 q-px-none send-toolbar">
             <XButton
               round
               flat
-              v-for="(tool, index) in Tools"
+              v-for="(tool, index) in tools"
               :key="index"
               v-bind="tool"
+              @click="tool.click(tool, index)"
             />
           </q-toolbar>
           <textarea
-            class="col send-message-field"
+            class="col send-message-field q-ml-md"
             v-model="message"
             type="textarea"
             @keyup.ctrl.enter="send"
@@ -71,8 +73,8 @@
 <script lang="ts" setup>
 import { ref, defineExpose, onMounted, nextTick, PropType } from 'vue';
 import { QVirtualScroll, QPage, QScrollArea, debounce } from 'quasar';
-import { XChatMessage, XButton } from '@/components';
-import { XMessagePageProps } from './index';
+import { XChatMessage, XButton, XMessagePageProps } from '@/components';
+import { formatTimestamp } from '@/utils';
 
 const $emits = defineEmits(['send']);
 defineProps({
@@ -80,9 +82,12 @@ defineProps({
     type: Array as PropType<XMessagePageProps['items']>,
     required: true,
   },
-  Tools: {
-    type: Array as PropType<XMessagePageProps['Tools']>,
+  tools: {
+    type: Array as PropType<XMessagePageProps['tools']>,
     default: () => [],
+  },
+  contextMenu: {
+    type: Array as PropType<XMessagePageProps['contextMenu']>,
   },
 });
 const virtualScrollRef = ref<QVirtualScroll>();
@@ -138,7 +143,7 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .send-toolbar {
-  height: 35px;
+  height: 40px;
 }
 .send-message-field {
   border: none;

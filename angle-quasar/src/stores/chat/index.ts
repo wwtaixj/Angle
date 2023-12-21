@@ -68,7 +68,7 @@ export const useChatStore = defineStore('chat', {
         if (isSplice) {
           const list = this.chatList.length ? this.chatList : this.getChatList;
           const newList = chatList.filter((i) => {
-            return list.findIndex((j) => j.id === i.id) === -1;
+            return list.findIndex((j) => j.chatId === i.chatId) === -1;
           });
           if (!newList.length) return;
           chatList = list.concat(newList);
@@ -89,7 +89,7 @@ export const useChatStore = defineStore('chat', {
       if (!isObject(chatActive)) return;
       //获取选中用户历史消息
       useDBStore()
-        .getChatHistory(chatActive?.id)
+        .getChatHistory(chatActive?.chatId)
         .then((result) => {
           const userStore = useUserStore();
           if (!isArray(result)) return;
@@ -110,7 +110,7 @@ export const useChatStore = defineStore('chat', {
     sendMessage(message: string) {
       const userStore = useUserStore();
       const senderId = userStore.getUserId;
-      const receiverId = this.getChatActive?.id as string;
+      const receiverId = this.getChatActive?.chatId as string;
       const messageId = uid();
       const status = MessageSendStatus.HAVE_SEND;
       const messageBody: TransmissionBody = {
@@ -126,7 +126,7 @@ export const useChatStore = defineStore('chat', {
       useSocketStore().socketEmit(receiverId, messageBody);
       // 存储消息到数据库
       useDBStore().addChatHistory(
-        this.getChatActive?.id as string,
+        this.getChatActive?.chatId as string,
         messageBody
       );
       this.setChatActiveMssage({
@@ -150,7 +150,7 @@ export const useChatStore = defineStore('chat', {
           const route = useRoute();
           route.replace({
             name: 'chatBox',
-            params: { uuid: chat.id },
+            params: { uuid: chat.chatId },
           });
         });
     },

@@ -51,7 +51,7 @@
           clickable
           v-ripple
           active-class="chat-list-active"
-          :active="chatRobotStore.getActive?.id === item.id"
+          :active="chatRobotStore.getActive?.chatId === item.chatId"
           @click="setCurrentConversation(item)"
         >
           <q-menu
@@ -129,9 +129,9 @@ const editTitleRef = ref();
  * @param chat
  */
 function setCurrentConversation(chat: ChatRobot.Chat) {
-  if (chatRobotStore.getActive?.id === chat.id) return;
+  if (chatRobotStore.getActive?.chatId === chat.chatId) return;
   chatRobotStore.setActive(chat);
-  router.replace({ name: 'chatRobotBox', params: { uuid: chat.id } });
+  router.replace({ name: 'chatRobotBox', params: { uuid: chat.chatId } });
 }
 /**
  * 删除聊天
@@ -139,13 +139,13 @@ function setCurrentConversation(chat: ChatRobot.Chat) {
  */
 async function deleteChat(chat: ChatRobot.Chat) {
   try {
-    await dbStore.deleteChatRobotHistory(chat.id);
+    await dbStore.deleteChatRobotHistoryTable(chat.chatId);
     const chatList = chatRobotStore.getChatList;
-    const findIndex = chatList.findIndex((item) => item.id === chat.id);
+    const findIndex = chatList.findIndex((item) => item.chatId === chat.chatId);
     chatList.splice(findIndex, 1);
     chatRobotStore.setChatList(chatList);
   } finally {
-    if (chatRobotStore.getActive?.id === chat.id) {
+    if (chatRobotStore.getActive?.chatId === chat.chatId) {
       chatRobotStore.setActive(null);
     }
   }
@@ -175,7 +175,7 @@ onMounted(async () => {
     chatRobotStore.setActive(chat);
     router.replace({
       name: 'chatRobotBox',
-      params: { uuid: chatRobotStore.getActive.id },
+      params: { uuid: chatRobotStore.getActive.chatId },
     });
   }
 });

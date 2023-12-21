@@ -7,5 +7,10 @@ export const XChatMessage = withInstall(ChatMessage);
 export interface XChatMessageProps extends QChatMessageProps {
   error?: boolean;
   loading?: boolean;
+  contextMenu?: {
+    click: (e: XChatMessageProps) => void;
+    name: string;
+  }[];
+  messageId?: string;
 }
 export type XChatMessageSlots = QChatMessageSlots;

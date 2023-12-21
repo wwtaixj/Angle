@@ -1,6 +1,6 @@
 const { join, resolve, dirname } = require('path');
 import { Sequelize } from 'sequelize';
-import { initChatHistory, initChatRobotHistory } from './model';
+import { initChatHistoryTable, initChatRobotHistoryTable } from './model';
 import { $Window } from '@/types/env';
 import { isArray } from '@/utils';
 import { ChatDBIds } from './types';
@@ -46,7 +46,7 @@ export async function createChatHistoryTable(db: Sequelize, ids?: ChatDBIds) {
   if (ids === undefined) return;
   if (isArray(ids)) {
     for (const id of ids) {
-      await initChatHistory(db, id);
+      await initChatHistoryTable(db, id);
     }
   }
 }
@@ -57,7 +57,7 @@ export async function createChatRobotHistoryTable(
   if (ids === undefined) return;
   if (isArray(ids)) {
     for (const id of ids) {
-      await initChatRobotHistory(db, id);
+      await initChatRobotHistoryTable(db, id);
     }
   }
 }

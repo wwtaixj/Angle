@@ -19,7 +19,7 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   timeout: 1000 * 60 * 5,
-  baseURL: 'http://loose.net.cn:9310', //loose.net.cn
+  baseURL: 'http://loose.net.cn:9310', //localhost
 });
 api.interceptors.request.use(
   (config) => {
@@ -51,16 +51,16 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    let message = '';
-    if (error.toString().includes('500') || error.toString().includes('502')) {
-      message = '服务未启动!';
-    } else {
-      message = '服务出错!';
+    const { config } = error;
+
+    if (config) {
+      if (config.url === Url.login) {
+        notify({
+          message: '登录失败，请重新登录',
+          type: 'negative',
+        });
+      }
     }
-    notify({
-      message,
-      type: 'negative',
-    });
     return Promise.reject(error);
   }
 );

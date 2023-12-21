@@ -1,5 +1,9 @@
 import { Result } from '@/axios/typings';
-export type Friend = Omit<
-  Result.User,
-  'password' | 'roleId' | 'createTime' | 'updateTime'
->;
+
+export interface Friend
+  extends Omit<
+    Result.User,
+    'password' | 'roleId' | 'createTime' | 'updateTime' | 'id'
+  > {
+  chatId: string;
+}

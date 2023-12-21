@@ -28,7 +28,7 @@
           clickable
           v-ripple
           active-class="chat-list-active"
-          :active="userStore.getFriendActive?.id === friend.id"
+          :active="userStore.getFriendActive?.chatId === friend.chatId"
           @click="userStore.setFriendActive(friend)"
         >
           <q-item-section avatar>

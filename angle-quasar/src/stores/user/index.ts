@@ -12,7 +12,7 @@ import { LoginDialogTypeEnum } from '@/enums/login';
 import { Params } from '@/axios/typings';
 import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '../database';
-import { useChatStore } from '@/stores/chat';
+//import { useChatStore } from '@/stores/chat';
 import { getFriends } from '@/axios';
 import type { UserParticles } from '@/assets/particles';
 import { useRoute } from '@/router';
@@ -252,7 +252,7 @@ export const useUserStore = defineStore('user', {
     async setFriends() {
       const { data } = await getFriends();
       if (!data.length) return;
-      this.friends = data;
+      this.friends = data.map((i) => ({ ...i, chatId: i.id }));
       return lStorage.set('FRIENDS', data);
     },
     /**
@@ -281,7 +281,7 @@ export const useUserStore = defineStore('user', {
           longitude: 0,
           latitude: 0,
         }),
-        { message: '登录成功！' },
+        false,
         async ({ data }) => {
           this.setUserInfo({
             ...data,
@@ -347,12 +347,12 @@ export const useUserStore = defineStore('user', {
      * @description 退出登录
      */
     async logout() {
-      const { t } = useI18n();
+      //const { t } = useI18n();
       const result = await loginOut({
         token: this.getToken,
         username: encrypt(this.getUserName),
       });
-      resultPrompt(result, { message: t('SignOutSuccessfully') }, () => {
+      resultPrompt(result, false, () => {
         this.resetUserInfo();
         useMainStore().closeDialog();
         useRoute().push('/login');

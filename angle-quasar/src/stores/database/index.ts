@@ -13,7 +13,13 @@ import {
   queryChatRobotHistoryByAll,
   createChatHistoryTable,
   createChatRobotHistoryTable,
-  deleteChatRobotHistory,
+  deleteChatRobotHistoryTable,
+  deleteChatRobotHistoryRecords,
+  initChatRobotListTable,
+  deleteChatRobotListRecords,
+  updateChatRobotListRecords,
+  queryChatRobotListByAll,
+  insertChatRobotList,
 } from '@/db';
 
 interface DBState {
@@ -33,14 +39,15 @@ export const useDBStore = defineStore('database', {
         password: userStore.getPassword,
       });
       if (!db) return;
-      const chatIds = useChatStore().getChatList.map((i) => i.id);
+      const chatIds = useChatStore().getChatList.map((i) => i.chatId);
       if (chatIds.length) {
         await createChatHistoryTable(db, chatIds);
       }
-      const chatRobotIds = useChatRobotStore().getChatList.map((i) => i.id);
+      const chatRobotIds = useChatRobotStore().getChatList.map((i) => i.chatId);
       if (chatRobotIds.length) {
         await createChatRobotHistoryTable(db, chatRobotIds);
       }
+      await initChatRobotListTable(db);
       this.instance = await db?.sync();
     },
     // 添加聊天记录
@@ -77,9 +84,52 @@ export const useDBStore = defineStore('database', {
         chat
       );
     },
-    async deleteChatRobotHistory(id: string) {
+    // 删除机器人聊天记录表
+    async deleteChatRobotHistoryTable(id: string) {
       if (!this.instance) await this.initDatabase();
-      return await deleteChatRobotHistory(this.instance as Sequelize, id);
+      return await deleteChatRobotHistoryTable(this.instance as Sequelize, id);
+    },
+    // 删除指定messageId机器人聊天记录
+    async deleteChatRobotHistoryRecords(
+      id: string,
+      params: Partial<ChatRobot.ChatRobotHistoryTable>
+    ) {
+      if (!this.instance) await this.initDatabase();
+      return await deleteChatRobotHistoryRecords(
+        this.instance as Sequelize,
+        id,
+        params
+      );
+    },
+    // 插入机器人聊天列表记录
+    async insertChatRobotList(params: ChatRobot.Chat | ChatRobot.Chat[]) {
+      if (!this.instance) await this.initDatabase();
+      return await insertChatRobotList(this.instance as Sequelize, params);
+    },
+    // 查询指定chatId机器人聊天列表记录
+    async queryChatRobotListByAll(params?: Partial<ChatRobot.Chat>) {
+      if (!this.instance) await this.initDatabase();
+      return await queryChatRobotListByAll(this.instance as Sequelize, params);
+    },
+    // 更新指定chatId机器人聊天列表记录
+    async updateChatRobotListRecords(
+      params: Partial<ChatRobot.Chat>,
+      values: Partial<ChatRobot.Chat>
+    ) {
+      if (!this.instance) await this.initDatabase();
+      return await updateChatRobotListRecords(
+        this.instance as Sequelize,
+        params,
+        values
+      );
+    },
+    // 删除指定chatId机器人聊天列表记录
+    async deleteChatRobotListRecords(params: Partial<ChatRobot.Chat>) {
+      if (!this.instance) await this.initDatabase();
+      return await deleteChatRobotListRecords(
+        this.instance as Sequelize,
+        params
+      );
     },
   },
 });

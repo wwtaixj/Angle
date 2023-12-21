@@ -3,6 +3,7 @@ import { notify } from './message';
 import { QNotifyCreateOptions } from 'quasar';
 import type { App, Plugin } from 'vue';
 import { Response } from '@/axios/typings';
+import { isObject } from './is';
 
 declare type TargetContext = '_self' | '_blank';
 
@@ -38,7 +39,7 @@ export function openWindow(
 
 export function resultPrompt<T>(
   result: Response<T>,
-  options: QNotifyCreateOptions,
+  options: QNotifyCreateOptions | boolean,
   succeedFun?: (arg0: Response<T>) => void
 ) {
   if (
@@ -46,10 +47,13 @@ export function resultPrompt<T>(
     result.status &&
     result.status.toString() === '0'
   ) {
-    notify({
-      type: 'positive',
-      ...options,
-    });
+    if (isObject(options) && options.message) {
+      notify({
+        type: 'positive',
+        ...options,
+      });
+    }
+
     if (!succeedFun) return;
     succeedFun(result);
   }

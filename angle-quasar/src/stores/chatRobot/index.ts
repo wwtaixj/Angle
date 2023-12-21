@@ -12,7 +12,6 @@ export const useChatRobotStore = defineStore('chatRobot', {
     activeMssage: [],
     chatList: [],
     model: '', // API Model
-    usingContext: true, // 是否使用上下文
   }),
   getters: {
     getChatList(state) {
@@ -55,11 +54,14 @@ export const useChatRobotStore = defineStore('chatRobot', {
       );
       //获取选中用户历史消息
       useDBStore()
-        .getChatRobotHistory(active?.id as string)
+        .getChatRobotHistory(active?.chatId as string)
         .then((result) => {
           const userStore = useUserStore();
           if (!isArray(result)) return;
+          console.log(result);
+
           this.activeMssage = result.map((i) => ({
+            messageId: i.dataValues.messageId,
             timestamp: i.dataValues.timestamp,
             text: [i.dataValues.message],
             avatar: (i.dataValues.sent
@@ -124,20 +126,21 @@ export const useChatRobotStore = defineStore('chatRobot', {
     addChat() {
       const uuid = uid();
       const model = this.getChatModel;
+      const dbStore = useDBStore();
       const chat = {
         title: 'New Chat',
-        id: uuid,
+        chatId: uuid,
         model: model?.value as string,
         timestamp: Date.now(),
         avatar: model?.avatar as string,
+        usingContext: true,
       };
       this.setChatList(chat);
-      useDBStore()
-        .initDatabase()
-        .then(() => {
-          this.setActive(chat);
-          useRoute().push({ name: 'chatRobotBox', params: { uuid: uuid } });
-        });
+      dbStore.insertChatRobotList(chat);
+      dbStore.initDatabase().then(() => {
+        this.setActive(chat);
+        useRoute().push({ name: 'chatRobotBox', params: { uuid: uuid } });
+      });
     },
   },
 });

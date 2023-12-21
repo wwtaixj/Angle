@@ -2,6 +2,8 @@
   <XMessagePage
     ref="XMessagePageRef"
     :items="chatRobotStore.getActiveMssage"
+    :contextMenu="contextMenu"
+    :tools="tools as XMessagePageProps['tools']"
     @send="send"
   >
     <template #loading>
@@ -22,14 +24,20 @@
   </XMessagePage>
 </template>
 <script setup lang="ts">
+import { uid } from 'quasar';
 import { ref, computed, nextTick } from 'vue';
 import { useChatRobotStore } from '@/stores/chatRobot';
 import { useUserStore } from '@/stores/user';
 import { useDBStore } from '@/stores/database';
-import { XMessagePage } from '@/components';
 import { fetchChatAPIProcess } from '@/axios';
 import { useI18n } from '@/boot/i18n';
 import { useCopyCode } from '../hooks';
+import { copyText, isNumber, notify } from '@/utils';
+import {
+  XMessagePage,
+  XChatMessageProps,
+  XMessagePageProps,
+} from '@/components';
 
 useCopyCode();
 const { t } = useI18n();
@@ -38,6 +46,85 @@ const userStore = useUserStore();
 const dbStore = useDBStore();
 const XMessagePageRef = ref();
 const loading = ref(false);
+const contextMenu = ref<XChatMessageProps['contextMenu']>([
+  {
+    name: '复制',
+    click: (e: XChatMessageProps) => {
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(e.text?.toString() ?? '');
+      } else {
+        copyText({ text: e.text?.toString() ?? '', origin: true });
+      }
+    },
+  },
+  {
+    name: '删除',
+    click: async (e) => {
+      // 删除选中消息
+      if (e.messageId) {
+        const deletedRows = await dbStore.deleteChatRobotHistoryRecords(
+          chatRobotStore.getActive?.chatId as string,
+          {
+            messageId: e.messageId,
+          }
+        );
+        if (isNumber(deletedRows) && deletedRows > 0) {
+          const index = chatRobotStore.getActiveMssage.findIndex(
+            (item) => item.messageId === e.messageId
+          );
+          chatRobotStore.getActiveMssage.splice(index, 1);
+        }
+      }
+    },
+  },
+]);
+
+const tools = ref<XMessagePageProps['tools']>([
+  {
+    icon: 'fa-solid fa-file-arrow-up',
+    style: { fontSize: '12px' },
+    padding: '4px',
+    color: 'grey-8',
+    click: () => {
+      // 上传文件
+    },
+  },
+  {
+    icon: 'history',
+    size: '12px',
+    padding: '4px',
+    style: { fontSize: '12px' },
+    color: chatRobotStore.getActive?.usingContext ? 'grey-8' : 'negative',
+    click: (tool) => {
+      // 是否携带之前的聊天记录
+      if (!chatRobotStore.getActive) return;
+      const active = chatRobotStore.getActive;
+      const usingContext = !active.usingContext;
+      const index = chatRobotStore.getChatList.findIndex(
+        (i) => i.chatId === active.chatId
+      );
+      if (!history) return;
+
+      chatRobotStore.setActive({ ...active, usingContext });
+      chatRobotStore.setChatList(
+        {
+          usingContext,
+        },
+        index
+      );
+      tool.color = usingContext ? 'grey-8' : 'negative';
+      usingContext
+        ? notify({
+            message: t('chat.turnOnContext'),
+            type: 'positive',
+          })
+        : notify({
+            message: t('chat.turnOffContext'),
+            type: 'warning',
+          });
+    },
+  },
+]);
 const currentChat = computed(
   () =>
     chatRobotStore.getActiveMssage[chatRobotStore.getActiveMssage.length - 1]
@@ -45,7 +132,6 @@ const currentChat = computed(
 const activeMssageList = computed(() =>
   chatRobotStore.getActiveMssage.filter((item) => !item.sent && !item.error)
 );
-const usingContext = computed(() => chatRobotStore.usingContext);
 
 function loadingStop() {
   // set loading to false
@@ -58,10 +144,11 @@ function loadingStop() {
 }
 let controller: AbortController;
 async function send(message: string) {
-  if (currentChat.value && currentChat.value.loading) return;
+  if (loading.value || message.trim() === '') return;
   const active = chatRobotStore.getActive;
   controller = new AbortController();
   const messageBody: ChatRobot.ChatRobotHistoryTable = {
+    messageId: uid(),
     message: message,
     sent: true,
     timestamp: Date.now(),
@@ -69,11 +156,13 @@ async function send(message: string) {
     conversationOptions: null,
     requestOptions: null,
   };
-  dbStore.addChatRobotHistory(active?.id as string, messageBody);
+  dbStore.addChatRobotHistory(active?.chatId as string, messageBody);
   chatRobotStore.setChatActiveMssage({
+    messageId: messageBody.messageId,
     text: [message],
     avatar: userStore.getAvatarUrl,
     sent: true,
+    timestamp: Date.now(),
   });
   loading.value = true;
   XMessagePageRef.value.clearMessage();
@@ -84,9 +173,9 @@ async function send(message: string) {
   const lastContext =
     activeMssageList.value[activeMssageList.value.length - 1]
       ?.conversationOptions;
-
-  if (lastContext && usingContext.value) options = { ...lastContext };
+  if (lastContext && active?.usingContext) options = { ...lastContext };
   chatRobotStore.setChatActiveMssage({
+    messageId: uid(),
     text: [''],
     avatar: active?.avatar as string,
     sent: false,
@@ -147,24 +236,12 @@ async function send(message: string) {
               XMessagePageRef.value.setScrollPositionBottom();
             });
           } catch (error) {
-            throw new Error(`${error}`);
+            //throw new Error(`${error}`);
           }
         },
       });
     };
     await fetchChatAPIOnce();
-    loadingStop();
-    // 添加回答数据到数据库
-    dbStore.addChatRobotHistory(active?.id as string, {
-      message: currentChat.value.text[0],
-      sent: currentChat.value.sent,
-      conversationOptions: JSON.stringify(
-        currentChat.value.conversationOptions
-      ),
-      requestOptions: JSON.stringify(currentChat.value.requestOptions),
-      timestamp: currentChat.value.timestamp,
-      error: currentChat.value.error as boolean,
-    });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     const errorMessage = error?.message ?? t('common.wrong');
@@ -200,6 +277,19 @@ async function send(message: string) {
     XMessagePageRef.value.setScrollPositionBottom();
   } finally {
     loading.value = false;
+    loadingStop();
+    // 添加回答数据到数据库
+    dbStore.addChatRobotHistory(active?.chatId as string, {
+      messageId: currentChat.value.messageId,
+      message: currentChat.value.text[0],
+      sent: currentChat.value.sent,
+      conversationOptions: JSON.stringify(
+        currentChat.value.conversationOptions
+      ),
+      requestOptions: JSON.stringify(currentChat.value.requestOptions),
+      timestamp: currentChat.value.timestamp,
+      error: currentChat.value.error as boolean,
+    });
   }
 }
 function handleStop() {

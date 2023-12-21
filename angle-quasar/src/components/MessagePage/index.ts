@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { withInstall } from '@/utils';
+import { StyleValue } from 'vue';
 import MessagePage from './Index.vue';
 import { QBtnProps } from 'quasar';
+import { XChatMessageProps } from '@/components';
 
 export const XMessagePage = withInstall(MessagePage);
 export interface MessageTool extends QBtnProps {
   icon: string;
+  click: (e: MessageTool, index: number) => void;
+  style?: StyleValue;
 }
 export interface MessageItem {
   sent: boolean;
@@ -17,6 +21,7 @@ export interface MessageItem {
   textHtml?: boolean;
 }
 export interface XMessagePageProps {
-  Tools?: MessageTool[];
+  tools?: MessageTool[];
   items: MessageItem[];
+  contextMenu?: XChatMessageProps['contextMenu'];
 }

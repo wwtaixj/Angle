@@ -1,10 +1,11 @@
 declare namespace ChatRobot {
   interface Chat {
     title: string;
-    id: string;
+    chatId: string;
     model: string;
     timestamp: number;
     avatar: string;
+    usingContext: boolean; // 是否使用上下文
   }
   interface ChatRobotModel {
     label: string;
@@ -13,6 +14,7 @@ declare namespace ChatRobot {
     avatar: string;
   }
   export interface ChatRobotHistoryTable {
+    messageId: string;
     message: string;
     sent: boolean;
     conversationOptions: string | null;
@@ -21,6 +23,7 @@ declare namespace ChatRobot {
     error: boolean;
   }
   export interface Message {
+    messageId: string;
     sent: boolean;
     avatar: string;
     text: any[];
@@ -37,7 +40,6 @@ declare namespace ChatRobot {
     activeMssage: Message[];
     chatList: Chat[];
     model: Chat['model'];
-    usingContext: boolean;
   }
 
   interface ConversationRequest {

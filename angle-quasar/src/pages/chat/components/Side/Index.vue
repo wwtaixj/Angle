@@ -61,7 +61,7 @@
           clickable
           v-ripple
           active-class="chat-list-active"
-          :active="chatStore.getChatActive?.id === conversation.id"
+          :active="chatStore.getChatActive?.chatId === conversation.chatId"
           @click="setCurrentConversation(conversation)"
         >
           <q-menu class="chat-list-menu text-body2" touch-position context-menu>
@@ -117,9 +117,9 @@ const search = ref('');
  * @param chat
  */
 function setCurrentConversation(chat: Chat) {
-  if (chatStore.getChatActive?.id === chat.id) return;
+  if (chatStore.getChatActive?.chatId === chat.chatId) return;
   chatStore.setChatActive(chat);
-  router.replace({ name: 'chatBox', params: { uuid: chat.id } });
+  router.replace({ name: 'chatBox', params: { uuid: chat.chatId } });
 }
 /**
  * 删除聊天
@@ -127,10 +127,10 @@ function setCurrentConversation(chat: Chat) {
  */
 function deleteChat(chat: Chat) {
   const chatList = chatStore.getChatList;
-  const findIndex = chatList.findIndex((item) => item.id === chat.id);
+  const findIndex = chatList.findIndex((item) => item.chatId === chat.chatId);
   chatList.splice(findIndex, 1);
   chatStore.setChatList(chatList);
-  if (chatStore.getChatActive?.id === chat.id) {
+  if (chatStore.getChatActive?.chatId === chat.chatId) {
     chatStore.setChatActive(null);
   }
 }
@@ -141,7 +141,7 @@ onMounted(async () => {
     chatStore.setChatActive(chat);
     router.replace({
       name: 'chatBox',
-      params: { uuid: chatStore.getChatActive.id },
+      params: { uuid: chatStore.getChatActive.chatId },
     });
   }
 });
