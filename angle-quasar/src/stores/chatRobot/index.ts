@@ -27,6 +27,7 @@ export const useChatRobotStore = defineStore('chatRobot', {
       const chatList = state.chatList;
       if (chatList.length) return chatList;
       return [];
+      return [];
     },
     getActive(state) {
       const active = state.active;

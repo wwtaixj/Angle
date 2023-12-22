@@ -45,6 +45,7 @@
     <q-scroll-area class="chat-list-scroll full-width">
       <q-list>
         <q-item class="q-mt-md" v-if="!chatRobotStore.chatList.length">
+        <q-item class="q-mt-md" v-if="!chatRobotStore.chatList.length">
           <q-item-section class="absolute-center">
             <q-icon
               size="32px"
