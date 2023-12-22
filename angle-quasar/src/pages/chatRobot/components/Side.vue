@@ -35,7 +35,7 @@
 
     <q-scroll-area class="chat-list-scroll full-width">
       <q-list>
-        <q-item class="q-mt-md" v-if="!chatRobotStore.getChatList.length">
+        <q-item class="q-mt-md" v-if="!chatRobotStore.chatList.length">
           <q-item-section class="absolute-center">
             <q-icon
               size="32px"
@@ -88,7 +88,7 @@
                 ref="editTitleRef"
                 class="inline"
                 :model-value="item.title"
-                @update:model-value="setChatRobotTitle($event, index)"
+                @update:model-value="setChatRobotTitle($event, index, item)"
               />
             </q-item-label>
           </q-item-section>
@@ -140,10 +140,10 @@ function setCurrentConversation(chat: ChatRobot.Chat) {
 async function deleteChat(chat: ChatRobot.Chat) {
   try {
     await dbStore.deleteChatRobotHistoryTable(chat.chatId);
-    const chatList = chatRobotStore.getChatList;
+    const chatList = chatRobotStore.chatList;
     const findIndex = chatList.findIndex((item) => item.chatId === chat.chatId);
     chatList.splice(findIndex, 1);
-    chatRobotStore.setChatList(chatList);
+    chatRobotStore.deleteChatList(chat, findIndex);
   } finally {
     if (chatRobotStore.getActive?.chatId === chat.chatId) {
       chatRobotStore.setActive(null);
@@ -155,11 +155,12 @@ async function deleteChat(chat: ChatRobot.Chat) {
  * @param index
  */
 function toTop(index: number) {
-  chatRobotStore.setChatList(moveToTop(chatRobotStore.getChatList, index));
+  chatRobotStore.chatList = moveToTop(chatRobotStore.chatList, index);
 }
-function setChatRobotTitle(title: string, index: number) {
-  chatRobotStore.setChatList(
+function setChatRobotTitle(title: string, index: number, chat: ChatRobot.Chat) {
+  chatRobotStore.updateChatList(
     {
+      chatId: chat.chatId,
       title,
     },
     index
@@ -169,9 +170,9 @@ function editTitle(index: number) {
   editTitleRef.value[index].inputPopupEditRef.popupEditRef.show();
 }
 onMounted(async () => {
+  await dbStore.initDatabase();
   const chat = chatRobotStore.getActive;
   if (chat) {
-    await dbStore.initDatabase();
     chatRobotStore.setActive(chat);
     router.replace({
       name: 'chatRobotBox',

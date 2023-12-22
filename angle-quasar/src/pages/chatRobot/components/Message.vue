@@ -106,8 +106,9 @@ const tools = ref<XMessagePageProps['tools']>([
       if (!history) return;
 
       chatRobotStore.setActive({ ...active, usingContext });
-      chatRobotStore.setChatList(
+      chatRobotStore.updateChatList(
         {
+          chatId: active.chatId,
           usingContext,
         },
         index

@@ -118,6 +118,7 @@ export async function initChatRobotListTable(sequelize: Sequelize) {
       modelName: 'ChatRobotList', // 我们需要选择模型名称
     }
   );
+  return ChatRobotList;
 }
 /**
  * ChatRobotHistory 批量创建
@@ -303,14 +304,12 @@ export const updateChatRobotListRecords = async (
   values: Partial<ChatRobot.Chat>
 ) => {
   if (!sequelize) return;
-  return await sequelize.models['ChatRobotList'].update(
-    { ...values },
-    {
-      where: {
-        params,
-      },
-    }
-  );
+  if (!isObject(params)) return;
+  const chat = await sequelize.models['ChatRobotList'].findOne({
+    where: { ...params },
+  });
+  if (!chat) return;
+  return await chat.update(values);
 };
 /**
  * 删除指定 chatId 聊天机器人聊天列表记录

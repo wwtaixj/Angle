@@ -17,9 +17,7 @@ export const useChatRobotStore = defineStore('chatRobot', {
     getChatList(state) {
       const chatList = state.chatList;
       if (chatList.length) return chatList;
-      return (
-        lStorage.get<ChatRobot.ChatState['chatList']>('CHAT_ROBOT_LIST') || []
-      );
+      return [];
     },
     getActive(state) {
       let active = state.active;
@@ -58,7 +56,6 @@ export const useChatRobotStore = defineStore('chatRobot', {
         .then((result) => {
           const userStore = useUserStore();
           if (!isArray(result)) return;
-          console.log(result);
 
           this.activeMssage = result.map((i) => ({
             messageId: i.dataValues.messageId,
@@ -105,23 +102,30 @@ export const useChatRobotStore = defineStore('chatRobot', {
       }
       this.activeMssage.push(message as ChatRobot.Message);
     },
-    setChatList(
-      chatList: ChatRobot.ChatState['chatList'] | Partial<ChatRobot.Chat>,
-      index?: number
-    ) {
-      if (isArray(chatList)) {
-        this.chatList = chatList;
-      }
-      if (isObject(chatList)) {
-        const list = this.chatList.length ? this.chatList : this.getChatList;
-        if (isNumber(index) && isObject(chatList)) {
-          list[index] = Object.assign({ ...list[index] }, chatList);
-        } else {
-          list.push(chatList as ChatRobot.Chat);
+    addChatList(chat: ChatRobot.Chat) {
+      if (!isObject(chat)) return;
+      const dbStore = useDBStore();
+      this.chatList.push(chat);
+      dbStore.insertChatRobotList(chat);
+    },
+    updateChatList(chat: Partial<ChatRobot.Chat>, index?: number) {
+      if (!isObject(chat)) return;
+      if (isNumber(index)) {
+        for (const key of Object.keys(chat)) {
+          this.chatList[index][key] = chat[key];
         }
-        this.chatList = list;
       }
-      lStorage.set('CHAT_ROBOT_LIST', this.chatList);
+      const dbStore = useDBStore();
+      const { chatId, ...values } = chat;
+      dbStore.updateChatRobotListRecords({ chatId }, values);
+    },
+    deleteChatList(chat: Partial<ChatRobot.Chat>, index?: number) {
+      if (!isObject(chat)) return;
+      if (isNumber(index)) {
+        this.chatList.splice(index, 1);
+      }
+      const dbStore = useDBStore();
+      dbStore.deleteChatRobotListRecords({ chatId: chat.chatId });
     },
     addChat() {
       const uuid = uid();
@@ -135,8 +139,7 @@ export const useChatRobotStore = defineStore('chatRobot', {
         avatar: model?.avatar as string,
         usingContext: true,
       };
-      this.setChatList(chat);
-      dbStore.insertChatRobotList(chat);
+      this.addChatList(chat);
       dbStore.initDatabase().then(() => {
         this.setActive(chat);
         useRoute().push({ name: 'chatRobotBox', params: { uuid: uuid } });

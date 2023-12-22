@@ -38,16 +38,25 @@ export const useDBStore = defineStore('database', {
         username: userStore.getUserName,
         password: userStore.getPassword,
       });
+
       if (!db) return;
+      const chatRobotListTable = await initChatRobotListTable(db);
+      const chatRobotList = (await chatRobotListTable.findAll()).map((i) => ({
+        ...i.dataValues,
+      }));
+      // 设置聊天机器人列表
+      useChatRobotStore().chatList = chatRobotList;
+
       const chatIds = useChatStore().getChatList.map((i) => i.chatId);
+      await createChatRobotHistoryTable(
+        db,
+        chatRobotList.map((i) => i.chatId)
+      );
+
       if (chatIds.length) {
         await createChatHistoryTable(db, chatIds);
       }
-      const chatRobotIds = useChatRobotStore().getChatList.map((i) => i.chatId);
-      if (chatRobotIds.length) {
-        await createChatRobotHistoryTable(db, chatRobotIds);
-      }
-      await initChatRobotListTable(db);
+
       this.instance = await db?.sync();
     },
     // 添加聊天记录
@@ -107,7 +116,7 @@ export const useDBStore = defineStore('database', {
       return await insertChatRobotList(this.instance as Sequelize, params);
     },
     // 查询指定chatId机器人聊天列表记录
-    async queryChatRobotListByAll(params?: Partial<ChatRobot.Chat>) {
+    async getChatRobotList(params?: Partial<ChatRobot.Chat>) {
       if (!this.instance) await this.initDatabase();
       return await queryChatRobotListByAll(this.instance as Sequelize, params);
     },
