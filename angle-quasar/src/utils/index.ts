@@ -92,6 +92,24 @@ export function moveToTop(arr: any[], index: number) {
   arr.unshift(element[0]);
   return arr;
 }
+/**
+ * 将小驼峰命名法（minWidth）转换为连字符命名法（min-width）
+ * @param obj
+ */
+export function convertObjectPropertiesToHyphenCase<T = { [x: string]: any }>(
+  obj: T
+) {
+  const hyphenCaseObj: T | { [x: string]: any } = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const hyphenCaseKey = key
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        .toLowerCase();
+      hyphenCaseObj[hyphenCaseKey] = obj[key];
+    }
+  }
+  return hyphenCaseObj as T;
+}
 export * from './cryptoJs';
 export * from './is';
 export * from './message';

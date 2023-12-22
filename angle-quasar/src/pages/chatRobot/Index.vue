@@ -1,6 +1,11 @@
 <template>
   <q-page :style="style">
-    <q-splitter v-model="splitter" :limits="[30, 50]" class="window-height">
+    <q-splitter
+      v-model="chatRobotStore.ySplitter"
+      :limits="[30, 50]"
+      @update:model-value="chatRobotStore.setYSplitter"
+      class="window-height"
+    >
       <template v-slot:before>
         <Side />
       </template>
@@ -24,7 +29,7 @@
 
 <script lang="ts" setup>
 import { useQuasar } from 'quasar';
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import Side from './components/Side.vue';
 // import { useMainStore } from '../../stores/main';
 import { useChatRobotStore } from '@/stores/chatRobot';
@@ -33,9 +38,6 @@ import { XHeader, XNullPage } from '@/components';
 
 const $q = useQuasar();
 const chatRobotStore = useChatRobotStore();
-//const userStore = useUserStore();
-//const socketStore = useSocketStore();
-const splitter = ref(30);
 
 const style = computed(() => {
   return {

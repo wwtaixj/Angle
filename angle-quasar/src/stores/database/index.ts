@@ -38,17 +38,32 @@ export const useDBStore = defineStore('database', {
         username: userStore.getUserName,
         password: userStore.getPassword,
       });
+
       if (!db) return;
-      const chatIds = useChatStore().getChatList.map((i) => i.chatId);
-      if (chatIds.length) {
-        await createChatHistoryTable(db, chatIds);
+      try {
+        const chatRobotListTable = await initChatRobotListTable(db);
+        const chatRobotList = (
+          await chatRobotListTable.findAll({
+            order: [['serialNumber', 'ASC']],
+          })
+        ).map((i) => ({
+          ...i.dataValues,
+        }));
+        // 设置聊天机器人列表
+        useChatRobotStore().chatList = chatRobotList;
+        const chatIds = useChatStore().getChatList.map((i) => i.chatId);
+        await createChatRobotHistoryTable(
+          db,
+          chatRobotList.map((i) => i.chatId)
+        );
+        if (chatIds.length) {
+          await createChatHistoryTable(db, chatIds);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.instance = await db?.sync();
       }
-      const chatRobotIds = useChatRobotStore().getChatList.map((i) => i.chatId);
-      if (chatRobotIds.length) {
-        await createChatRobotHistoryTable(db, chatRobotIds);
-      }
-      await initChatRobotListTable(db);
-      this.instance = await db?.sync();
     },
     // 添加聊天记录
     async addChatHistory(id: string, history: ChatHistoryTable) {
@@ -107,9 +122,14 @@ export const useDBStore = defineStore('database', {
       return await insertChatRobotList(this.instance as Sequelize, params);
     },
     // 查询指定chatId机器人聊天列表记录
-    async queryChatRobotListByAll(params?: Partial<ChatRobot.Chat>) {
-      if (!this.instance) await this.initDatabase();
-      return await queryChatRobotListByAll(this.instance as Sequelize, params);
+    async getChatRobotList(params?: Partial<ChatRobot.Chat>) {
+      if (!this.instance) return;
+      let model = (this.instance as Sequelize).models['ChatRobotList'];
+      if (!model) {
+        model = await initChatRobotListTable(this.instance);
+        await model.sync();
+      }
+      return await queryChatRobotListByAll(model, params);
     },
     // 更新指定chatId机器人聊天列表记录
     async updateChatRobotListRecords(
