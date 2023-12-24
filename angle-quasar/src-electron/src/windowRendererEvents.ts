@@ -23,4 +23,10 @@ export function windowRendererEventsHandle({
   mainWindow.on('unmaximize', () => {
     mainWindow.webContents.send('unmaximized');
   });
+  // 监听从渲染进程发送过来的 change-window-size 事件
+  ipcMain.on('change-window-size', (event, { width, height }) => {
+    if (mainWindow) {
+      mainWindow.setSize(width, height);
+    }
+  });
 }

@@ -25,7 +25,6 @@
 <script lang="ts" setup>
 import { useQuasar } from 'quasar';
 import { ref, computed } from 'vue';
-
 import Side from './components/Side/Index.vue';
 
 // import { useMainStore } from '../../stores/main';

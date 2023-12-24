@@ -6,7 +6,7 @@ import { useUserStore } from '@/stores/user';
 import { useDBStore } from '@/stores/database';
 import { useChatStore } from '@/stores/chat';
 import { MessageSendStatus, MessageSendType } from '@/enums/chat';
-import { $Window } from '@/types/env';
+import { $Window } from '@/types/quasar';
 
 const { VITE_GLOB_SOCKET_URL } = import.meta.env;
 
@@ -53,8 +53,8 @@ export const useSocketStore = defineStore('socket', {
         if (data.type !== MessageSendType.SYSTEM_MESSAGE) {
           const chatStore = useChatStore();
           chatStore.setChatActiveMssage({
-            message: [data.message],
-            avatarUrl: chatStore.getChatActive?.avatarUrl as string,
+            text: [data.message],
+            avatar: chatStore.getChatActive?.avatarUrl as string,
             status: MessageSendStatus.CLIENT_RECEIVED,
             sent: false,
           });

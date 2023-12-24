@@ -1,24 +1,29 @@
 <template>
-  <div class="login-content">
-    <Particles
-      id="tsparticles"
-      :options="particOPtions"
-      :particlesInit="particlesInit"
-      :key="current[0]"
-    />
-    <q-card class="login-card">
-      <q-card-section class="q-pt-none">
-        <div class="q-pa-lg position-relative">
-          <LoginForm
-            v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
-          />
-          <RegisterForm
-            v-show="userStore.loginDialogType === LoginDialogTypeEnum.REGISTER"
-          />
-        </div>
-      </q-card-section>
-    </q-card>
-  </div>
+  <q-layout>
+    <q-header class="text-black bg-grey-2" bordered> <XWinBar /> </q-header>
+    <div class="login-content">
+      <Particles
+        id="tsparticles"
+        :options="particOPtions"
+        :particlesInit="particlesInit"
+        :key="current[0]"
+      />
+      <q-card class="login-card">
+        <q-card-section class="q-pt-none">
+          <div class="q-pa-lg position-relative">
+            <LoginForm
+              v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
+            />
+            <RegisterForm
+              v-show="
+                userStore.loginDialogType === LoginDialogTypeEnum.REGISTER
+              "
+            />
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
+  </q-layout>
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
@@ -29,8 +34,11 @@ import { useUserStore } from '@/stores/user';
 import options, { UserParticles } from '@/assets/particles';
 import { loadFull } from 'tsparticles';
 import { Engine } from 'tsparticles-engine';
+import { XWinBar } from '@/components';
+// import { useQuasar } from 'quasar';
 
 const userStore = useUserStore();
+// const $q = useQuasar();
 const current = ref<UserParticles[]>([userStore.particles]); // 当前选中背景特性
 const particOPtions = ref(options[userStore.particles]); // 背景特性参数
 

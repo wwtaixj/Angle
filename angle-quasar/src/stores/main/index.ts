@@ -4,7 +4,7 @@ import { DialogEventEnum, SideListKeyEnum } from '@/enums/main';
 import { useI18n } from '@/boot/i18n';
 import { XUpdate } from '@/components';
 import { useQuasar } from 'quasar';
-import { $Window } from '@/types/env';
+import { $Window } from '@/types/quasar';
 import { lStorage } from '@/utils';
 
 interface Dialog {

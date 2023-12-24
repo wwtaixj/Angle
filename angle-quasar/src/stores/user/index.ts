@@ -17,6 +17,7 @@ import { getFriends } from '@/axios';
 import type { UserParticles } from '@/assets/particles';
 import { useRoute } from '@/router';
 import { Friend } from '../typings/user';
+import { $Window } from '@/types/quasar';
 import {
   getNavLanguage,
   lStorage,
@@ -295,7 +296,13 @@ export const useUserStore = defineStore('user', {
           useDBStore().initDatabase();
           // 连接Socket服务端
           useSocketStore().initSocket();
-          useRoute().push('/home');
+          await useRoute().push('/home');
+          const { electron } = window as unknown as $Window;
+          // 向主进程发送 change-window-size 事件，传递新的窗口大小参数
+          electron.ipcRenderer.send('change-window-size', {
+            width: 800,
+            height: 680,
+          });
         }
       );
     },
