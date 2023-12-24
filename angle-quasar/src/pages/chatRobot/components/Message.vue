@@ -4,7 +4,9 @@
     :items="chatRobotStore.getActiveMssage"
     :contextMenu="contextMenu"
     :tools="tools as XMessagePageProps['tools']"
+    :splitter="chatRobotStore.xSplitter"
     @send="send"
+    @update-splitter="chatRobotStore.setXSplitter"
   >
     <template #loading>
       <q-chip
@@ -105,7 +107,7 @@ const tools = ref<XMessagePageProps['tools']>([
       );
       if (!history) return;
 
-      chatRobotStore.setActive({ ...active, usingContext });
+      chatRobotStore.setActive({ ...active, usingContext }, false);
       chatRobotStore.updateChatList(
         {
           chatId: active.chatId,

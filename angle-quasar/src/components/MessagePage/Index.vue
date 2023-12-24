@@ -1,7 +1,7 @@
 <template>
   <q-page ref="messagePageRef">
     <q-splitter
-      v-model="horizontalSplitter"
+      :model-value="splitter"
       :limits="[60, 80]"
       horizontal
       style="height: calc(100vh - 69px)"
@@ -76,8 +76,8 @@ import { QVirtualScroll, QPage, QScrollArea, debounce } from 'quasar';
 import { XChatMessage, XButton, XMessagePageProps } from '@/components';
 import { formatTimestamp } from '@/utils';
 
-const $emits = defineEmits(['send']);
-defineProps({
+const $emits = defineEmits(['send', 'update-splitter']);
+const props = defineProps({
   items: {
     type: Array as PropType<XMessagePageProps['items']>,
     required: true,
@@ -89,23 +89,25 @@ defineProps({
   contextMenu: {
     type: Array as PropType<XMessagePageProps['contextMenu']>,
   },
+  splitter: {
+    type: Number,
+    default: 80,
+  },
 });
 const virtualScrollRef = ref<QVirtualScroll>();
-const horizontalSplitter = ref(80);
 const messagePageRef = ref<QPage>();
 const scrollAreaRef = ref<QScrollArea>();
 const scrollAreaHeight = ref('0');
 const message = ref('');
 
-function setScrollAreaHeight() {
+function setScrollAreaHeight(value?: number) {
+  if (value) $emits('update-splitter', value);
+  const splitter = value || props.splitter;
   const pageContainer = messagePageRef.value?.$el;
   if (pageContainer) {
     const minHeightPx = pageContainer.style.minHeight as string;
     const minHeight = minHeightPx.substring(0, minHeightPx.length - 2);
-
-    scrollAreaHeight.value = `${
-      (Number(minHeight) * horizontalSplitter.value) / 100
-    }px`;
+    scrollAreaHeight.value = `${(Number(minHeight) * splitter) / 100}px`;
   }
 }
 function setScrollPositionBottom() {
@@ -130,7 +132,12 @@ defineExpose({
 });
 
 // 监听窗口变化时重新计算高度
-window.addEventListener('resize', debounce(setScrollAreaHeight));
+window.addEventListener(
+  'resize',
+  debounce(() => {
+    setScrollAreaHeight();
+  })
+);
 
 onMounted(() => {
   nextTick(() => {

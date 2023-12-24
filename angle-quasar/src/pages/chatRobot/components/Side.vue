@@ -30,6 +30,15 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
+        <q-btn
+          round
+          flat
+          icon="fa-solid fa-gear"
+          class="q-ml-sm"
+          color="grey-8"
+          size="sm"
+          @click="opSettings"
+        />
       </q-toolbar>
     </q-header>
 
@@ -62,9 +71,6 @@
             context-menu
           >
             <q-list>
-              <q-item clickable v-close-popup @click="toTop(index)">
-                <q-item-section>置顶</q-item-section>
-              </q-item>
               <q-item clickable v-close-popup @click="editTitle(index)">
                 <q-item-section>修改标题</q-item-section>
               </q-item>
@@ -108,6 +114,9 @@
         </q-item>
       </q-list>
     </q-scroll-area>
+    <XDialog persistent v-model="visible" title="聊天机器人设置"
+      ><Settings />
+    </XDialog>
   </q-layout>
 </template>
 <script lang="ts" setup>
@@ -115,15 +124,22 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useChatRobotStore } from '@/stores/chatRobot';
-import { formatTimestamp, moveToTop } from '@/utils';
+import { formatTimestamp } from '@/utils';
 import { getModelList } from '@/assets/constant';
 import { useDBStore } from '@/stores/database';
-import { XInputPopupEdit } from '@/components';
+import { XInputPopupEdit, XDialog } from '@/components';
+import Settings from './Settings.vue';
 
 const router = useRouter();
 const dbStore = useDBStore();
 const chatRobotStore = useChatRobotStore();
 const editTitleRef = ref();
+const visible = ref(false);
+
+function opSettings() {
+  visible.value = true;
+  //
+}
 /**
  * 设置当前会话
  * @param chat
@@ -131,7 +147,7 @@ const editTitleRef = ref();
 function setCurrentConversation(chat: ChatRobot.Chat) {
   if (chatRobotStore.getActive?.chatId === chat.chatId) return;
   chatRobotStore.setActive(chat);
-  router.replace({ name: 'chatRobotBox', params: { uuid: chat.chatId } });
+  router.push({ name: 'chatRobotBox', params: { uuid: chat.chatId } });
 }
 /**
  * 删除聊天
@@ -139,24 +155,16 @@ function setCurrentConversation(chat: ChatRobot.Chat) {
  */
 async function deleteChat(chat: ChatRobot.Chat) {
   try {
-    await dbStore.deleteChatRobotHistoryTable(chat.chatId);
     const chatList = chatRobotStore.chatList;
     const findIndex = chatList.findIndex((item) => item.chatId === chat.chatId);
-    chatList.splice(findIndex, 1);
     chatRobotStore.deleteChatList(chat, findIndex);
   } finally {
     if (chatRobotStore.getActive?.chatId === chat.chatId) {
-      chatRobotStore.setActive(null);
+      chatRobotStore.setActive(null, false);
     }
   }
 }
-/**
- * @description 置顶聊天
- * @param index
- */
-function toTop(index: number) {
-  chatRobotStore.chatList = moveToTop(chatRobotStore.chatList, index);
-}
+
 function setChatRobotTitle(title: string, index: number, chat: ChatRobot.Chat) {
   chatRobotStore.updateChatList(
     {

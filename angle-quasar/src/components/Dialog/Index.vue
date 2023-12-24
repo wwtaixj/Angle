@@ -2,9 +2,9 @@
   <!-- notice dialogRef here -->
   <q-dialog ref="dialogRef" @hide="onHide" style="-webkit-app-region: none">
     <slot v-if="type === DialogTypeEnum.NATIVE" />
-    <q-card v-bind="attrs" v-if="type === DialogTypeEnum.CARD">
+    <q-card v-bind="attrsComputed" v-if="type === DialogTypeEnum.CARD">
       <q-card-section class="items-center row q-pb-none">
-        <div class="text-h6">{{ attrs.title }}</div>
+        <div class="text-h6">{{ attrsComputed.title }}</div>
         <q-space />
         <q-btn
           v-show="isShowClose"
@@ -26,16 +26,16 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, PropType, useAttrs, ref } from 'vue';
+import { defineEmits, PropType, useAttrs, ref, computed } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
 import { DialogTypeEnum, XDialogProps, XDialogButton } from './index';
-
-const attrs: XDialogProps = useAttrs();
+import { convertObjectPropertiesToHyphenCase } from '@/utils';
 
 defineOptions({
   name: 'XDialog',
 });
 
+const $emits = defineEmits([...useDialogPluginComponent.emits, 'cancel']);
 const props = defineProps({
   type: {
     type: String as PropType<XDialogProps['type']>,
@@ -49,8 +49,16 @@ const props = defineProps({
     default: true,
   },
 });
-
-const $emits = defineEmits([...useDialogPluginComponent.emits, 'cancel']);
+const attrsComputed = computed(() => {
+  const { style, ...attrs }: XDialogProps = useAttrs();
+  return {
+    ...attrs,
+    style: {
+      'min-width': '400px',
+      ...convertObjectPropertiesToHyphenCase(style),
+    },
+  };
+});
 const propsConfig = ref<XDialogButton>({
   show: false,
   ok: {

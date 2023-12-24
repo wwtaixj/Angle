@@ -1,5 +1,6 @@
 import { IpcRenderer } from 'electron';
 import { Sequelize } from 'sequelize';
+
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: string;

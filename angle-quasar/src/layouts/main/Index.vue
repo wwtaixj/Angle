@@ -51,12 +51,9 @@
               <q-item-section avatar>
                 <q-btn flat icon="menu">
                   <q-menu anchor="top right" self="top left" class="bg-grey-10">
-                    <q-list>
+                    <q-list class="text-grey-6 text-subtitle2">
                       <q-item clickable v-close-popup>
-                        <q-item-section>anchor="top right"</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup>
-                        <q-item-section>self="top left"</q-item-section>
+                        <q-item-section>设置</q-item-section>
                       </q-item>
                     </q-list>
                   </q-menu>

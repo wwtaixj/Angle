@@ -47,7 +47,7 @@ export const useMainStore = defineStore('main', {
     },
     openAccount() {
       const { t } = useI18n();
-      this.setDialog({ title: t('AccountInfo'), style: { minWidth: '400px' } });
+      this.setDialog({ title: t('AccountInfo') });
       this.openDialog(DialogEventEnum.ACCOUNT);
     },
     setDialog(config: Partial<Dialog>) {

@@ -1,4 +1,4 @@
-import { DataTypes, Sequelize, Model } from 'sequelize';
+import { DataTypes, Sequelize, Model, ModelCtor } from 'sequelize';
 import { ChatHistoryTable } from './types';
 import { isObject } from '@/utils';
 
@@ -110,6 +110,9 @@ export async function initChatRobotListTable(sequelize: Sequelize) {
       },
       usingContext: {
         type: DataTypes.BOOLEAN,
+      },
+      serialNumber: {
+        type: DataTypes.NUMBER,
       },
     },
     {
@@ -276,22 +279,21 @@ export const insertChatRobotList = async (
  * @param params 查询的参数
  */
 export const queryChatRobotListByAll = async (
-  sequelize: Sequelize,
+  model: ModelCtor<Model>,
   params?: Partial<ChatRobot.Chat> & {
     [P in keyof ChatRobot.Chat]?: ChatRobot.Chat[P];
   }
 ) => {
-  if (!sequelize) return;
+  if (!model) return;
   if (params) {
-    return await sequelize.models['ChatRobotList'].findAll<
-      Model<ChatRobot.Chat>
-    >({
+    return await model.findAll<Model<ChatRobot.Chat>>({
       where: params,
+      order: [['serialNumber', 'ASC']], // 按升序排序,
     });
   }
-  return await sequelize.models['ChatRobotList'].findAll<
-    Model<ChatRobot.Chat>
-  >();
+  return await model.findAll<Model<ChatRobot.Chat>>({
+    order: [['serialNumber', 'ASC']], // 按升序排序,
+  });
 };
 /**
  * 更新指定 chatId 聊天机器人聊天列表记录

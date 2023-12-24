@@ -4,25 +4,34 @@ import { lStorage, isObject, isArray, isNumber } from '@/utils';
 import { useUserStore } from '@/stores/user';
 import { getModelList } from '@/assets/constant';
 import { useDBStore } from '@/stores/database';
-import { useRoute } from '@/router';
+//import { useRoute } from '@/router';
 
-export const useChatRobotStore = defineStore('chatRobot', {
-  state: (): ChatRobot.ChatState => ({
-    active: null,
+export function getLocalState(): ChatRobot.ChatState {
+  const localModel = lStorage.get<ChatRobot.ChatRobotModel>('CHAT_ROBOT_MODEL');
+  const localState = {
+    active: lStorage.get<ChatRobot.ChatState['active']>('CHAT_ROBOT_ACTIVE'),
     activeMssage: [],
     chatList: [],
-    model: '', // API Model
-  }),
+    model: localModel ? localModel.value : getModelList()[0].value, // API Model
+    xSplitter:
+      lStorage.get<ChatRobot.ChatState['xSplitter']>('X_SPLITTER') || 80,
+    ySplitter:
+      lStorage.get<ChatRobot.ChatState['ySplitter']>('Y_SPLITTER') || 30,
+  };
+  return { ...localState };
+}
+export const useChatRobotStore = defineStore('chatRobot', {
+  state: (): ChatRobot.ChatState => getLocalState(),
   getters: {
     getChatList(state) {
       const chatList = state.chatList;
       if (chatList.length) return chatList;
       return [];
+      return [];
     },
     getActive(state) {
-      let active = state.active;
+      const active = state.active;
       if (isObject(active)) return active;
-      active = lStorage.get<ChatRobot.ChatState['active']>('CHAT_ROBOT_ACTIVE');
       return isObject(active) ? active : null;
     },
     getChatModel(state) {
@@ -30,10 +39,6 @@ export const useChatRobotStore = defineStore('chatRobot', {
       if (!!model) {
         return getModelList().find((item) => item.value === model);
       }
-      const locaModel =
-        lStorage.get<ChatRobot.ChatRobotModel>('CHAT_ROBOT_MODEL');
-      if (!!locaModel) return locaModel;
-      return getModelList()[0];
     },
     getActiveMssage(state) {
       const activeMssage = state.activeMssage;
@@ -42,11 +47,27 @@ export const useChatRobotStore = defineStore('chatRobot', {
     },
   },
   actions: {
-    setActive(active: ChatRobot.ChatState['active'] | null) {
-      this.active = active;
-      lStorage.set('CHAT_ROBOT_ACTIVE', active);
+    setYSplitter(y: number) {
+      this.ySplitter = y;
+      lStorage.set('Y_SPLITTER', y);
+    },
+    setXSplitter(x: number) {
+      this.xSplitter = x;
+      lStorage.set('X_SPLITTER', x);
+    },
+    setActive(
+      active: Partial<ChatRobot.ChatState['active']> | null,
+      isQuery = true
+    ) {
+      this.active = isObject(active)
+        ? (Object.assign(
+            this.active ?? {},
+            active
+          ) as ChatRobot.ChatState['active'])
+        : active;
+      lStorage.set('CHAT_ROBOT_ACTIVE', this.active);
       const chatActive = this.getActive;
-      if (!isObject(chatActive)) return;
+      if (!isObject(chatActive) || !isQuery) return;
       const modelObj = getModelList().find(
         (item) => item.value === chatActive.model
       );
@@ -111,9 +132,8 @@ export const useChatRobotStore = defineStore('chatRobot', {
     updateChatList(chat: Partial<ChatRobot.Chat>, index?: number) {
       if (!isObject(chat)) return;
       if (isNumber(index)) {
-        for (const key of Object.keys(chat)) {
-          this.chatList[index][key] = chat[key];
-        }
+        if (chat.chatId === this.getActive?.chatId) this.setActive(chat, false);
+        Object.assign(this.chatList[index], chat);
       }
       const dbStore = useDBStore();
       const { chatId, ...values } = chat;
@@ -130,20 +150,17 @@ export const useChatRobotStore = defineStore('chatRobot', {
     addChat() {
       const uuid = uid();
       const model = this.getChatModel;
-      const dbStore = useDBStore();
-      const chat = {
+
+      const chat: ChatRobot.Chat = {
         title: 'New Chat',
         chatId: uuid,
         model: model?.value as string,
         timestamp: Date.now(),
         avatar: model?.avatar as string,
         usingContext: true,
+        serialNumber: this.getChatList.length - 1,
       };
       this.addChatList(chat);
-      dbStore.initDatabase().then(() => {
-        this.setActive(chat);
-        useRoute().push({ name: 'chatRobotBox', params: { uuid: uuid } });
-      });
     },
   },
 });
