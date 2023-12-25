@@ -26,7 +26,7 @@ function createWindow(key?: number) {
   });
 
   mainWindow.loadURL(process.env.APP_URL);
-  mainWindow.setMinimumSize(800, mainWindow.getSize()[1]);
+  //mainWindow.setMinimumSize(800, mainWindow.getSize()[1]);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();

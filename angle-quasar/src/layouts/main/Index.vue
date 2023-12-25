@@ -85,7 +85,6 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-// import Header from '@/pages/header/Index.vue';
 import { DialogEventEnum } from '@/enums/main';
 import { getSideList } from '@/assets/constant';
 import { useMainStore } from '@/stores/main';

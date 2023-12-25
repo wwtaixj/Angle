@@ -1,4 +1,6 @@
 /* eslint-disable */
+import { IpcRenderer } from 'electron';
+import { Sequelize } from 'sequelize';
 
 // Forces TS to apply `@quasar/app-vite` augmentations of `quasar` package
 // Removing this would break `quasar/wrappers` imports as those typings are declared
@@ -7,3 +9,12 @@
 //  this declaration also apply `quasar` own
 //  augmentations (eg. adds `$q` into Vue component context)
 /// <reference types="@quasar/app-vite" />
+
+interface $Window extends Window {
+  electron: {
+    ipcRenderer: IpcRenderer;
+  };
+  api: {
+    Sequelize: typeof Sequelize;
+  };
+}

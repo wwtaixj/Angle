@@ -13,12 +13,3 @@ interface ImportMetaEnv {
   VITE_GLOB_SOCKET_URL: string; // socket 服务端地址
   VITE_GLOB_API_URL: string; // 接口服务端地址
 }
-
-interface $Window extends Window {
-  electron: {
-    ipcRenderer: IpcRenderer;
-  };
-  api: {
-    Sequelize: typeof Sequelize;
-  };
-}

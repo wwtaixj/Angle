@@ -1,7 +1,7 @@
 const { join, resolve, dirname } = require('path');
 import { Sequelize } from 'sequelize';
 import { initChatHistoryTable, initChatRobotHistoryTable } from './model';
-import { $Window } from '@/types/env';
+import { $Window } from '@/types/quasar';
 import { isArray } from '@/utils';
 import { ChatDBIds } from './types';
 
