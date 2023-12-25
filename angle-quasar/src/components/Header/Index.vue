@@ -1,6 +1,6 @@
 <template>
   <div>
-    <XWinBar />
+    <XWinBar class="bg-grey-2" />
     <q-toolbar
       class="bg-grey-2 text-black x-header"
       style="-webkit-app-region: drag"

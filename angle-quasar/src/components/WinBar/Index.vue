@@ -1,6 +1,8 @@
 <template>
-  <q-bar class="bg-grey-2" style="-webkit-app-region: drag">
+  <q-bar v-bind="useAttrs()" style="-webkit-app-region: drag">
+    <slot name="before" />
     <q-space />
+    <slot name="after" />
     <q-btn
       style="-webkit-app-region: no-drag"
       dense
@@ -10,7 +12,7 @@
       @click="minimize"
     />
     <q-btn
-      v-show="isMaximized"
+      v-show="isMaximized && showMaximized"
       style="-webkit-app-region: no-drag"
       dense
       flat
@@ -19,7 +21,7 @@
       class="q-mr-sm"
     />
     <q-btn
-      v-show="!isMaximized"
+      v-show="!isMaximized && showMaximized"
       style="-webkit-app-region: no-drag"
       dense
       flat
@@ -38,11 +40,17 @@
   </q-bar>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, useAttrs } from 'vue';
 import { $Window } from '@/types/quasar';
 
 defineOptions({
   name: 'XWinBar',
+});
+defineProps({
+  showMaximized: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const isMaximized = ref(false);
@@ -70,3 +78,8 @@ onMounted(() => {
   });
 });
 </script>
+<style lang="scss" scoped>
+.q-bar {
+  background: transparent;
+}
+</style>

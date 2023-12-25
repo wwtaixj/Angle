@@ -1,9 +1,10 @@
 <template>
   <q-form
+    v-bind="useAttrs()"
     ref="loginForm"
     @submit="submitLogin"
     @reset="onReset"
-    class="q-gutter-md q-x-md"
+    class="text-grey-6"
     autocorrect="off"
     autocapitalize="off"
     autocomplete="off"
@@ -11,57 +12,58 @@
   >
     <XInput
       v-model="userStore.username"
-      :label="t('login.Username') + '*'"
       lazy-rules
       :rules="getLoginFormRules().username"
-    />
+      dense
+    >
+      <template v-slot:prepend>
+        <q-icon size="xs" name="fa-solid fa-user" /> </template
+    ></XInput>
 
     <XInputPassword
+      dense
       v-model="userStore.password"
-      :label="t('login.Password') + '*'"
       lazy-rules
       :rules="getLoginFormRules().password"
-    />
-    <q-toggle
-      :label="t('login.RememberMe')"
-      v-model="userStore.remember"
-      checked-icon="check"
-      unchecked-icon="clear"
-    />
+    >
+      <template v-slot:prepend>
+        <q-icon size="xs" name="fa-solid fa-lock" />
+      </template>
+    </XInputPassword>
 
-    <div class="q-gutter-md">
-      <XButton
-        :label="t('login.Login')"
-        class="full-width"
-        type="submit"
-        color="primary"
-        :loading="loginLoading"
-      />
-      <q-space />
-      <XButton
-        outline
-        label="注册"
-        class="full-width"
-        color="primary"
-        @click="register"
-      />
-    </div>
+    <q-checkbox
+      class="flex-start"
+      right-label
+      dense
+      v-model="userStore.remember"
+      :label="t('login.AutomaticLogin')"
+      checked-icon="task_alt"
+      unchecked-icon="highlight_off"
+    />
+    <XButton
+      :label="t('login.Login')"
+      class="full-width q-mt-md"
+      type="submit"
+      color="primary"
+      :loading="loginLoading"
+      unelevated
+      rounded
+    />
   </q-form>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, useAttrs } from 'vue';
 import { useI18n } from '@/boot/i18n';
 import { QFormProps } from 'quasar';
 import { getLoginFormRules } from './constant';
 import { useUserStore } from '@/stores/user';
-import { useMainStore } from '@/stores/main';
+
 import { XButton, XInputPassword, XInput } from '@/components';
-import { LoginDialogTypeEnum } from '@/enums/login';
 
 const { t } = useI18n();
 const loginForm = ref<QFormProps>();
 const userStore = useUserStore();
-const mainStore = useMainStore();
+
 const loginLoading = ref(false);
 async function submitLogin() {
   loginLoading.value = true;
@@ -73,10 +75,7 @@ async function submitLogin() {
     loginLoading.value = false;
   }
 }
-function register() {
-  mainStore.setDialog({ title: '注册' });
-  userStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER);
-}
+
 function onReset() {
   userStore.username = '';
   userStore.password = '';

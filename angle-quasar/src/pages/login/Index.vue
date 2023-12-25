@@ -1,89 +1,72 @@
 <template>
-  <q-layout>
-    <q-header class="text-black bg-grey-2" bordered> <XWinBar /> </q-header>
-    <div class="login-content">
-      <Particles
-        id="tsparticles"
-        :options="particOPtions"
-        :particlesInit="particlesInit"
-        :key="current[0]"
-      />
-      <q-card class="login-card">
-        <q-card-section class="q-pt-none">
-          <div class="q-pa-lg position-relative">
-            <LoginForm
-              v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
+  <RegisterForm
+    v-show="userStore.loginDialogType === LoginDialogTypeEnum.REGISTER"
+  />
+  <q-layout
+    v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
+    class="login"
+  >
+    <q-header :style="{ height: headerHeight }" class="login-header">
+      <XWinBar :showMaximized="false" />
+    </q-header>
+    <q-page-container class="login-content">
+      <q-page>
+        <q-card flat>
+          <q-card-section>
+            <q-btn
+              fab
+              color="primary"
+              icon="fa-solid fa-robot"
+              class="avatar absolute"
             />
-            <RegisterForm
-              v-show="
-                userStore.loginDialogType === LoginDialogTypeEnum.REGISTER
-              "
-            />
-          </div>
-        </q-card-section>
-      </q-card>
-    </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="position-relative">
+              <LoginForm />
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-page>
+    </q-page-container>
+    <q-footer class="bg-white text-grey-6">
+      <XButton outline flat label="注册账号" @click="register" />
+    </q-footer>
   </q-layout>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
 import LoginForm from './components/LoginForm.vue';
 import RegisterForm from './components/RegisterForm.vue';
 import { LoginDialogTypeEnum } from '@/enums/login';
 import { useUserStore } from '@/stores/user';
-import options, { UserParticles } from '@/assets/particles';
-import { loadFull } from 'tsparticles';
-import { Engine } from 'tsparticles-engine';
-import { XWinBar } from '@/components';
-// import { useQuasar } from 'quasar';
+import { XWinBar, XButton } from '@/components';
 
 const userStore = useUserStore();
-// const $q = useQuasar();
-const current = ref<UserParticles[]>([userStore.particles]); // 当前选中背景特性
-const particOPtions = ref(options[userStore.particles]); // 背景特性参数
+//const mainStore = useMainStore();
+const headerHeight = computed(() =>
+  userStore.loginDialogType === LoginDialogTypeEnum.REGISTER ? '32px' : '220px'
+);
 
-// 粒子特性初始化
-const particlesInit = async (engine: Engine) => {
-  // console.log(engine);
-  await loadFull(engine);
-};
+function register() {
+  userStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER);
+}
 </script>
 <style lang="scss" scoped>
-.login-content {
-  background: transparent;
-  #tsparticles {
-    height: 100%;
-    width: 100%;
+.login {
+  .login-header {
+    background: url('/src/assets/images/shijie.png');
+    background-size: cover;
   }
-  .login-card {
-    border-radius: 5px;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 2px solid rgba(255, 255, 255, 0);
-    position: absolute;
-    right: 5%;
-    top: 50%;
-    transform: translateX(-5%) translateY(-50%);
-    min-width: 400px;
-    box-shadow: var(--shadow-card);
-  }
-  .login-card:hover {
-    transition: box-shadow 0.3s, border-color 0.3s;
+  .avatar {
+    top: 0;
+    right: 50%;
+    transform: translateY(-50%) translateX(50%);
+    z-index: 9999;
   }
 
-  .login-form-title {
-    text-align: center;
-
-    @keyframes showup {
-      from {
-        letter-spacing: -14px;
-        filter: blur(10px);
-      }
-      to {
-        letter-spacing: 10px;
-        filter: blur(2px);
-      }
-    }
+  .login-content {
+    margin: 0 80px;
   }
 }
 </style>

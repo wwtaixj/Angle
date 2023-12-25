@@ -1,4 +1,9 @@
-import { app, BrowserWindow, globalShortcut } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  globalShortcut,
+  BrowserWindowConstructorOptions,
+} from 'electron';
 import { resolve } from 'path';
 import os from 'os';
 import { updateHandle } from './src/updater';
@@ -8,14 +13,20 @@ const platform = process.platform || os.platform();
 
 let mainWindow: BrowserWindow | undefined;
 
-function createWindow(key?: number) {
+export function createWindow({
+  key,
+  ...options
+}: {
+  key: 'ready' | 'activate';
+} & BrowserWindowConstructorOptions) {
   mainWindow = new BrowserWindow({
     frame: false,
     icon: resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 650,
+    width: 430,
+    height: 500,
     useContentSize: true,
     autoHideMenuBar: true,
+    resizable: false,
     webPreferences: {
       devTools: true,
       contextIsolation: false,
@@ -23,10 +34,11 @@ function createWindow(key?: number) {
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
     },
+    ...options,
   });
 
   mainWindow.loadURL(process.env.APP_URL);
-  //mainWindow.setMinimumSize(800, mainWindow.getSize()[1]);
+  mainWindow.setMinimumSize(mainWindow.getSize()[0], mainWindow.getSize()[1]);
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();
@@ -42,7 +54,7 @@ function createWindow(key?: number) {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show();
-    if (key === 1 && mainWindow) {
+    if (key === 'ready' && mainWindow) {
       updateHandle({ mainWindow });
       windowRendererEventsHandle({ mainWindow });
     }
@@ -50,7 +62,7 @@ function createWindow(key?: number) {
 }
 
 app.on('ready', () => {
-  createWindow(1);
+  createWindow({ key: 'ready' });
   // 注册全局快捷键
   const ret = globalShortcut.register('CommandOrControl+F12', () => {
     // 在这里执行你希望触发的操作
@@ -76,6 +88,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (mainWindow === undefined) {
-    createWindow(2);
+    createWindow({ key: 'ready' });
   }
 });

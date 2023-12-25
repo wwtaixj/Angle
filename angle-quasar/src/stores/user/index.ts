@@ -14,7 +14,6 @@ import { useSocketStore } from '@/stores/socket';
 import { useDBStore } from '../database';
 //import { useChatStore } from '@/stores/chat';
 import { getFriends } from '@/axios';
-import type { UserParticles } from '@/assets/particles';
 import { useRoute } from '@/router';
 import { Friend } from '../typings/user';
 import { $Window } from '@/types/quasar';
@@ -52,7 +51,6 @@ interface UserState {
   email: string;
   loginDialogType: LoginDialogTypeEnum;
   verCodeTimer: number;
-  particles: UserParticles;
   friends: Friend[];
   friendActive?: Friend;
 }
@@ -80,7 +78,6 @@ export const useUserStore = defineStore('user', {
     loginDialogType: LoginDialogTypeEnum.LOGIN,
     verCodeTimer: 0,
     userId: '',
-    particles: 'fireworks',
     friends: [],
     friendActive: void 0,
   }),
@@ -302,6 +299,7 @@ export const useUserStore = defineStore('user', {
           electron.ipcRenderer.send('change-window-size', {
             width: 800,
             height: 680,
+            resizable: true,
           });
         }
       );
@@ -355,14 +353,20 @@ export const useUserStore = defineStore('user', {
      */
     async logout() {
       //const { t } = useI18n();
+      const { electron } = window as unknown as $Window;
       const result = await loginOut({
         token: this.getToken,
         username: encrypt(this.getUserName),
       });
-      resultPrompt(result, false, () => {
+      resultPrompt(result, false, async () => {
         this.resetUserInfo();
         useMainStore().closeDialog();
-        useRoute().push('/login');
+        await useRoute().push('/login');
+        electron.ipcRenderer.send('change-window-size', {
+          width: 430,
+          height: 500,
+          resizable: false,
+        });
       });
     },
     /**

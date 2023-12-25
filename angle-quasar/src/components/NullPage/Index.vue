@@ -1,6 +1,6 @@
 <template>
   <div class="fit bg-grey-2" style="-webkit-app-region: drag">
-    <XWinBar />
+    <XWinBar class="bg-grey-2" />
     <q-icon
       class="absolute-center"
       size="5em"

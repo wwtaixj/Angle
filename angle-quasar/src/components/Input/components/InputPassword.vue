@@ -13,22 +13,18 @@
       />
       <slot name="append" />
     </template>
-    <template v-for="key in slots">
+    <template v-for="key in slots" v-slot:[key]>
       <slot :name="key" />
     </template>
   </XInput>
 </template>
 <script lang="ts" setup>
 import { ref, PropType, defineEmits, useSlots, computed, useAttrs } from 'vue';
-import { QInputSlots } from 'quasar';
 import { XInputPasswordProps, XInput } from '../index';
 
 const isPwd = ref(true);
 const slots = computed(
-  () =>
-    Object.keys(useSlots()).filter(
-      (i) => i !== 'append'
-    ) as Partial<QInputSlots>
+  () => Object.keys(useSlots()).filter((i) => i !== 'append') as unknown
 );
 
 const $emits = defineEmits(['update:modelValue']);

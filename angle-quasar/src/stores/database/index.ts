@@ -41,21 +41,25 @@ export const useDBStore = defineStore('database', {
 
       if (!db) return;
       try {
-        const chatRobotListTable = await initChatRobotListTable(db);
-        const chatRobotList = (
-          await chatRobotListTable.findAll({
-            order: [['serialNumber', 'ASC']],
-          })
-        ).map((i) => ({
-          ...i.dataValues,
-        }));
-        // 设置聊天机器人列表
-        useChatRobotStore().chatList = chatRobotList;
+        let chatRobotList = [];
+        try {
+          const chatRobotListTable = await initChatRobotListTable(db);
+          chatRobotList = (
+            await chatRobotListTable.findAll({
+              order: [['serialNumber', 'ASC']],
+            })
+          ).map((i) => ({
+            ...i.dataValues,
+          }));
+        } finally {
+          // 设置聊天机器人列表
+          useChatRobotStore().chatList = chatRobotList;
+          await createChatRobotHistoryTable(
+            db,
+            chatRobotList.map((i) => i.chatId)
+          );
+        }
         const chatIds = useChatStore().getChatList.map((i) => i.chatId);
-        await createChatRobotHistoryTable(
-          db,
-          chatRobotList.map((i) => i.chatId)
-        );
         if (chatIds.length) {
           await createChatHistoryTable(db, chatIds);
         }

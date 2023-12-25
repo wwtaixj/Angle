@@ -1,66 +1,83 @@
 <template>
-  <q-form
-    ref="registerFormRef"
-    @submit="submitRegister"
-    class="q-gutter-md q-x-md"
-  >
-    <XInput
-      v-model="registerForm.username"
-      :label="t('login.Username') + '*'"
-      lazy-rules
-      :rules="getLoginFormRules().username"
-    />
+  <q-layout>
+    <q-header>
+      <XWinBar class="bg-white text-grey-9" :showMaximized="false">
+        <template #before>
+          <XButton
+            style="-webkit-app-region: no-drag"
+            icon="arrow_back_ios"
+            color="primary"
+            flat
+            round
+            @click="userStore.setLoginDialogType(LoginDialogTypeEnum.LOGIN)"
+          />
+        </template>
+      </XWinBar>
+    </q-header>
+    <q-page-container>
+      <q-page>
+        <q-form
+          ref="registerFormRef"
+          @submit="submitRegister"
+          class="text-grey-6 q-px-lg q-pt-md"
+        >
+          <XInput
+            v-model="registerForm.username"
+            :label="t('login.Username') + '*'"
+            lazy-rules
+            :rules="getLoginFormRules().username"
+            clearable
+          />
 
-    <XInputPassword
-      v-model="registerForm.password"
-      :label="'设置密码' + '*'"
-      lazy-rules
-      :rules="getLoginFormRules().password"
-    />
-    <XInputPassword
-      v-model="registerForm.confirmPassword"
-      :label="'确认密码' + '*'"
-      lazy-rules
-      :rules="getLoginFormRules().password"
-    />
-    <XInput
-      ref="emailRef"
-      v-model="registerForm.email"
-      :label="'邮箱' + '*'"
-      lazy-rules
-      :rules="getLoginFormRules().email"
-    />
-    <XInput
-      v-model="registerForm.verCode"
-      :label="'验证码' + '*'"
-      :rules="getLoginFormRules().verCode"
-    >
-      <template v-slot:after>
-        <XButtonVerifyCode
-          v-model="userStore.verCodeTimer"
-          :before-click="beforeSend"
-        />
-      </template>
-    </XInput>
+          <XInputPassword
+            v-model="registerForm.password"
+            :label="'设置密码' + '*'"
+            lazy-rules
+            :rules="getLoginFormRules().password"
+            clearable
+          />
+          <XInputPassword
+            v-model="registerForm.confirmPassword"
+            :label="'确认密码' + '*'"
+            lazy-rules
+            :rules="getLoginFormRules().password"
+            clearable
+          />
+          <XInput
+            ref="emailRef"
+            v-model="registerForm.email"
+            :label="'邮箱' + '*'"
+            lazy-rules
+            :rules="getLoginFormRules().email"
+            clearable
+          />
+          <XInput
+            v-model="registerForm.verCode"
+            :label="'验证码' + '*'"
+            :rules="getLoginFormRules().verCode"
+            clearable
+          >
+            <template v-slot:after>
+              <XButtonVerifyCode
+                v-model="userStore.verCodeTimer"
+                :before-click="beforeSend"
+              />
+            </template>
+          </XInput>
 
-    <div class="q-gutter-md">
-      <XButton
-        :label="t('login.RegisterNow')"
-        class="full-width"
-        type="submit"
-        color="primary"
-        :loading="registerLoading"
-      />
-      <q-space />
-      <XButton
-        outline
-        :label="t('login.GoBack')"
-        class="full-width"
-        color="primary"
-        @click="userStore.setLoginDialogType(LoginDialogTypeEnum.LOGIN)"
-      />
-    </div>
-  </q-form>
+          <XButton
+            :label="t('login.RegisterNow')"
+            class="full-width q-mt-sm"
+            type="submit"
+            color="primary"
+            :loading="registerLoading"
+            unelevated
+            rounded
+          />
+        </q-form>
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
@@ -75,6 +92,7 @@ import {
   XInput,
   XInputPassword,
   XButtonVerifyCode,
+  XWinBar,
 } from '@/components';
 
 const { t } = useI18n();
