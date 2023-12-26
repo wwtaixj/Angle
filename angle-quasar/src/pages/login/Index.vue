@@ -6,7 +6,7 @@
     v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
     class="login"
   >
-    <q-header :style="{ height: headerHeight }" class="login-header">
+    <q-header class="login-header">
       <XWinBar :showMaximized="false" />
     </q-header>
     <q-page-container class="login-content">
@@ -21,10 +21,8 @@
             />
           </q-card-section>
 
-          <q-card-section class="q-pt-none">
-            <div class="position-relative">
-              <LoginForm />
-            </div>
+          <q-card-section class="q-pt-sm">
+            <LoginForm />
           </q-card-section>
         </q-card>
       </q-page>
@@ -35,7 +33,7 @@
   </q-layout>
 </template>
 <script lang="ts" setup>
-import { computed } from 'vue';
+//import { computed } from 'vue';
 import LoginForm from './components/LoginForm.vue';
 import RegisterForm from './components/RegisterForm.vue';
 import { LoginDialogTypeEnum } from '@/enums/login';
@@ -44,9 +42,6 @@ import { XWinBar, XButton } from '@/components';
 
 const userStore = useUserStore();
 //const mainStore = useMainStore();
-const headerHeight = computed(() =>
-  userStore.loginDialogType === LoginDialogTypeEnum.REGISTER ? '32px' : '220px'
-);
 
 function register() {
   userStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER);
@@ -57,12 +52,15 @@ function register() {
   .login-header {
     background: url('/src/assets/images/shijie.png');
     background-size: cover;
+    min-height: 200px;
+    -webkit-app-region: drag;
   }
   .avatar {
     top: 0;
     right: 50%;
     transform: translateY(-50%) translateX(50%);
     z-index: 9999;
+    -webkit-app-region: no-drag;
   }
 
   .login-content {
