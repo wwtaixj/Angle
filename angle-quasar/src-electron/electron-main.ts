@@ -26,7 +26,7 @@ export function createWindow({
     height: 500,
     useContentSize: true,
     autoHideMenuBar: true,
-    resizable: false,
+    resizable: true,
     webPreferences: {
       devTools: true,
       contextIsolation: false,

@@ -13,7 +13,7 @@ import {
  * @returns
  */
 export async function selectUserInfoExcludeName(username: string) {
-  return await db.query<UserId[]>(Sql.EXCLUDE_NAME, [username]);
+  return await db.query<UserId[]>(Sql.EXCLUDE_NAME);
 }
 
 /**
@@ -83,25 +83,32 @@ export async function deleteUserDB({
 }
 
 export async function updateUserDB(user: Omit<User, 'roleId' | 'id'>) {
-  const { avatarUrl, gender, tag, phone, age, password, email, username } =
-    user;
+  let fieldsStr = ``,
+    values = [];
+  for (let key in user) {
+    if (user[key] && key !== 'username') {
+      fieldsStr += ` ${key} = ?,`;
+      values.push(user[key]);
+    }
+  }
+  values.push(user['username']);
+  console.log(
+    `UPDATE users SET ${fieldsStr.substring(
+      0,
+      fieldsStr.length - 1
+    )} WHERE username = ?`
+  );
+  console.log(values);
+
   return await db.query(
-    `UPDATE users SET 
-    ${avatarUrl ? 'avatarUrl =?,' : ''}
-    ${gender ? 'gender =?,' : ''}
-    ${tag ? 'tag =?,' : ''}
-    ${phone ? 'phone =?,' : ''}
-    ${age ? 'age =?,' : ''}
-    ${password ? 'password =?,' : ''}
-    ${email ? 'email =?,' : ''}
-     WHERE 
-     username = ?`,
-    [avatarUrl, gender, tag, phone, age, password, email, username].filter(
-      Boolean
-    )
+    `UPDATE users SET ${fieldsStr.substring(
+      0,
+      fieldsStr.length - 1
+    )} WHERE username = ?`,
+    values
   );
 }
-export async function addUserDB(params: Omit<User, 'roleId' | 'id'> & Object) {
+export async function addUserDB(params: Omit<User, 'id'>) {
   let fieldsStr = ``,
     valuesStr = ``,
     values = [];

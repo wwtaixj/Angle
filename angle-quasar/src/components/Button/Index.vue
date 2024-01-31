@@ -12,6 +12,7 @@
 <script lang="ts" setup>
 import { useSlots, useAttrs } from 'vue';
 import { QBtnSlots } from 'quasar';
+
 defineOptions({
   name: 'XButton',
 });

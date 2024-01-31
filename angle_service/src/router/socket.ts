@@ -4,6 +4,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { connection } from '@/controller/message';
 import { updateApp } from '@/controller/other';
+import { getAllUserId } from '@/db';
 
 dotenv.config();
 const router = express.Router();

@@ -19,9 +19,10 @@
             <q-card flat class="q-mt-xl bg-grey-2 q-px-lg">
               <q-item>
                 <q-item-section class="q-pr-md" avatar>
-                  <q-avatar>
-                    <img :src="userStore.getFriendActive.avatarUrl" />
-                  </q-avatar>
+                  <XAvatar
+                    :src="userStore.getFriendActive.avatarUrl"
+                    :text="userStore.getFriendActive.username.charAt(0)"
+                  />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label class="text-subtitle2">{{
@@ -78,7 +79,7 @@ import { ref, computed } from 'vue';
 import Side from './components/Side.vue';
 import { useChatStore } from '@/stores/chat';
 import { useUserStore } from '@/stores/user';
-import { XNullPage, XHeader } from '@/components';
+import { XNullPage, XHeader, XAvatar } from '@/components';
 import { GenderEnum } from '@/enums/user';
 
 const $q = useQuasar();

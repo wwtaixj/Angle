@@ -13,13 +13,12 @@
           <q-list class="fit column justify-start">
             <q-item class="col-2">
               <q-item-section avatar>
-                <q-avatar
-                  class="cursor-pointer"
-                  size="md"
+                <XAvatar
+                  class="cursor-pointer text-black"
+                  :text="userStore.getUserName.charAt(0)"
+                  :src="userStore.getAvatarUrl"
                   @click="mainStore.openAccount"
-                >
-                  <XImg :src="userStore.getAvatarUrl" />
-                </q-avatar>
+                />
               </q-item-section>
             </q-item>
             <q-item
@@ -47,12 +46,16 @@
         </div>
         <div class="col-6">
           <q-list class="fit column justify-end">
-            <q-item class="col-2" v-ripple @click="openSettingAndOther">
+            <q-item class="col-2">
               <q-item-section avatar>
                 <q-btn flat icon="menu">
                   <q-menu anchor="top right" self="top left" class="bg-grey-10">
                     <q-list class="text-grey-6 text-subtitle2">
-                      <q-item clickable v-close-popup>
+                      <q-item
+                        clickable
+                        @click="openSettingAndOther"
+                        v-close-popup
+                      >
                         <q-item-section>设置</q-item-section>
                       </q-item>
                     </q-list>
@@ -78,6 +81,7 @@
       persistent
     >
       <Account v-show="mainStore.dialog.event === DialogEventEnum.ACCOUNT" />
+      <Setting v-show="mainStore.dialog.event === DialogEventEnum.SETTING" />
     </XDialog>
   </q-layout>
 </template>
@@ -90,9 +94,10 @@ import { getSideList } from '@/assets/constant';
 import { useMainStore } from '@/stores/main';
 import { useUserStore } from '@/stores/user';
 //import Login from '@/pages/login/Index.vue';
-import { XDialog, XImg } from '@/components';
+import { XDialog, XAvatar } from '@/components';
 import Account from '@/pages/account/Index.vue';
 import { SideListKeyEnum } from '@/enums/main';
+import Setting from '@/pages/Setting/Index.vue';
 
 const mainStore = useMainStore();
 const router = useRouter();
@@ -104,8 +109,19 @@ function listClick(key: SideListKeyEnum, isClick = true) {
   const tool = getSideList().find((i) => i.key === key);
   if (tool?.router) router.push(`/${key}`);
 }
+/**
+ * @description: 打开设置和其他
+ */
 function openSettingAndOther() {
-  //
+  mainStore.setDialog({
+    title: '设置',
+    visible: true,
+    style: {
+      minWidth: '560px',
+      minHeight: '400px',
+    },
+    event: DialogEventEnum.SETTING,
+  });
 }
 onMounted(() => {
   listClick(mainStore.getToolActive, false);

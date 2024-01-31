@@ -7,8 +7,7 @@ export enum SideListKeyEnum {
   CHAT_ROBOT = 'chatRobot',
 }
 export enum DialogEventEnum {
-  CHAT = SideListKeyEnum.CHAT,
-  LOGIN = 'login',
+  SETTING = 'setting',
   ACCOUNT = 'account',
 }
 

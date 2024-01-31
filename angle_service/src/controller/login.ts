@@ -58,7 +58,7 @@ export const login = async (
         tag,
         gender,
         email,
-        id,
+        id: id.toString(),
       },
     });
   } catch (e) {

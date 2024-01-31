@@ -7,6 +7,8 @@
   >
     <template v-slot:append>
       <q-icon
+        size="20px"
+        v-show="!!modelValue"
         :name="isPwd ? 'visibility_off' : 'visibility'"
         class="cursor-pointer"
         @click="isPwd = !isPwd"

@@ -24,7 +24,8 @@ export const authentication = async (
       req.url === Url.API + Url.LOGIN ||
       req.url === Url.API + Url.REGISTER ||
       req.url === Url.API + Url.LOGOUT ||
-      req.url === Url.API + Url.VERIFICATION_CODE
+      req.url === Url.API + Url.VERIFICATION_CODE ||
+      req.url.includes('upload')
     ) {
       next();
       return;
@@ -85,7 +86,8 @@ export const apiPermission = async (
       req.url === Url.API + Url.LOGIN ||
       req.url === Url.API + Url.REGISTER ||
       req.url === Url.API + Url.LOGOUT ||
-      req.url === Url.API + Url.VERIFICATION_CODE
+      req.url === Url.API + Url.VERIFICATION_CODE ||
+      req.url.includes('upload')
     ) {
       next();
       return;

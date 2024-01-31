@@ -76,12 +76,10 @@
             </q-list>
           </q-menu>
           <q-item-section avatar>
-            <q-avatar>
-              <img
-                :src="conversation.avatarUrl"
-                style="width: 32px; height: 32px"
-              />
-            </q-avatar>
+            <XAvatar
+              :src="conversation.avatarUrl"
+              :text="conversation.username.charAt(0)"
+            />
           </q-item-section>
 
           <q-item-section>
@@ -102,14 +100,15 @@
 //import { useQuasar } from 'quasar';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-//import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user';
 import { useChatStore } from '@/stores/chat';
 import { Chat } from '@/stores/typings/chat';
 import { XInput } from '@/components';
 import { useDBStore } from '@/stores/database';
+import { XAvatar } from '@/components';
 
 const router = useRouter();
-//const userStore = useUserStore();
+const userStore = useUserStore();
 const chatStore = useChatStore();
 const search = ref('');
 /**

@@ -49,6 +49,7 @@ export declare namespace Params {
     password: string;
     email: string;
     verCode: string;
+    referralCode: string;
   }
   interface verCode {
     email: string;

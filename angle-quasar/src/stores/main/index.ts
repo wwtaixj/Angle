@@ -23,7 +23,7 @@ export const useMainStore = defineStore('main', {
   state: (): MainState => ({
     dialog: {
       visible: false,
-      event: DialogEventEnum.LOGIN,
+      event: DialogEventEnum.ACCOUNT,
       title: '',
       style: {},
     },
@@ -47,16 +47,16 @@ export const useMainStore = defineStore('main', {
     },
     openAccount() {
       const { t } = useI18n();
-      this.setDialog({ title: t('AccountInfo') });
-      this.openDialog(DialogEventEnum.ACCOUNT);
+      this.setDialog({
+        event: DialogEventEnum.ACCOUNT,
+        title: t('AccountInfo'),
+        visible: true,
+      });
     },
     setDialog(config: Partial<Dialog>) {
       Object.assign(this.dialog, config);
     },
-    openDialog(dialogEvent: DialogEventEnum) {
-      if (dialogEvent) this.setDialog({ event: dialogEvent });
-      this.setDialog({ visible: true });
-    },
+
     closeDialog() {
       this.setDialog({ visible: false });
     },

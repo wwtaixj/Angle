@@ -1,3 +1,7 @@
+import multer from 'multer';
+import iconv from 'iconv-lite';
+import fs from 'fs';
+import { resolve } from 'path';
 export function generateRandomCode(
   length: number,
   type: 'number' | 'string' = 'number'
@@ -54,6 +58,45 @@ export const formatDate = () => {
   const seconds = date.getSeconds().toString().padStart(2, '0');
   return `${year}${month}${day}${hours}${minutes}${seconds}`;
 };
+export function uploadFile({ path, fileTypes }) {
+  const folderPath = resolve(__dirname, `../../${path}`);
+  if (!fs.existsSync(folderPath)) {
+    // 如果文件夹不存在，就新建文件夹
+    fs.mkdirSync(folderPath, { recursive: true });
+    console.log(folderPath + ' created successfully.');
+  }
+  const storage = multer.diskStorage({
+    destination(req, file, cb) {
+      //指定文件路径存储地
+      cb(null, path);
+    },
+    filename(req, file, cb) {
+      try {
+        //获取后缀名
+        const ext = file.originalname.split('.').pop();
+        const filename = file.originalname.split('.').shift();
+        // 将 ASCII 字符串转换为 Buffer 对象
+        const asciiBuffer = Buffer.from(filename, 'ascii');
+        // 将 Buffer 对象解码为 UTF-8 编码的字符串
+        const utf8String = iconv.decode(asciiBuffer, 'utf-8');
+        cb(null, `${utf8String}_w${formatDate()}.${ext}`);
+      } catch (e) {
+        console.log('set upload images filename error:' + e);
+      }
+    },
+  });
+  return multer({
+    storage: storage,
+    fileFilter(req, file, cb) {
+      const allowedTypes = Array.isArray(fileTypes) ? fileTypes : [fileTypes];
+
+      if (!allowedTypes.some((type) => file.mimetype.startsWith(type))) {
+        return cb(new Error(`只支持${allowedTypes.join(', ')}类型`));
+      }
+      cb(null, true);
+    },
+  });
+}
 
 export * from './cryptoJs';
 export * from './chatGPT';

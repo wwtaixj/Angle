@@ -1,8 +1,36 @@
 declare namespace ChatRobot {
+  interface FileObject {
+    url: string;
+    id: string;
+    bytes: number;
+    created_at: number;
+    filename: string;
+    object: 'file';
+    purpose:
+      | 'fine-tune'
+      | 'fine-tune-results'
+      | 'assistants'
+      | 'assistants_output';
+  }
+  export type ChatCompletionContentPart = {
+    type: 'text' | 'image_url';
+    text?: string;
+    image_url?: {
+      url: string;
+      detail: 'auto' | 'full' | 'large' | 'medium' | 'small' | 'thumb';
+    };
+  };
   type Chat = ChatRobotListTable;
+  type Type = 'text' | 'image' | 'tools' | 'logprobs';
+  export type Model =
+    | 'gpt-3.5-turbo'
+    | 'gpt-4'
+    | 'dall-e-3'
+    | 'gpt-4-vision-preview'
+    | 'gpt-4-1106-preview';
   interface ChatRobotModel {
     label: string;
-    value: string;
+    value: Model;
     description?: string;
     avatar: string;
   }
@@ -18,7 +46,7 @@ declare namespace ChatRobot {
   export interface ChatRobotListTable {
     title: string;
     chatId: string;
-    model: string;
+    model: Model;
     timestamp: number;
     avatar: string;
     usingContext: boolean; // 是否使用上下文
@@ -34,6 +62,7 @@ declare namespace ChatRobot {
     error?: boolean;
     timestamp: number;
     textHtml?: boolean;
+    isMarkdown?: boolean;
     conversationOptions?: ConversationRequest | null;
     requestOptions?: { prompt: string; options?: ConversationRequest | null };
   }
@@ -44,11 +73,15 @@ declare namespace ChatRobot {
     model: Chat['model'];
     xSplitter: number;
     ySplitter: number;
+    role: string;
+    maxWidth: string;
   }
 
   interface ConversationRequest {
     conversationId?: string;
     parentMessageId?: string;
+    fileIds?: string[];
+    threadId?: string;
   }
 
   interface ConversationResponse {

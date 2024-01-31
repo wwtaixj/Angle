@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useStore } from '@/stores';
 import { LOCALE } from '@/i18n';
 import { setLocale } from '@/boot/i18n';
 import { LoginStateEnum } from '@/enums/main';
@@ -27,6 +28,7 @@ import {
   decrypt,
   isNumber,
   isObject,
+  isArray,
 } from '@/utils';
 
 interface UserState {
@@ -45,42 +47,57 @@ interface UserState {
   age?: number;
   gender: Gender;
   tag: string;
-  newPassword: string;
-  againNewPassword: string;
   description: string;
   email: string;
   loginDialogType: LoginDialogTypeEnum;
   verCodeTimer: number;
   friends: Friend[];
   friendActive?: Friend;
+  loginHistory: {
+    username: string;
+    password: string;
+  }[];
+  automaticLogin: boolean;
+  serviceAddress: string;
 }
-
-export const useUserStore = defineStore('user', {
-  state: (): UserState => ({
+const { VITE_GLOB_API_URL } = import.meta.env;
+export function getLocalState(): UserState {
+  const remember = lStorage.get<UserState['remember']>('REMEMBER');
+  const automaticLogin =
+    lStorage.get<UserState['automaticLogin']>('AUTOMATIC_LOGIN');
+  const loginHistory = lStorage.get<UserState['loginHistory']>('LOGIN_HISTORY');
+  return {
     locale: LOCALE.ZH_CN, // default locale
     theme: false, // default theme
     avatarUrl: 'public\\icons\\chatDefIcon.png',
-    token: '',
+    token: lStorage.get<UserState['token']>('TOKEN') || '',
     loginState: LoginStateEnum.LOGIN,
     verCode: '',
-    username: '',
+    username: lStorage.get<UserState['username']>('USERNAME') || '',
     phone: '',
     location: { longitude: 0, latitude: 0 },
     age: void 0,
     gender: null,
     tag: '',
-    password: '',
-    remember: false,
+    password: lStorage.get<UserState['password']>('PASSWORD') || '',
+    remember: isBoolean(remember) ? remember : false,
     description: '',
     email: '',
-    newPassword: '', // 新密码
-    againNewPassword: '',
     loginDialogType: LoginDialogTypeEnum.LOGIN,
     verCodeTimer: 0,
-    userId: '',
+    userId: lStorage.get<UserState['userId']>('USER_ID') || '',
     friends: [],
     friendActive: void 0,
-  }),
+    loginHistory:
+      isArray(loginHistory) && !!loginHistory.length ? loginHistory : [],
+    automaticLogin: isBoolean(automaticLogin) ? automaticLogin : false,
+    serviceAddress:
+      lStorage.get<UserState['serviceAddress']>('SERVICE_ADDRESS') ||
+      VITE_GLOB_API_URL,
+  };
+}
+export const useUserStore = defineStore('user', {
+  state: (): UserState => getLocalState(),
   getters: {
     getUserId(state) {
       const userId = state.userId;
@@ -167,8 +184,19 @@ export const useUserStore = defineStore('user', {
       if (active) return active;
       return lStorage.get<Friend>('FRIEND_ACTIVE');
     },
+    getServiceAddress(state) {
+      const address = state.serviceAddress;
+      if (address) return address;
+      return lStorage.get<UserState['serviceAddress']>('SERVICE_ADDRESS');
+    },
   },
   actions: {
+    setServiceAddress(address: string) {
+      if (!address) return;
+      this.serviceAddress = address;
+      lStorage.set('SERVICE_ADDRESS', address);
+      useSocketStore().initSocket();
+    },
     setLocales(locale: LOCALE) {
       if (!locale) return;
       this.locale = locale;
@@ -248,10 +276,35 @@ export const useUserStore = defineStore('user', {
       return lStorage.set('USER_ID', userId);
     },
     async setFriends() {
-      const { data } = await getFriends();
-      if (!data.length) return;
-      this.friends = data.map((i) => ({ ...i, chatId: i.id }));
-      return lStorage.set('FRIENDS', data);
+      try {
+        const { data } = await getFriends();
+        if (!data.length) return;
+        this.friends = data.map((i) => ({ ...i, chatId: i.id }));
+        return lStorage.set('FRIENDS', data);
+      } catch (e: any) {
+        throw new Error(e.message);
+      }
+    },
+    setAutomaticLogin(automatic: boolean) {
+      this.automaticLogin = automatic;
+      lStorage.set('AUTOMATIC_LOGIN', automatic);
+    },
+    addLoginHistory(username: string, password: string) {
+      if (
+        !isString(username) ||
+        this.loginHistory.some((i) => i.username === username)
+      )
+        return;
+      this.loginHistory.splice(0, 0, {
+        username,
+        password,
+      });
+      lStorage.set('LOGIN_HISTORY', this.loginHistory);
+    },
+    deleteLoginHistory(index: number) {
+      if (!isNumber(index)) return;
+      this.loginHistory.splice(index, 1);
+      lStorage.set('LOGIN_HISTORY', this.loginHistory);
     },
     /**
      * @description 设置选中的好友
@@ -269,40 +322,42 @@ export const useUserStore = defineStore('user', {
     /**
      * @description 登录
      */
-    async login() {
-      const { username, password, remember } = this.$state;
+    async login(isRefresh = false) {
+      const { username, password } = this.$state;
       const hasUsername = encrypt(username);
-      resultPrompt(
-        await login({
-          username: hasUsername,
-          password: encrypt(password),
-          longitude: 0,
-          latitude: 0,
-        }),
-        false,
-        async ({ data }) => {
-          this.setUserInfo({
-            ...data,
-            username,
-            password,
-            remember,
-            userId: data.id,
-          });
-          // 设置用户列表
-          await this.setFriends();
-          useDBStore().initDatabase();
-          // 连接Socket服务端
-          useSocketStore().initSocket();
-          await useRoute().push('/home');
-          const { electron } = window as unknown as $Window;
-          // 向主进程发送 change-window-size 事件，传递新的窗口大小参数
-          electron.ipcRenderer.send('change-window-size', {
-            width: 800,
-            height: 680,
-            resizable: true,
-          });
+      const { status, data } = await login({
+        username: hasUsername,
+        password: encrypt(password),
+        longitude: 0,
+        latitude: 0,
+      });
+      if (status === '0') {
+        this.setUserInfo({
+          ...data,
+          username,
+          password,
+          userId: data.id,
+        });
+        if (isRefresh) {
+          return status;
         }
-      );
+        // 设置用户列表
+        await this.setFriends();
+        useDBStore().initDatabase();
+        // 连接Socket服务端
+        useSocketStore().initSocket();
+        await useRoute().push('/home');
+        const { electron } = window as unknown as $Window;
+        // 向主进程发送 change-window-size 事件，传递新的窗口大小参数
+        electron.ipcRenderer.send('change-window-size', {
+          width: 800,
+          height: 680,
+          resizable: true,
+        });
+        // 是否记住密码
+        this.addLoginHistory(username, this.getRemember ? password : '');
+      }
+      return status;
     },
     setUserInfo(
       info: Pick<
@@ -314,7 +369,6 @@ export const useUserStore = defineStore('user', {
         | 'gender'
         | 'password'
         | 'tag'
-        | 'remember'
         | 'token'
         | 'phone'
         | 'userId'
@@ -328,7 +382,6 @@ export const useUserStore = defineStore('user', {
       this.setGender(info.gender);
       this.setTag(info.tag);
       this.setPhone(decrypt(info.phone));
-      this.setRemember(info.remember);
       this.setEmail(info.email);
       this.setUserId(info.userId);
     },
@@ -340,13 +393,11 @@ export const useUserStore = defineStore('user', {
         token: '',
         email: '',
         gender: null,
-        remember: false,
         age: void 0,
         phone: '',
         tag: '',
         userId: '',
       });
-      lStorage.clear();
     },
     /**
      * @description 退出登录
@@ -389,11 +440,19 @@ export const useUserStore = defineStore('user', {
     async sendVerCode(email: string) {
       //const { t } = useI18n();
       let status = false;
-      const result = await sendVerCode({ email });
-      resultPrompt(result, { message: '验证码已发送' }, () => {
-        status = true;
-      });
-      return status;
+      try {
+        const result = await sendVerCode({ email });
+        resultPrompt(result, { message: '验证码已发送' }, () => {
+          status = true;
+        });
+      } catch (err) {
+        status = false;
+      } finally {
+        return status;
+      }
     },
   },
 });
+export function useUserStoreWithout() {
+  return useUserStore(useStore());
+}

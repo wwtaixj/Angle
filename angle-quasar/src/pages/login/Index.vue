@@ -1,36 +1,46 @@
 <template>
-  <RegisterForm
-    v-show="userStore.loginDialogType === LoginDialogTypeEnum.REGISTER"
-  />
-  <q-layout
-    v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
-    class="login"
+  <Transition
+    enter-active-class="animated fadeIn"
+    leave-active-class="animated fadeOut"
   >
-    <q-header class="login-header">
-      <XWinBar :showMaximized="false" />
-    </q-header>
-    <q-page-container class="login-content">
-      <q-page>
-        <q-card flat>
-          <q-card-section>
-            <q-btn
-              fab
-              color="primary"
-              icon="fa-solid fa-robot"
-              class="avatar absolute"
-            />
-          </q-card-section>
+    <RegisterForm
+      v-show="userStore.loginDialogType === LoginDialogTypeEnum.REGISTER"
+    />
+  </Transition>
+  <Transition
+    enter-active-class="animated fadeIn"
+    leave-active-class="animated fadeOut"
+  >
+    <q-layout
+      v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
+      class="login"
+    >
+      <q-header class="login-header">
+        <XWinBar :showMaximized="false" />
+      </q-header>
+      <q-page-container class="login-content">
+        <q-page>
+          <q-card flat>
+            <q-card-section>
+              <q-btn
+                fab
+                color="primary"
+                icon="fa-solid fa-robot"
+                class="avatar absolute"
+              />
+            </q-card-section>
 
-          <q-card-section class="q-pt-sm">
-            <LoginForm />
-          </q-card-section>
-        </q-card>
-      </q-page>
-    </q-page-container>
-    <q-footer class="bg-white text-grey-6">
-      <XButton outline flat label="注册账号" @click="register" />
-    </q-footer>
-  </q-layout>
+            <q-card-section class="q-pt-sm">
+              <LoginForm />
+            </q-card-section>
+          </q-card>
+        </q-page>
+      </q-page-container>
+      <q-footer class="bg-white text-grey-6">
+        <XButton outline flat label="注册账号" @click="register" />
+      </q-footer>
+    </q-layout>
+  </Transition>
 </template>
 <script lang="ts" setup>
 //import { computed } from 'vue';

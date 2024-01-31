@@ -3,6 +3,7 @@ import { post, put, get } from './request';
 import { useChatGptStore } from '@/stores/chatGpt';
 import request_url from './url';
 import { Params, Result } from './typings';
+export * from './typings/index.d';
 
 export function fetchChatAPI<T = unknown>(
   prompt: string,
@@ -26,7 +27,10 @@ export function fetchChatAPIProcess<T = unknown>(params: {
   prompt: string;
   options?: { conversationId?: string; parentMessageId?: string };
   signal?: GenericAbortSignal;
+  model: ChatRobot.Model;
   onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
+  type: ChatRobot.Type;
+  fileIds?: string[];
 }) {
   const chatGptStore = useChatGptStore();
 
@@ -36,16 +40,12 @@ export function fetchChatAPIProcess<T = unknown>(params: {
       prompt: params.prompt,
       options: params.options,
       systemMessage: chatGptStore.systemMessage,
+      model: params.model,
+      type: params.type,
+      fileIds: params.fileIds,
     },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
-  });
-}
-
-export function fetchVerify<T>(token: string) {
-  return post<T>({
-    url: request_url.chatVerify,
-    data: { token },
   });
 }
 
@@ -92,6 +92,24 @@ export function sendVerCode(data: Params.verCode) {
 export function getFriends(data?: Partial<Params.User>) {
   return get<Result.User[]>({
     url: request_url.getFriends,
+    data,
+  });
+}
+export function uploadImage(data: FormData) {
+  return post<{ url: string }>({
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    url: request_url.uploadImage,
+    data,
+  });
+}
+export function uploadAvatar(data: FormData) {
+  return post<{ url: string }>({
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    url: request_url.uploadAvatar,
     data,
   });
 }

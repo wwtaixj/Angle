@@ -136,7 +136,7 @@ module.exports = configure(function (/* ctx */) {
     },
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
-    animations: [],
+    animations: ['fadeIn', 'fadeOut'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
     sourceFiles: {
@@ -227,6 +227,10 @@ module.exports = configure(function (/* ctx */) {
           provider: 'generic',
           url: 'http://localhost:9310/update',
           updaterCacheDirName: 'update',
+        },
+        nsis: {
+          allowElevation: true,
+          oneClick: false,
         },
       },
 

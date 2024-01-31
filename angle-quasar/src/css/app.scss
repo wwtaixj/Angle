@@ -6,6 +6,9 @@ $notify-margin-top: 70px; //notify距离顶部高度
 $left-header-max-height: 68px;
 $right-header-max-height: 36px;
 
+body {
+  overflow: hidden;
+}
 .q-notifications {
   .q-notifications__list.q-notifications__list--top {
     margin-top: $notify-margin-top;
@@ -64,5 +67,15 @@ $right-header-max-height: 36px;
 .q-scrollarea__thumb {
   border-radius: 7px;
   width: 7px;
-  height: 7px;;
+  height: 7px;
+}
+::-webkit-scrollbar {
+  background-color: transparent;
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 7px;
 }

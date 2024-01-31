@@ -16,6 +16,7 @@ interface ActiveMessage {
   status?: TransmissionBody['status'];
   avatar: Chat['avatarUrl'];
   sent: boolean;
+  avatarText: string;
 }
 interface ChatState {
   chatList: Chat[];
@@ -92,6 +93,7 @@ export const useChatStore = defineStore('chat', {
         .getChatHistory(chatActive?.chatId)
         .then((result) => {
           const userStore = useUserStore();
+          const avatarText = userStore.getUserName.charAt(0);
           if (!isArray(result)) return;
           this.chatActiveMssage = result.map((i) => ({
             text: [i.dataValues.message],
@@ -100,6 +102,7 @@ export const useChatStore = defineStore('chat', {
               : this.chatActive?.avatarUrl) as string,
             status: i.dataValues.status,
             sent: i.dataValues.senderId === userStore.getUserId,
+            avatarText,
           }));
         });
     },
@@ -111,6 +114,7 @@ export const useChatStore = defineStore('chat', {
       const userStore = useUserStore();
       const senderId = userStore.getUserId;
       const receiverId = this.getChatActive?.chatId as string;
+
       const messageId = uid();
       const status = MessageSendStatus.HAVE_SEND;
       const messageBody: TransmissionBody = {
@@ -122,8 +126,10 @@ export const useChatStore = defineStore('chat', {
         status,
         messageId,
       };
+      console.log(messageBody);
+
       // 发送消息到服务器
-      useSocketStore().socketEmit(receiverId, messageBody);
+      useSocketStore().socketEmit('messages', messageBody);
       // 存储消息到数据库
       useDBStore().addChatHistory(
         this.getChatActive?.chatId as string,
@@ -134,6 +140,7 @@ export const useChatStore = defineStore('chat', {
         avatar: userStore.getAvatarUrl,
         status,
         sent: true,
+        avatarText: userStore.getUserName.charAt(0),
       });
     },
     /**

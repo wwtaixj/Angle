@@ -7,19 +7,21 @@
 <script lang="ts" setup>
 import { PropType, defineEmits, useAttrs } from 'vue';
 import { XButton, XButtonVerifyCodeProps } from '../index';
-import { CountdownTimer } from '@/utils';
+import { CountdownTimer, isFunction } from '@/utils';
 
 const $emits = defineEmits(['update:modelValue']);
 
 defineOptions({
   name: 'XButtonVerifyCode',
 });
+
 const props = defineProps({
   modelValue: {
     type: Number as PropType<XButtonVerifyCodeProps['modelValue']>,
   },
   beforeClick: {
     type: Function as PropType<XButtonVerifyCodeProps['beforeClick']>,
+    required: true,
   },
   time: {
     type: Number as PropType<XButtonVerifyCodeProps['time']>,
@@ -34,7 +36,7 @@ async function updateModelValue() {
     $emits('update:modelValue', time);
   };
 
-  if (props.beforeClick) {
+  if (isFunction(props.beforeClick)) {
     const isUpdate = await props.beforeClick();
     if (isUpdate) {
       countdown.start();

@@ -12,5 +12,6 @@ export interface XChatMessageProps extends QChatMessageProps {
     name: string;
   }[];
   messageId?: string;
+  isMarkdown?: boolean;
 }
 export type XChatMessageSlots = QChatMessageSlots;

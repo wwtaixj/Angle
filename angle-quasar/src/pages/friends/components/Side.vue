@@ -32,9 +32,10 @@
           @click="userStore.setFriendActive(friend)"
         >
           <q-item-section avatar>
-            <q-avatar>
-              <img :src="friend.avatarUrl" style="width: 32px; height: 32px" />
-            </q-avatar>
+            <XAvatar
+              :src="friend.avatarUrl"
+              :text="friend.username.charAt(0)"
+            />
           </q-item-section>
 
           <q-item-section>
@@ -52,7 +53,7 @@
 import { ref } from 'vue';
 //import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
-import { XInput } from '@/components';
+import { XInput, XAvatar } from '@/components';
 //import { Friend } from '@/stores/typings/user';
 
 //const router = useRouter();

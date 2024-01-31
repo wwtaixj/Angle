@@ -5,10 +5,6 @@ export function setupPageGuard(router: Router) {
   router.beforeEach((to, _from, next) => {
     try {
       const userStore = useUserStore();
-      if (to.name === 'login' && userStore.getToken) {
-        next('/home');
-        return;
-      }
       if (to.name !== 'login' && to.path !== '/' && !userStore.getToken) {
         next('/login');
         return;

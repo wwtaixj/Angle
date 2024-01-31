@@ -1,15 +1,16 @@
-const { join, resolve, dirname } = require('path');
+const { join, resolve } = require('path');
 import { Sequelize } from 'sequelize';
 import { initChatHistoryTable, initChatRobotHistoryTable } from './model';
 import { $Window } from '@/types/quasar';
 import { isArray } from '@/utils';
 import { ChatDBIds } from './types';
+const { VITE_GLOB_APP_TITLE } = import.meta.env;
 
+//const DB_PATH = join(`C:\\Program Files\\${VITE_GLOB_APP_TITLE}`);
 const DB_PATH =
   process.env.NODE_ENV === 'development'
     ? resolve()
-    : dirname(process.execPath);
-
+    : `C:\\Program Files\\${VITE_GLOB_APP_TITLE}`;
 /**
  * @description: 连接数据库
  */

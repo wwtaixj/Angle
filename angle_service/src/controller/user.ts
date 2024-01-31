@@ -14,6 +14,41 @@ import { RegisterParams, SendVerificationCodeParams } from './types';
 import verCodeCache from '@/stores/VerificationCode';
 
 /**
+ * 上传头像
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
+export async function uploadAvatar(
+  req: GlobalRequest<any>,
+  res: GlobalResponse<{ url: string }>
+) {
+  try {
+    const filename = `${req.file.filename}`;
+    const avatarUrl =
+      `http://${process.env.UPLOAD_URL}:${process.env.LISTEN_PORT}/upload/images/avatar/` +
+      filename;
+    const username = decrypt(req.headers.username as string);
+
+    const [result] = await updateUserDB({
+      avatarUrl,
+      username,
+    });
+    if (result['serverStatus'] === 2) {
+      res.send({
+        status: '0',
+        message: '上传成功！',
+        data: { url: avatarUrl },
+      });
+    }
+  } catch (e) {
+    res.send({
+      status: '-1',
+      message: e.message,
+    });
+  }
+}
+/**
  * /api/user 获取登录用户好友列表
  * @param {*} req
  * @param {*} res
@@ -27,7 +62,7 @@ export async function getFriends(req: any, res: any) {
     res.send({
       status: '0',
       message: '获取好友列表数据成功！',
-      data: rows,
+      data: rows.map((i) => ({ ...i, id: i.id.toString() })),
     });
   } catch (e) {
     console.log(e);
@@ -325,7 +360,7 @@ export async function register(
   let status = '1';
   try {
     // 解析参数
-    const { username, password, email, verCode } = req.body;
+    const { username, password, email, verCode, referralCode } = req.body;
     const [rows] = await selectUserInfoWhereAllDB({ email });
     if (rows && rows.length > 0) {
       status = '-1';
@@ -345,6 +380,7 @@ export async function register(
       password: decrypt(password),
       email,
       status: '1',
+      roleId: referralCode === process.env.REFERRAL_CODE ? '1' : '2',
     });
     if (result['serverStatus'] === 2) {
       res.send({

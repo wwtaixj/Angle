@@ -2,7 +2,11 @@
   <!-- notice dialogRef here -->
   <q-dialog ref="dialogRef" @hide="onHide" style="-webkit-app-region: none">
     <slot v-if="type === DialogTypeEnum.NATIVE" />
-    <q-card v-bind="attrsComputed" v-if="type === DialogTypeEnum.CARD">
+    <q-card
+      class="bg-grey-2"
+      v-bind="attrsComputed"
+      v-if="type === DialogTypeEnum.CARD"
+    >
       <q-card-section class="items-center row q-pb-none">
         <div class="text-h6">{{ attrsComputed.title }}</div>
         <q-space />
@@ -55,6 +59,7 @@ const attrsComputed = computed(() => {
     ...attrs,
     style: {
       'min-width': '400px',
+      'min-height': '100px',
       ...convertObjectPropertiesToHyphenCase(style),
     },
   };

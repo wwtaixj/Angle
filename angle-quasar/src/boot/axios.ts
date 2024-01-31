@@ -1,7 +1,11 @@
 import { boot } from 'quasar/wrappers';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, {
+  AxiosInstance,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { useUserStore } from '@/stores/user';
-import { isObject, encrypt, notify } from '@/utils';
+import { isObject, encrypt, notify, lStorage } from '@/utils';
 import Url from '@/axios/url';
 
 declare module '@vue/runtime-core' {
@@ -17,10 +21,12 @@ declare module '@vue/runtime-core' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
+const { VITE_GLOB_API_URL } = import.meta.env;
 const api = axios.create({
   timeout: 1000 * 60 * 5,
-  baseURL: 'http://localhost:9310', //localhost
+  baseURL: lStorage.get('SERVICE_ADDRESS') || VITE_GLOB_API_URL, //localhost
 });
+
 api.interceptors.request.use(
   (config) => {
     // 添加请求前添加token
@@ -35,28 +41,37 @@ api.interceptors.request.use(
     return Promise.reject(error.response);
   }
 );
+
 // 响应拦截器
+// 初始化登录尝试次数为0
+let loginAttempts = 0;
+let failedRequest: InternalAxiosRequestConfig;
 api.interceptors.response.use(
-  (response: AxiosResponse) => {
+  async (response: AxiosResponse) => {
     const status =
       isObject(response.data) && response.data.status
         ? response.data.status
         : '0';
-    if (status !== '0') {
+
+    if (status !== '0' && status !== '1002') {
       notify({
         message: response.data.message,
         type: 'negative',
       });
     }
+    //登录超时
+    if (status === '1002') {
+      failedRequest = response.config; // 保存失败的请求
+      await loginBack();
+    }
     return response;
   },
   (error) => {
     const { config } = error;
-
     if (config) {
       if (config.url === Url.login) {
         notify({
-          message: '登录失败，请重新登录',
+          message: '登录失败!',
           type: 'negative',
         });
       }
@@ -64,7 +79,18 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
+async function loginBack() {
+  if (loginAttempts >= 5) return;
+  const userStore = useUserStore();
+  const status = await userStore.login(true); // 尝试登录
+  if (status === '0') {
+    await api.request(failedRequest);
+    loginAttempts = 0;
+  } else {
+    loginAttempts++;
+    loginBack();
+  }
+}
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 

@@ -8,8 +8,6 @@ import { useChatStore } from '@/stores/chat';
 import { MessageSendStatus, MessageSendType } from '@/enums/chat';
 import { $Window } from '@/types/quasar';
 
-const { VITE_GLOB_SOCKET_URL } = import.meta.env;
-
 interface SocketState {
   socketIO?: Socket;
 }
@@ -23,7 +21,7 @@ export const useSocketStore = defineStore('socket', {
       const userStore = useUserStore();
       const userId = String(userStore.getUserId);
       this.socketIO = createSocket({
-        url: VITE_GLOB_SOCKET_URL,
+        url: userStore.getServiceAddress,
         username: userStore.getUserName,
         token: userStore.getToken,
         userId: userId,
@@ -49,6 +47,8 @@ export const useSocketStore = defineStore('socket', {
      */
     socketOnServer(userId: string) {
       this.socketOn(userId, (data) => {
+        console.log(data);
+
         // 不是系统消息时, 接收消息并存储到数据库
         if (data.type !== MessageSendType.SYSTEM_MESSAGE) {
           const chatStore = useChatStore();
@@ -57,6 +57,7 @@ export const useSocketStore = defineStore('socket', {
             avatar: chatStore.getChatActive?.avatarUrl as string,
             status: MessageSendStatus.CLIENT_RECEIVED,
             sent: false,
+            avatarText: useUserStore().getUserName.charAt(0),
           });
           useDBStore().addChatHistory(data.senderId, data);
         }

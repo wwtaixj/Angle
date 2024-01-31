@@ -27,6 +27,7 @@
             lazy-rules
             :rules="getLoginFormRules().username"
             clearable
+            dense
           />
 
           <XInputPassword
@@ -35,6 +36,7 @@
             lazy-rules
             :rules="getLoginFormRules().password"
             clearable
+            dense
           />
           <XInputPassword
             v-model="registerForm.confirmPassword"
@@ -42,6 +44,7 @@
             lazy-rules
             :rules="getLoginFormRules().password"
             clearable
+            dense
           />
           <XInput
             ref="emailRef"
@@ -50,17 +53,27 @@
             lazy-rules
             :rules="getLoginFormRules().email"
             clearable
+            dense
+          />
+          <XInput
+            v-model="registerForm.referralCode"
+            label="推荐码(选填)"
+            clearable
+            dense
           />
           <XInput
             v-model="registerForm.verCode"
             :label="'验证码' + '*'"
             :rules="getLoginFormRules().verCode"
             clearable
+            dense
+            class="q-mt-xs"
           >
             <template v-slot:after>
               <XButtonVerifyCode
                 v-model="userStore.verCodeTimer"
                 :before-click="beforeSend"
+                :loading="verCodeloading"
               />
             </template>
           </XInput>
@@ -98,6 +111,7 @@ import {
 const { t } = useI18n();
 const userStore = useUserStore();
 const registerLoading = ref(false);
+const verCodeloading = ref(false);
 const emailRef = ref<typeof XInput>();
 const registerForm = reactive({
   username: '',
@@ -105,11 +119,21 @@ const registerForm = reactive({
   confirmPassword: '',
   email: '',
   verCode: '',
+  referralCode: '',
 });
 async function beforeSend() {
   const isTrue = await emailRef.value?.$refs.inputRef.validate();
+  let isSend = false;
   if (!isTrue) return isTrue;
-  return await userStore.sendVerCode(registerForm.email);
+  try {
+    verCodeloading.value = true;
+    isSend = await userStore.sendVerCode(registerForm.email);
+  } catch (e) {
+    isSend = false;
+  } finally {
+    verCodeloading.value = false;
+    return isSend;
+  }
 }
 async function submitRegister() {
   registerLoading.value = true;
@@ -119,6 +143,7 @@ async function submitRegister() {
       password: encrypt(registerForm.password),
       email: registerForm.email,
       verCode: registerForm.verCode,
+      referralCode: registerForm.referralCode,
     });
   } catch (e) {
     console.log(e);

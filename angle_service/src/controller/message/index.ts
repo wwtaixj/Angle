@@ -1,25 +1,31 @@
 import { Socket, Server } from 'socket.io';
 import { TransmissionBody } from '../types';
 import { getAllUserId } from '@/db';
-let userIds = [];
-getAllUserId().then((result) => {
-  userIds = result[0].map((i) => i.id);
-});
+let isGetId = false;
 
 /**
  * @description 连接到客户端回调
  * @param socket
  * @param io
  */
-export function connection(socket: Socket, io: Server) {
+export async function connection(socket: Socket, io: Server) {
   const { token, username, userid } = socket.handshake.headers;
   if (!token || !username || !userid) {
     socket.disconnect();
     return;
   }
-  for (let id of userIds) {
-    socket.on(id, (msg) => receive(msg, io));
-  }
+  console.log('connection');
+
+  // if (!isGetId) {
+  //   isGetId = true;
+  //   const result = await getAllUserId();
+  //   console.log(result[0]);
+  //   const userIds = result[0].map((i) => i.id);
+  //   for (let id of userIds) {
+  //     socket.on(id.toString(), (msg) => receive(msg, io));
+  //   }
+  // }
+  socket.on('messages', (msg) => receive(msg, io));
   socket.on('disconnect', disconnect);
 }
 /**
@@ -29,16 +35,18 @@ export function connection(socket: Socket, io: Server) {
  */
 export function receive(msg: TransmissionBody, io: Server) {
   const { senderId, receiverId, message, type } = msg;
-  const messageMap = new Map();
-  // 将消息发送成功回调给发送者客户端
+  console.log(msg);
+
   if (type !== 0) {
+    // 将消息发送成功回调给发送者客户端
     io.emit<string>(senderId, {
       type: 0,
       status: 1,
     });
+  } else {
+    // 将消息发送给接收者客户端
+    io.emit(receiverId, msg);
   }
-  // 将消息发送给接收者客户端
-  io.emit(receiverId, msg);
 }
 /**
  * @description 断开客户端连接

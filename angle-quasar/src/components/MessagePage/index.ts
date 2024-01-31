@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { withInstall } from '@/utils';
-import { StyleValue } from 'vue';
+//import { StyleValue } from 'vue';
 import MessagePage from './Index.vue';
-import { QBtnProps } from 'quasar';
+import { QEditorProps } from 'quasar';
 import { XChatMessageProps } from '@/components';
 
 export const XMessagePage = withInstall(MessagePage);
-export interface MessageTool extends QBtnProps {
-  icon: string;
-  click: (e: MessageTool, index: number) => void;
-  style?: StyleValue;
-}
+export type MessageEditor = Omit<
+  QEditorProps,
+  'modelValue' | 'minHeight' | 'maxHeight'
+>;
 export interface MessageItem {
   sent: boolean;
   avatar: string;
@@ -21,7 +20,15 @@ export interface MessageItem {
   textHtml?: boolean;
 }
 export interface XMessagePageProps {
-  tools?: MessageTool[];
+  editor?: MessageEditor;
   items: MessageItem[];
   contextMenu?: XChatMessageProps['contextMenu'];
+  isHtml?: boolean;
+  splitter?: number;
+}
+export interface SendData {
+  urls?: string[];
+  text: string;
+  html: string;
+  files?: ChatRobot.FileObject[];
 }

@@ -1,5 +1,6 @@
 import { useI18n } from '@/boot/i18n';
 import { SideListKeyEnum } from '@/enums/main';
+import chatGptImg from '@/assets/images/chatGpt-logo.jpg';
 
 const { t } = useI18n();
 interface SideList {
@@ -47,27 +48,36 @@ export function getModelList(): ChatRobot.ChatRobotModel[] {
     {
       label: 'gpt-3.5-turbo',
       value: 'gpt-3.5-turbo',
-      description: 'Currently points to gpt-3.5-turbo-0613.',
-      avatar: '/public/icons/chatGpt-logo.jpg',
-    },
-    {
-      label: 'gpt-3.5-turbo-16k',
-      value: 'gpt-3.5-turbo-16k',
-      description: '更长令牌的gpt-3.5-turbo.',
-      avatar: '/public/icons/chatGpt-logo.jpg',
+      description: '支持对话.',
+      avatar: chatGptImg,
     },
     {
       label: 'gpt-4',
       value: 'gpt-4',
-      description:
-        'Currently points to gpt-4-0613. See continuous model upgrades.',
-      avatar: '/public/icons/chatGpt-logo.jpg',
+      description: '支持对话，上传文件，上传图片.',
+      avatar: chatGptImg,
     },
     {
-      label: 'gpt-4-32k',
-      value: 'gpt-4-32k',
-      description: '更长令牌的gpt-4.',
-      avatar: '/public/icons/chatGpt-logo.jpg',
+      label: 'gpt-4-vision-preview',
+      value: 'gpt-4-vision-preview',
+      description: '支持上传图片分析并生成文本.',
+      avatar: chatGptImg,
+    },
+    {
+      label: 'dall-e-3',
+      value: 'dall-e-3',
+      description: '支持根据提示创建具有特定尺寸的新图像，编辑图片.',
+      avatar: chatGptImg,
     },
   ];
+}
+
+export function getImageHtml(url: string) {
+  return `&nbsp;<div class="editor_image text-white row inline items-center" contenteditable="false">
+  <img src="${url}">
+  <i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">
+    close
+  </i>
+  </img>
+</div>&nbsp;`;
 }

@@ -4,6 +4,22 @@
     :bg-color="attrsComputed.sent ? 'green-3' : 'grey-4'"
     v-bind="attrsComputed"
   >
+    <template #name>
+      <div class="text-caption text-grey-6">
+        {{ customComputed.name }}
+      </div>
+    </template>
+    <template v-slot:avatar>
+      <XAvatar
+        :class="`q-message-avatar ${
+          attrsComputed.sent
+            ? 'q-message-avatar--sent'
+            : 'q-message-avatar--received'
+        }`"
+        :src="customComputed.avatar"
+        :text="avatarText"
+      />
+    </template>
     <q-spinner-dots v-if="loading" color="primary" size="2em" />
     <div
       v-else
@@ -31,22 +47,17 @@
         </q-list>
       </q-menu>
       <div
-        v-if="customComputed.textHtml && !attrsComputed.sent"
+        v-if="customComputed.textHtml"
         class="markdown-body"
         v-html="customComputed.text"
       />
       <div v-else class="whitespace-pre-wrap" v-text="customComputed.text" />
     </div>
-    <template #name>
-      <div class="text-caption text-grey-6">
-        {{ customComputed.name }}
-      </div>
-    </template>
   </q-chat-message>
 </template>
 
 <script lang="ts" setup>
-import { useAttrs, computed, PropType } from 'vue';
+import { useAttrs, computed, PropType, nextTick } from 'vue';
 import { XChatMessageProps } from './index';
 import MarkdownIt from 'markdown-it';
 import mdKatex from '@traptitech/markdown-it-katex';
@@ -54,6 +65,8 @@ import mila from 'markdown-it-link-attributes';
 import hljs from 'highlight.js';
 import { useQuasar } from 'quasar';
 import { useI18n } from '@/boot/i18n';
+import { copyText } from '@/utils';
+import { XAvatar } from '@/components';
 
 defineOptions({
   name: 'XChatMessage',
@@ -70,6 +83,17 @@ const props = defineProps({
   contextMenu: {
     type: Array as PropType<XChatMessageProps['contextMenu']>,
   },
+  isMarkdown: {
+    type: Boolean,
+    default: false,
+  },
+  maxWidth: {
+    type: String,
+    default: '470px',
+  },
+  avatarText: {
+    type: String,
+  },
 });
 
 const { t } = useI18n();
@@ -78,18 +102,21 @@ const attrs: XChatMessageProps = useAttrs();
 
 const attrsComputed = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { text, textHtml, name, ...attr } = attrs;
+  const { text, textHtml, name, avatar, ...attr } = attrs;
   return {
     ...attr,
   };
 });
 const customComputed = computed(() => {
-  const { text, textHtml, sent, name } = attrs;
+  const { text, textHtml, name, avatar } = attrs;
   return {
     text:
-      textHtml && !sent ? mdi.render(text?.toString() ?? '') : text?.toString(),
+      props.isMarkdown && textHtml
+        ? mdi.render(text?.toString() ?? '')
+        : text?.toString(),
     textHtml,
     name,
+    avatar,
   };
 });
 const wrapClass = computed(() => {
@@ -120,8 +147,24 @@ mdi.use(mdKatex, {
   blockClass: 'katexmath-block',
   errorColor: '#cc0000',
 });
-
+function copyCode() {
+  nextTick(() => {
+    const codeBlockWrapper = document.querySelectorAll('.code-block-wrapper');
+    codeBlockWrapper.forEach((wrapper) => {
+      const copyBtn = wrapper.querySelector('.code-block-header__copy');
+      const codeBlock = wrapper.querySelector('.code-block-body');
+      if (copyBtn && codeBlock) {
+        copyBtn.addEventListener('click', () => {
+          if (navigator.clipboard?.writeText)
+            navigator.clipboard.writeText(codeBlock.textContent ?? '');
+          else copyText({ text: codeBlock.textContent ?? '', origin: true });
+        });
+      }
+    });
+  });
+}
 function highlightBlock(str: string, lang?: string) {
+  copyCode();
   return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">${t(
     'chat.copyCode'
   )}</span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`;
@@ -139,7 +182,16 @@ function highlightBlock(str: string, lang?: string) {
 }
 .markdown-body {
   background-color: transparent !important;
-
+  .editor_image {
+    .q-icon {
+      display: none;
+    }
+  }
+  .editor_file {
+    .q-icon {
+      display: none;
+    }
+  }
   p {
     white-space: pre-wrap;
   }
@@ -208,6 +260,9 @@ function highlightBlock(str: string, lang?: string) {
     .q-message-avatar--sent {
       margin-right: 4px;
     }
+  }
+  .q-message-text {
+    max-width: v-bind('props.maxWidth');
   }
   .q-message-text:last-child {
     border-radius: 6px;

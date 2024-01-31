@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia';
 import { uid } from 'quasar';
-import { lStorage, isObject, isArray, isNumber } from '@/utils';
+import {
+  lStorage,
+  isObject,
+  isArray,
+  isNumber,
+  isString,
+  notify,
+} from '@/utils';
 import { useUserStore } from '@/stores/user';
 import { getModelList } from '@/assets/constant';
 import { useDBStore } from '@/stores/database';
@@ -8,7 +15,8 @@ import { useDBStore } from '@/stores/database';
 
 export function getLocalState(): ChatRobot.ChatState {
   const localModel = lStorage.get<ChatRobot.ChatRobotModel>('CHAT_ROBOT_MODEL');
-  const localState = {
+  const currentDate = new Date().toISOString().split('T')[0];
+  return {
     active: lStorage.get<ChatRobot.ChatState['active']>('CHAT_ROBOT_ACTIVE'),
     activeMssage: [],
     chatList: [],
@@ -16,9 +24,12 @@ export function getLocalState(): ChatRobot.ChatState {
     xSplitter:
       lStorage.get<ChatRobot.ChatState['xSplitter']>('X_SPLITTER') || 80,
     ySplitter:
-      lStorage.get<ChatRobot.ChatState['ySplitter']>('Y_SPLITTER') || 30,
+      lStorage.get<ChatRobot.ChatState['ySplitter']>('Y_SPLITTER') || 25,
+    role:
+      lStorage.get<ChatRobot.ChatState['role']>('ROLE') ||
+      `你是智能语言模型ChatGPT,回答要尽可能简明扼要,知识截止: 2021-09-01,当前日期:${currentDate}`,
+    maxWidth: '0px',
   };
-  return { ...localState };
 }
 export const useChatRobotStore = defineStore('chatRobot', {
   state: (): ChatRobot.ChatState => getLocalState(),
@@ -26,7 +37,6 @@ export const useChatRobotStore = defineStore('chatRobot', {
     getChatList(state) {
       const chatList = state.chatList;
       if (chatList.length) return chatList;
-      return [];
       return [];
     },
     getActive(state) {
@@ -86,7 +96,8 @@ export const useChatRobotStore = defineStore('chatRobot', {
               ? userStore.getAvatarUrl
               : modelObj?.avatar) as string,
             sent: i.dataValues.sent,
-            textHtml: !i.dataValues.sent,
+            textHtml: true,
+            isMarkdown: !i.dataValues.sent,
             ...i,
             conversationOptions: i.dataValues.conversationOptions
               ? JSON.parse(i.dataValues.conversationOptions)
@@ -154,13 +165,22 @@ export const useChatRobotStore = defineStore('chatRobot', {
       const chat: ChatRobot.Chat = {
         title: 'New Chat',
         chatId: uuid,
-        model: model?.value as string,
+        model: model?.value as ChatRobot.Model,
         timestamp: Date.now(),
         avatar: model?.avatar as string,
         usingContext: true,
         serialNumber: this.getChatList.length - 1,
       };
       this.addChatList(chat);
+    },
+    setRole(role: string) {
+      if (!isString(role)) return;
+      this.role = role;
+      lStorage.set('ROLE', role);
+      notify({
+        message: '角色设置成功',
+        type: 'positive',
+      });
     },
   },
 });
