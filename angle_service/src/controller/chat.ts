@@ -11,7 +11,6 @@ import { GlobalResponse, GlobalRequest } from '@/types';
 import OpenAI from 'openai';
 import { decrypt, formatDate, useLogger } from '@/utils';
 import type { sendOptions } from '../controller/types';
-import { stringify } from 'querystring';
 
 const logger = useLogger('aiChat');
 
@@ -43,7 +42,8 @@ export const chatProcess = async (
       model,
       type,
     };
-    logger.info('chatProcess', JSON.stringify(params));
+    const { process, lastContext, ...logs } = params;
+    logger.info('chatProcess', JSON.stringify(logs));
     if (options.fileIds) {
       await chatAssistantsProcess({
         ...params,
