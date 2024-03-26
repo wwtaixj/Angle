@@ -9,7 +9,11 @@ import {
 } from '../utils/chatGPT';
 import { GlobalResponse, GlobalRequest } from '@/types';
 import OpenAI from 'openai';
-import { decrypt, formatDate } from '@/utils';
+import { decrypt, formatDate, useLogger } from '@/utils';
+import type { sendOptions } from '../controller/types';
+import { stringify } from 'querystring';
+
+const logger = useLogger('aiChat');
 
 /**
  * 发送对话
@@ -26,49 +30,29 @@ export const chatProcess = async (
     let firstChunk = true;
     const username = decrypt(req.headers.username as string);
     const token = req.headers.token as string;
-
+    const params: sendOptions = {
+      message: prompt,
+      lastContext: options,
+      process: (chat) => {
+        res.write(
+          firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`
+        );
+        firstChunk = false;
+      },
+      systemMessage,
+      model,
+      type,
+    };
+    logger.info('chatProcess', JSON.stringify(params));
     if (options.fileIds) {
       await chatAssistantsProcess({
-        message: prompt,
-        lastContext: options,
-        process: (chat) => {
-          res.write(
-            firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`
-          );
-          firstChunk = false;
-        },
-        systemMessage,
-        model,
-        type,
+        ...params,
         assistantsName: username + '_' + token + formatDate(),
       });
     } else if (model.includes('dall-e')) {
-      await chatImageProcess({
-        message: prompt,
-        process: (chat: any) => {
-          res.write(
-            firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`
-          );
-          firstChunk = false;
-        },
-        systemMessage,
-        model,
-        type,
-      });
+      await chatImageProcess(params);
     } else {
-      await chatReplyProcess({
-        message: prompt,
-        lastContext: options,
-        process: (chat) => {
-          res.write(
-            firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`
-          );
-          firstChunk = false;
-        },
-        systemMessage,
-        model,
-        type,
-      });
+      await chatReplyProcess(params);
     }
   } catch (error) {
     res.write(JSON.stringify(error));

@@ -154,7 +154,7 @@ async function chatAssistantsProcess({
   assistantsName,
 }: sendOptions) {
   let assistant: OpenAI.Beta.Assistant,
-    messages: OpenAI.Beta.Threads.ThreadMessagesPage,
+    messages: OpenAI.Beta.Threads.MessagesPage,
     result: string;
 
   if (!lastContext.threadId) {
