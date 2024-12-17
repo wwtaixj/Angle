@@ -26,7 +26,7 @@
         <q-tab-panel name="user">
           <q-card flat class="q-mx-xl">
             <q-card-section horizontal class="q-ma-xs">
-              <q-card-section class="col-5 flex flex-center">
+              <q-card-section class="flex col-5 flex-center">
                 <XAvatar
                   size="100px"
                   class="rounded-borders"
@@ -39,7 +39,7 @@
               </q-card-actions>
             </q-card-section>
           </q-card>
-          <div class="row justify-center q-mt-xl">
+          <div class="justify-center row q-mt-xl">
             <q-btn
               unelevated
               text-color="primary"
@@ -61,7 +61,7 @@
               dense
             />
           </div>
-          <div class="col row justify-end q-mt-md">
+          <div class="justify-end col row q-mt-md">
             <XButton
               unelevated
               text-color="primary"
@@ -87,5 +87,5 @@ import { XInput, XButton, XAvatar } from '@/components';
 const userStore = useUserStore();
 
 const tab = ref('user');
-const splitterModel = ref(90);
+const splitterModel = ref(20);
 </script>

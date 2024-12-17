@@ -11,6 +11,14 @@
     enter-active-class="animated fadeIn"
     leave-active-class="animated fadeOut"
   >
+    <SettingsForm
+      v-show="userStore.loginDialogType === LoginDialogTypeEnum.SETTINGS"
+    />
+  </Transition>
+  <Transition
+    enter-active-class="animated fadeIn"
+    leave-active-class="animated fadeOut"
+  >
     <q-layout
       v-show="userStore.loginDialogType === LoginDialogTypeEnum.LOGIN"
       class="login"
@@ -26,7 +34,7 @@
                 fab
                 color="primary"
                 icon="fa-solid fa-robot"
-                class="avatar absolute"
+                class="absolute avatar"
               />
             </q-card-section>
 
@@ -36,8 +44,9 @@
           </q-card>
         </q-page>
       </q-page-container>
-      <q-footer class="bg-white text-grey-6">
+      <q-footer class="justify-between bg-white text-grey-6 row">
         <XButton outline flat label="注册账号" @click="register" />
+        <XButton flat round icon="settings" @click="openSettings" />
       </q-footer>
     </q-layout>
   </Transition>
@@ -46,6 +55,7 @@
 //import { computed } from 'vue';
 import LoginForm from './components/LoginForm.vue';
 import RegisterForm from './components/RegisterForm.vue';
+import SettingsForm from './components/SettingsForm.vue';
 import { LoginDialogTypeEnum } from '@/enums/login';
 import { useUserStore } from '@/stores/user';
 import { XWinBar, XButton } from '@/components';
@@ -55,6 +65,9 @@ const userStore = useUserStore();
 
 function register() {
   userStore.setLoginDialogType(LoginDialogTypeEnum.REGISTER);
+}
+function openSettings() {
+  userStore.setLoginDialogType(LoginDialogTypeEnum.SETTINGS);
 }
 </script>
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 <template>
-  <q-bar v-bind="useAttrs()" style="-webkit-app-region: drag">
+  <q-bar v-bind="useAttrs()" style="-webkit-app-region: drag" class="q-pt-md">
     <slot name="before" />
     <q-space />
     <slot name="after" />
